@@ -592,3 +592,125 @@ function TabPanel() {
 }
 ```
 
+## 面试常见问题
+
+::: details 1. React 18 并发特性是什么？
+并发特性允许 React 同时准备多个版本的 UI，渲染过程可以被中断、暂停和恢复。主要包括：
+- 自动批处理
+- useTransition 和 useDeferredValue
+- Suspense 增强
+- 流式 SSR
+:::
+
+::: details 2. useTransition 和 useDeferredValue 的区别？
+```jsx
+// useTransition - 包装更新函数
+// 你可以控制何时触发过渡
+const [isPending, startTransition] = useTransition();
+startTransition(() => setState(newValue));
+
+// useDeferredValue - 包装值
+// 适用于无法控制更新源的情况
+const deferredValue = useDeferredValue(propsValue);
+```
+:::
+
+::: details 3. 为什么需要并发渲染？
+- 保持 UI 响应性，用户输入不被阻塞
+- 区分更新优先级，紧急更新优先处理
+- 避免不必要的加载状态
+- 更好的用户体验
+:::
+
+::: details 4. 并发模式下状态更新可能被丢弃吗？
+是的，过渡更新可能被丢弃：
+
+```jsx
+// 用户快速输入 a → ab → abc
+// 只有最后一次 "abc" 的搜索结果会被渲染
+startTransition(() => {
+  setSearchResults(search(query));
+});
+```
+:::
+
+::: details 5. createRoot 和 render 的区别？
+```jsx
+// render (React 17) - 同步渲染
+ReactDOM.render(<App />, container);
+
+// createRoot (React 18) - 启用并发特性
+const root = createRoot(container);
+root.render(<App />);
+
+// 区别：
+// 1. createRoot 启用自动批处理
+// 2. createRoot 支持并发特性
+// 3. createRoot 可以调用 root.unmount()
+```
+:::
+
+## 最佳实践
+
+::: details 1. 合理使用 Transition
+```jsx
+// ✅ 好：用于非紧急更新
+startTransition(() => {
+  setSearchResults(results);
+});
+
+// ❌ 不好：用于紧急更新
+startTransition(() => {
+  setInputValue(e.target.value); // 输入框应该立即更新
+});
+```
+:::
+
+::: details 2. 配合 Suspense 使用
+```jsx
+// ✅ 好：Transition + Suspense
+function App() {
+  const [tab, setTab] = useState('home');
+  const [isPending, startTransition] = useTransition();
+
+  return (
+    <div>
+      <TabButtons onChange={tab => startTransition(() => setTab(tab))} />
+      <Suspense fallback={<Spinner />}>
+        <TabContent tab={tab} />
+      </Suspense>
+    </div>
+  );
+}
+```
+:::
+
+::: details 3. 避免过度使用
+```jsx
+// ❌ 不好：所有更新都用 Transition
+startTransition(() => {
+  setName(value);
+  setEmail(value);
+  setPhone(value);
+});
+
+// ✅ 好：只对耗时更新使用 Transition
+setName(value);
+setEmail(value);
+startTransition(() => {
+  setExpensiveData(compute(value));
+});
+```
+:::
+
+## 总结
+
+React 18 并发特性的核心价值：
+
+1. **可中断渲染**：长时间渲染不再阻塞用户交互
+2. **优先级调度**：紧急更新优先处理
+3. **自动批处理**：减少不必要的渲染次数
+4. **流式 SSR**：更快的首屏加载
+5. **更好的开发体验**：useTransition、useDeferredValue 等新 API
+
+掌握并发特性是 React 面试的重要加分项，也是构建高性能 React 应用的关键技能。

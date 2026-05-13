@@ -1103,3 +1103,894 @@ class MultiInit {
 }
 ```
 
+## 常见面试题
+
+::: details 1. 说说原型链
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 原型链是 JavaScript 实现继承的机制，每个对象都有 `__proto__` 指向其构造函数的 `prototype`，形成一条链，直到 `null`。
+
+**详细答案**:
+
+```javascript
+// 原型链示意图
+/*
+实例对象 person
+    ↓ __proto__
+Person.prototype  { constructor: Person, sayHello: fn }
+    ↓ __proto__
+Object.prototype  { toString: fn, valueOf: fn, hasOwnProperty: fn }
+    ↓ __proto__
+null
+*/
+
+// 代码验证
+function Person(name) {
+  this.name = name
+}
+const person = new Person('Alice')
+
+console.log(person.__proto__ === Person.prototype)  // true
+console.log(Person.prototype.__proto__ === Object.prototype)  // true
+console.log(Object.prototype.__proto__ === null)  // true
+```
+
+**口语化回答**:
+"原型链是 JS 实现继承的方式。简单说，每个对象都有一个隐藏属性 `__proto__`，指向创建它的构造函数的 `prototype`。当访问对象的属性时，如果对象本身没有，就会顺着 `__proto__` 往上找，一直找到 `Object.prototype`，再往上就是 `null` 了。这个链条就叫原型链。"
+:::
+
+</details>
+
+::: details 2. 如何判断属性是自身的还是原型上的?
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 用 `hasOwnProperty` 判断是否是自身属性，用 `in` 操作符判断包括原型链。
+
+```javascript
+const obj = { name: 'Alice' }
+
+// hasOwnProperty - 只检查自身属性
+console.log(obj.hasOwnProperty('name'))  // true
+console.log(obj.hasOwnProperty('toString'))  // false
+
+// in 运算符 - 包括原型链
+console.log('name' in obj)  // true
+console.log('toString' in obj)  // true
+
+// Object.hasOwn (ES2022，推荐)
+console.log(Object.hasOwn(obj, 'name'))  // true
+console.log(Object.hasOwn(obj, 'toString'))  // false
+
+// Object.keys - 只返回自身可枚举属性
+console.log(Object.keys(obj))  // ['name']
+
+// Object.getOwnPropertyNames - 自身所有属性（包括不可枚举）
+console.log(Object.getOwnPropertyNames(obj))  // ['name']
+```
+
+**口语化回答**:
+"用 `hasOwnProperty` 或者 ES2022 的 `Object.hasOwn` 可以判断属性是不是对象自己的。`in` 操作符会把原型链上的属性也算进去。一般遍历对象时用 `Object.keys` 就只会拿到自身的可枚举属性。"
+:::
+
+</details>
+
+::: details 3. `__proto__` 和 `prototype` 的区别？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: `prototype` 是函数独有的属性，`__proto__` 是所有对象都有的属性。
+
+**对比**:
+
+| 属性 | 所属 | 作用 |
+|------|------|------|
+| `prototype` | 函数 | 定义实例的原型 |
+| `__proto__` | 所有对象 | 指向对象的原型 |
+| `constructor` | prototype 对象 | 指向构造函数 |
+
+```javascript
+function Person() {}
+const person = new Person()
+
+// prototype 是函数的属性
+console.log(Person.prototype)  // { constructor: Person }
+
+// __proto__ 是实例的属性
+console.log(person.__proto__ === Person.prototype)  // true
+
+// constructor 指向构造函数
+console.log(Person.prototype.constructor === Person)  // true
+
+// 函数也是对象，也有 __proto__
+console.log(Person.__proto__ === Function.prototype)  // true
+console.log(Function.prototype.__proto__ === Object.prototype)  // true
+```
+
+**口语化回答**:
+"`prototype` 是函数才有的属性，用来给实例提供原型。`__proto__` 是每个对象都有的，指向它的原型。当我们 `new` 一个构造函数时，新对象的 `__proto__` 就会指向构造函数的 `prototype`。这样实例就能访问原型上的方法了。"
+:::
+
+</details>
+
+::: details 4. new 操作符做了什么？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 创建空对象、设置原型、执行构造函数、返回对象。
+
+**四个步骤**:
+1. 创建一个空对象
+2. 将空对象的 `__proto__` 指向构造函数的 `prototype`
+3. 将构造函数的 `this` 指向这个空对象，执行构造函数
+4. 如果构造函数返回对象则返回该对象，否则返回新创建的对象
+
+```javascript
+// 手写 new
+function myNew(Constructor, ...args) {
+  // 1. 创建空对象，原型指向构造函数的 prototype
+  const obj = Object.create(Constructor.prototype)
+
+  // 2. 执行构造函数，绑定 this
+  const result = Constructor.apply(obj, args)
+
+  // 3. 如果构造函数返回对象，则返回该对象；否则返回新对象
+  return result instanceof Object ? result : obj
+}
+
+// 测试
+function Person(name) {
+  this.name = name
+}
+const p = myNew(Person, 'Alice')
+console.log(p.name)  // 'Alice'
+console.log(p instanceof Person)  // true
+```
+
+**口语化回答**:
+"`new` 做了四件事：第一，创建一个空对象；第二，把这个对象的原型指向构造函数的 `prototype`；第三，用这个对象作为 `this` 执行构造函数；第四，如果构造函数返回了一个对象就用那个，否则返回新创建的对象。"
+:::
+
+</details>
+
+::: details 5. ES6 class 和 ES5 构造函数的区别？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: class 是语法糖，本质还是原型继承，但有一些差异。
+
+**主要区别**:
+
+| 特性 | ES5 构造函数 | ES6 class |
+|------|-------------|-----------|
+| 调用方式 | 可以不用 new | 必须用 new |
+| 方法枚举 | 可枚举 | 不可枚举 |
+| 严格模式 | 需要手动开启 | 默认严格模式 |
+| 变量提升 | 有提升 | 无提升（暂时性死区） |
+| 静态方法 | 需手动添加 | 直接用 static |
+
+```javascript
+// ES5
+function Person(name) {
+  this.name = name
+}
+Person.prototype.sayHello = function() {
+  console.log(`Hello, ${this.name}`)
+}
+Person.create = function(name) {  // 静态方法
+  return new Person(name)
+}
+
+// ES6
+class Person {
+  constructor(name) {
+    this.name = name
+  }
+  sayHello() {
+    console.log(`Hello, ${this.name}`)
+  }
+  static create(name) {  // 静态方法
+    return new Person(name)
+  }
+}
+
+// 区别验证
+// 1. 必须用 new
+// Person()  // TypeError: Class constructor cannot be invoked without 'new'
+
+// 2. 方法不可枚举
+console.log(Object.keys(Person.prototype))  // []
+
+// 3. 无变量提升
+// const p = new Person()  // ReferenceError（如果写在 class 定义前）
+```
+
+**口语化回答**:
+"class 本质上是构造函数的语法糖，但有一些区别。class 必须用 new 调用，不能直接当函数调。class 里的方法默认不可枚举。class 没有变量提升，必须先定义再使用。另外 class 内部默认是严格模式。"
+:::
+
+</details>
+
+::: details 6. 如何实现继承？各种方式的优缺点？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 推荐使用 ES6 class extends 或寄生组合继承。
+
+| 方式 | 优点 | 缺点 |
+|------|------|------|
+| 原型链继承 | 简单 | 引用类型共享、无法传参 |
+| 构造函数继承 | 可传参、引用独立 | 无法继承原型方法 |
+| 组合继承 | 功能完整 | 调用两次父构造函数 |
+| 寄生组合继承 | 完美 | 写法稍复杂 |
+| ES6 class | 简洁、官方推荐 | 需要编译 |
+
+```javascript
+// 寄生组合继承（最优方案）
+function Parent(name) {
+  this.name = name
+  this.colors = ['red', 'blue']
+}
+
+Parent.prototype.getName = function() {
+  return this.name
+}
+
+function Child(name, age) {
+  Parent.call(this, name)  // 继承实例属性
+  this.age = age
+}
+
+// 关键：使用 Object.create 而不是 new Parent()
+Child.prototype = Object.create(Parent.prototype)
+Child.prototype.constructor = Child
+
+// ES6 class 继承（推荐）
+class Parent {
+  constructor(name) {
+    this.name = name
+  }
+  getName() {
+    return this.name
+  }
+}
+
+class Child extends Parent {
+  constructor(name, age) {
+    super(name)  // 必须先调用 super
+    this.age = age
+  }
+}
+```
+
+**口语化回答**:
+"JS 继承有好几种方式。原型链继承最简单但有引用类型共享问题。构造函数继承能传参但继承不了原型方法。组合继承结合了两者但会调用两次父构造函数。寄生组合继承是 ES5 的最佳方案，用 `Object.create` 代替 `new Parent()` 来设置原型。现在最推荐的是 ES6 的 class extends，简洁明了。"
+:::
+
+</details>
+
+::: details 7. 如何实现多重继承?
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: JavaScript 不支持多重继承，但可以用 Mixin 模式模拟。
+
+```javascript
+// Mixin 模式
+const FlyMixin = {
+  fly() {
+    console.log(`${this.name} is flying`)
+  }
+}
+
+const SwimMixin = {
+  swim() {
+    console.log(`${this.name} is swimming`)
+  }
+}
+
+class Animal {
+  constructor(name) {
+    this.name = name
+  }
+}
+
+// 混入多个功能
+Object.assign(Animal.prototype, FlyMixin, SwimMixin)
+
+const duck = new Animal('Duck')
+duck.fly()   // Duck is flying
+duck.swim()  // Duck is swimming
+
+// 更优雅的写法：高阶函数
+function withFly(Base) {
+  return class extends Base {
+    fly() {
+      console.log(`${this.name} is flying`)
+    }
+  }
+}
+
+function withSwim(Base) {
+  return class extends Base {
+    swim() {
+      console.log(`${this.name} is swimming`)
+    }
+  }
+}
+
+// 组合使用
+class Duck extends withSwim(withFly(Animal)) {}
+
+const duck2 = new Duck('Donald')
+duck2.fly()   // Donald is flying
+duck2.swim()  // Donald is swimming
+```
+
+**口语化回答**:
+"JavaScript 原生不支持多重继承，但可以用 Mixin 模式来模拟。简单的方式是用 `Object.assign` 把多个对象的方法混入原型。更优雅的方式是用高阶函数，每个函数接收一个基类返回一个扩展后的类，然后嵌套调用实现多重混入。"
+:::
+
+</details>
+
+::: details 8. `Object.create(null)` 和 `{}` 的区别？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: `Object.create(null)` 创建的对象没有原型，是真正的空对象。
+
+```javascript
+// 普通对象
+const obj1 = {}
+console.log(obj1.__proto__ === Object.prototype)  // true
+console.log(obj1.toString)  // function toString()
+console.log(obj1.hasOwnProperty)  // function hasOwnProperty()
+
+// Object.create(null)
+const obj2 = Object.create(null)
+console.log(obj2.__proto__)  // undefined
+console.log(obj2.toString)  // undefined
+console.log(obj2.hasOwnProperty)  // undefined
+
+// 使用场景：纯净的字典/Map
+const dict = Object.create(null)
+dict['__proto__'] = 'value'  // 不会有问题
+dict['constructor'] = 'value'  // 不会有问题
+
+// 用 {} 的话
+const obj = {}
+obj['__proto__'] = 'value'  // 可能有问题
+```
+
+**口语化回答**:
+"`Object.create(null)` 创建的是一个完全空的对象，没有原型链，没有 `toString`、`hasOwnProperty` 这些继承来的方法。普通的 `{}` 会继承 `Object.prototype` 上的所有方法。`Object.create(null)` 常用于创建纯净的字典对象，避免键名和原型属性冲突，比如用 `__proto__` 或 `constructor` 作为键名时不会出问题。"
+:::
+
+</details>
+
+::: details 9. Function.__proto__ 指向什么？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: `Function.__proto__` 指向 `Function.prototype`，Function 是自己创建自己。
+
+```javascript
+// Function 的特殊性
+console.log(Function.__proto__ === Function.prototype)  // true
+
+// 这看起来像鸡生蛋的问题，但实际上是引擎内部处理的
+// Function 既是构造函数，也是 Function 的实例
+
+// 验证其他关系
+console.log(Function.prototype.__proto__ === Object.prototype)  // true
+console.log(Object.__proto__ === Function.prototype)  // true（Object 也是函数）
+
+// 完整关系
+/*
+Function ─┬─ prototype ───→ Function.prototype
+          └─ __proto__ ────→ Function.prototype ───→ Object.prototype ───→ null
+                                    ↑
+Object ───── __proto__ ─────────────┘
+*/
+
+// 所有函数都是 Function 的实例
+function foo() {}
+console.log(foo.__proto__ === Function.prototype)  // true
+console.log(foo instanceof Function)  // true
+console.log(Function instanceof Function)  // true
+console.log(Object instanceof Function)  // true
+```
+
+**口语化回答**:
+"`Function.__proto__` 指向 `Function.prototype`，这是一个特殊情况。可以理解为 Function 是自己创建自己的。这在 JavaScript 引擎内部有特殊处理。同时，因为 Object 也是一个函数，所以 `Object.__proto__` 也指向 `Function.prototype`。所有函数的 `__proto__` 都指向 `Function.prototype`。"
+:::
+
+</details>
+
+::: details 10. 什么是原型污染？如何防范？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 原型污染是通过修改原型对象影响所有继承对象的安全漏洞。
+
+```javascript
+// 原型污染示例
+const maliciousPayload = '{"__proto__": {"isAdmin": true}}'
+const parsed = JSON.parse(maliciousPayload)
+
+// 不安全的对象合并
+function unsafeMerge(target, source) {
+  for (const key in source) {
+    if (typeof source[key] === 'object') {
+      target[key] = target[key] || {}
+      unsafeMerge(target[key], source[key])
+    } else {
+      target[key] = source[key]
+    }
+  }
+}
+
+const obj = {}
+unsafeMerge(obj, parsed)
+
+// 所有对象都被污染了
+const newObj = {}
+console.log(newObj.isAdmin)  // true（危险！）
+
+// 防范措施
+// 1. 检查危险的键名
+function safeMerge(target, source) {
+  for (const key in source) {
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue  // 跳过危险的键
+    }
+    // ...
+  }
+}
+
+// 2. 使用 Object.create(null) 创建无原型对象
+const safeDict = Object.create(null)
+
+// 3. 使用 Map 替代普通对象
+const safeMap = new Map()
+
+// 4. 使用 Object.freeze 冻结原型
+Object.freeze(Object.prototype)
+
+// 5. 使用 JSON schema 验证输入
+```
+
+**口语化回答**:
+"原型污染是一种安全漏洞。攻击者通过恶意数据修改了 `Object.prototype` 这样的原型对象，导致所有继承该原型的对象都受影响。常见于不安全的对象合并操作。防范方法包括：检查并过滤 `__proto__`、`constructor` 等危险键名；使用 `Object.create(null)` 创建纯净字典；用 `Map` 替代对象；或者冻结原型对象。"
+:::
+
+</details>
+
+::: details 11. 如何安全地检查对象是否有某个属性？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 使用 `Object.hasOwn()` (ES2022) 或 `Object.prototype.hasOwnProperty.call()`。
+
+```javascript
+const obj = { name: 'Alice' }
+
+// ❌ 不推荐：直接调用 hasOwnProperty
+// 如果对象覆盖了这个方法或用 Object.create(null) 创建，会出问题
+obj.hasOwnProperty('name')  // 可能不安全
+
+// ❌ 不安全示例
+const unsafeObj = {
+  hasOwnProperty: () => false  // 覆盖了方法
+}
+console.log(unsafeObj.hasOwnProperty('hasOwnProperty'))  // false（错误结果）
+
+const nullProtoObj = Object.create(null)
+nullProtoObj.name = 'Bob'
+// nullProtoObj.hasOwnProperty('name')  // TypeError: not a function
+
+// ✅ 推荐方式 1: Object.hasOwn() (ES2022)
+console.log(Object.hasOwn(obj, 'name'))  // true
+console.log(Object.hasOwn(unsafeObj, 'hasOwnProperty'))  // true
+console.log(Object.hasOwn(nullProtoObj, 'name'))  // true
+
+// ✅ 推荐方式 2: Object.prototype.hasOwnProperty.call()
+console.log(Object.prototype.hasOwnProperty.call(obj, 'name'))  // true
+console.log(Object.prototype.hasOwnProperty.call(nullProtoObj, 'name'))  // true
+
+// ✅ 推荐方式 3: 使用 in 操作符（包含原型链）
+console.log('name' in obj)  // true
+console.log('toString' in obj)  // true（原型链上的属性）
+
+// 区分自身和原型属性
+function hasOwnAndInherited(obj, prop) {
+  const hasOwn = Object.hasOwn(obj, prop)
+  const hasInherited = prop in obj && !hasOwn
+  return { hasOwn, hasInherited }
+}
+
+console.log(hasOwnAndInherited(obj, 'name'))     // { hasOwn: true, hasInherited: false }
+console.log(hasOwnAndInherited(obj, 'toString')) // { hasOwn: false, hasInherited: true }
+```
+
+**口语化回答**:
+"最安全的方式是使用 ES2022 的 `Object.hasOwn(obj, prop)`。如果要兼容旧环境，用 `Object.prototype.hasOwnProperty.call(obj, prop)`。不要直接调用 `obj.hasOwnProperty()`，因为这个方法可能被覆盖，或者对象可能是用 `Object.create(null)` 创建的没有这个方法。"
+:::
+
+</details>
+
+::: details 12. 说说 getter 和 setter 在原型上的行为
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 原型上的 getter/setter 会在访问/设置属性时被调用，但 setter 设置的值会成为实例的自身属性。
+
+```javascript
+const proto = {
+  _value: 0,
+  get value() {
+    console.log('getter called')
+    return this._value
+  },
+  set value(v) {
+    console.log('setter called')
+    this._value = v
+  }
+}
+
+const obj = Object.create(proto)
+
+// 访问会触发原型上的 getter
+console.log(obj.value)  // 'getter called', 0
+
+// 设置会触发原型上的 setter，但 _value 会成为 obj 的自身属性
+obj.value = 42  // 'setter called'
+console.log(obj._value)  // 42
+
+// 验证属性归属
+console.log(obj.hasOwnProperty('_value'))  // true（自身属性）
+console.log(obj.hasOwnProperty('value'))   // false（原型上的访问器）
+
+// 注意：如果直接赋值会覆盖原型上的访问器
+const obj2 = Object.create(proto)
+Object.defineProperty(obj2, 'value', {
+  value: 100,
+  writable: true
+})
+console.log(obj2.value)  // 100（不会触发 getter）
+
+// 实际应用：计算属性
+class Circle {
+  constructor(radius) {
+    this._radius = radius
+  }
+
+  get radius() {
+    return this._radius
+  }
+
+  set radius(value) {
+    if (value < 0) throw new Error('Radius cannot be negative')
+    this._radius = value
+  }
+
+  get area() {
+    return Math.PI * this._radius ** 2
+  }
+
+  get circumference() {
+    return 2 * Math.PI * this._radius
+  }
+}
+
+const circle = new Circle(5)
+console.log(circle.area)  // ~78.54
+circle.radius = 10
+console.log(circle.area)  // ~314.16
+```
+
+**口语化回答**:
+"当访问一个属性时，如果对象本身没有这个属性，就会去原型上找。如果原型上是 getter/setter，就会触发它们。setter 里设置的值会作为实例的自身属性存储，所以不会影响原型上的数据。这个特性常用于实现计算属性和属性验证。"
+:::
+
+</details>
+
+::: details 13. Symbol.species 有什么作用？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: `Symbol.species` 允许子类覆盖返回实例的构造函数，影响 `map`、`filter` 等方法的返回类型。
+
+```javascript
+// 默认行为：子类的方法返回子类实例
+class MyArray extends Array {}
+
+const arr = new MyArray(1, 2, 3)
+const mapped = arr.map(x => x * 2)
+
+console.log(mapped instanceof MyArray)  // true
+console.log(mapped instanceof Array)    // true
+
+// 使用 Symbol.species 改变返回类型
+class SpecialArray extends Array {
+  static get [Symbol.species]() {
+    return Array  // 让派生方法返回 Array 而不是 SpecialArray
+  }
+
+  sum() {
+    return this.reduce((a, b) => a + b, 0)
+  }
+}
+
+const special = new SpecialArray(1, 2, 3)
+console.log(special.sum())  // 6
+
+const filtered = special.filter(x => x > 1)
+console.log(filtered instanceof SpecialArray)  // false
+console.log(filtered instanceof Array)         // true
+// filtered.sum()  // TypeError: filtered.sum is not a function
+
+// 实际应用：Promise 子类
+class MyPromise extends Promise {
+  static get [Symbol.species]() {
+    return Promise  // then/catch 返回普通 Promise
+  }
+
+  // 添加自定义方法
+  timeout(ms) {
+    return Promise.race([
+      this,
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), ms)
+      )
+    ])
+  }
+}
+
+const p = new MyPromise(resolve => resolve(42))
+const chained = p.then(x => x * 2)
+console.log(chained instanceof MyPromise)  // false
+console.log(chained instanceof Promise)    // true
+
+// 其他支持 Symbol.species 的内置类
+// - Array
+// - ArrayBuffer
+// - Map
+// - Set
+// - Promise
+// - RegExp
+// - TypedArray (Int8Array, etc.)
+```
+
+**口语化回答**:
+"`Symbol.species` 用于指定派生对象的构造函数。比如你继承了 Array，调用 `map()` 默认会返回子类的实例。如果你想让它返回普通数组，就定义静态的 `[Symbol.species]` getter 返回 `Array`。这在创建工具类时很有用，可以避免链式调用时每次都创建自定义类的实例。"
+:::
+
+</details>
+
+::: details 14. 如何让一个对象不可被继承？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 使用 `Object.preventExtensions()`、`Object.seal()` 或 `Object.freeze()`。
+
+```javascript
+// 方法1: Object.preventExtensions - 禁止添加属性
+const obj1 = { a: 1 }
+Object.preventExtensions(obj1)
+
+obj1.a = 2  // ✅ 可以修改
+obj1.b = 3  // ❌ 静默失败（严格模式下报错）
+delete obj1.a  // ✅ 可以删除
+console.log(Object.isExtensible(obj1))  // false
+
+// 方法2: Object.seal - 禁止添加/删除属性
+const obj2 = { a: 1 }
+Object.seal(obj2)
+
+obj2.a = 2  // ✅ 可以修改
+obj2.b = 3  // ❌ 禁止添加
+delete obj2.a  // ❌ 禁止删除
+console.log(Object.isSealed(obj2))  // true
+
+// 方法3: Object.freeze - 完全冻结（最严格）
+const obj3 = { a: 1 }
+Object.freeze(obj3)
+
+obj3.a = 2  // ❌ 禁止修改
+obj3.b = 3  // ❌ 禁止添加
+delete obj3.a  // ❌ 禁止删除
+console.log(Object.isFrozen(obj3))  // true
+
+// 注意：freeze 是浅冻结
+const nested = { inner: { value: 1 } }
+Object.freeze(nested)
+nested.inner.value = 2  // ✅ 嵌套对象可以修改
+console.log(nested.inner.value)  // 2
+
+// 深度冻结
+function deepFreeze(obj) {
+  Object.keys(obj).forEach(key => {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      deepFreeze(obj[key])
+    }
+  })
+  return Object.freeze(obj)
+}
+
+// 对比总结
+/*
+┌─────────────────────┬──────────┬──────────┬──────────┐
+│       操作          │ prevent  │   seal   │  freeze  │
+│                     │Extensions│          │          │
+├─────────────────────┼──────────┼──────────┼──────────┤
+│ 添加新属性          │    ❌    │    ❌    │    ❌    │
+│ 删除已有属性        │    ✅    │    ❌    │    ❌    │
+│ 修改已有属性值      │    ✅    │    ✅    │    ❌    │
+│ 修改属性描述符      │    ✅    │    ❌    │    ❌    │
+│ 修改原型            │    ❌    │    ❌    │    ❌    │
+└─────────────────────┴──────────┴──────────┴──────────┘
+*/
+```
+
+**口语化回答**:
+"有三个方法：`preventExtensions` 只是禁止添加新属性；`seal` 在此基础上禁止删除属性和修改属性描述符；`freeze` 是最严格的，完全冻结对象，属性值也不能改。但要注意，这些都是浅操作，嵌套对象需要递归处理才能深度冻结。"
+:::
+
+</details>
+
+::: details 15. 原型方法和实例方法的区别？什么时候用哪个？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 原型方法被所有实例共享节省内存，实例方法每个实例独立可访问私有数据。
+
+```javascript
+class Person {
+  constructor(name) {
+    this.name = name
+    this._id = Math.random()
+
+    // 实例方法：每个实例有自己的一份
+    this.getIdInstance = function() {
+      return this._id  // 可以访问私有变量
+    }
+  }
+
+  // 原型方法：所有实例共享一份
+  getName() {
+    return this.name
+  }
+
+  // 静态方法：属于类本身
+  static create(name) {
+    return new Person(name)
+  }
+}
+
+const p1 = new Person('Alice')
+const p2 = new Person('Bob')
+
+// 原型方法是共享的
+console.log(p1.getName === p2.getName)  // true
+
+// 实例方法每个实例都有一份
+console.log(p1.getIdInstance === p2.getIdInstance)  // false
+
+// 内存对比
+// - 1000 个实例，原型方法只有 1 份
+// - 1000 个实例，实例方法有 1000 份
+
+// 什么时候用实例方法？
+// 1. 需要访问闭包中的私有变量（ES6 之前的私有属性模式）
+function Counter() {
+  let count = 0  // 私有变量
+
+  this.increment = function() {
+    return ++count  // 实例方法可以访问闭包
+  }
+}
+
+// 2. 需要在构造函数中动态创建方法
+function DynamicClass(config) {
+  if (config.type === 'A') {
+    this.method = function() { /* A 的实现 */ }
+  } else {
+    this.method = function() { /* B 的实现 */ }
+  }
+}
+
+// 什么时候用原型方法？
+// 1. 大多数情况（节省内存）
+// 2. 需要被所有实例共享的方法
+// 3. 可能被继承和覆盖的方法
+
+// ES6 类中的箭头函数字段（实例方法的语法糖）
+class Button {
+  // 这实际上是实例方法！
+  handleClick = () => {
+    console.log('clicked', this.name)
+  }
+
+  // 这是原型方法
+  handleHover() {
+    console.log('hovered', this.name)
+  }
+}
+
+const btn1 = new Button()
+const btn2 = new Button()
+console.log(btn1.handleClick === btn2.handleClick)  // false（实例方法）
+console.log(btn1.handleHover === btn2.handleHover)  // true（原型方法）
+```
+
+**口语化回答**:
+"原型方法定义在 `prototype` 上，所有实例共享同一份，节省内存。实例方法在构造函数中用 `this.method = function(){}` 定义，每个实例有自己的一份。一般优先用原型方法。实例方法主要用于需要访问构造函数闭包中的私有变量，或者 React 中需要绑定 this 的事件处理函数（用类字段的箭头函数）。"
+:::
+
+</details>
+
+::: details 16. 如何检测一个对象是否是某个类的实例？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 使用 `instanceof`、`Object.prototype.isPrototypeOf` 或 `constructor` 属性。
+
+```javascript
+class Animal {}
+class Dog extends Animal {}
+const dog = new Dog()
+
+// 方法1: instanceof
+console.log(dog instanceof Dog)     // true
+console.log(dog instanceof Animal)  // true
+console.log(dog instanceof Object)  // true
+
+// 方法2: isPrototypeOf
+console.log(Dog.prototype.isPrototypeOf(dog))     // true
+console.log(Animal.prototype.isPrototypeOf(dog))  // true
+
+// 方法3: constructor
+console.log(dog.constructor === Dog)  // true
+// 注意：constructor 可能被修改，不太可靠
+
+// 方法4: Symbol.hasInstance（自定义 instanceof 行为）
+class Even {
+  static [Symbol.hasInstance](obj) {
+    return Number.isInteger(obj) && obj % 2 === 0
+  }
+}
+console.log(2 instanceof Even)   // true
+console.log(3 instanceof Even)   // false
+console.log('2' instanceof Even) // false
+
+// 跨 iframe/window 的问题
+// instanceof 会失败，因为不同 window 的构造函数不同
+// 解决方案：使用 duck typing 或 Symbol
+const isArray1 = arr => arr instanceof Array  // 可能失败
+const isArray2 = arr => Array.isArray(arr)    // 可靠
+
+// 更可靠的类型检测
+function getType(obj) {
+  return Object.prototype.toString.call(obj).slice(8, -1)
+}
+console.log(getType([]))        // 'Array'
+console.log(getType({}))        // 'Object'
+console.log(getType(new Date))  // 'Date'
+console.log(getType(null))      // 'Null'
+
+// 自定义 toStringTag
+class MyClass {
+  get [Symbol.toStringTag]() {
+    return 'MyClass'
+  }
+}
+console.log(getType(new MyClass()))  // 'MyClass'
+```
+
+**口语化回答**:
+"最常用的是 `instanceof`，但它有跨 iframe 的问题。更可靠的方式是 `Object.prototype.toString.call()`，它能准确返回内置类型。对于数组专门用 `Array.isArray()`。如果需要自定义 instanceof 的行为，可以定义 `Symbol.hasInstance` 静态方法。"
+:::
+
+</details>

@@ -4,8 +4,7 @@
 
 ## Webpack
 
-### 1. Webpack 的构建流程是什么？
-
+::: details 1. Webpack 的构建流程是什么？
 ```
 初始化（读取配置）
     ↓
@@ -26,9 +25,9 @@ Plugin 在各生命周期钩子介入处理
 - **Chunk**：代码分割的产物，一个 chunk 对应一个输出文件
 
 ---
+:::
 
-### 2. Loader 和 Plugin 的区别？
-
+::: details 2. Loader 和 Plugin 的区别？
 | 特性 | Loader | Plugin |
 |------|--------|--------|
 | 作用 | 转换文件内容（文件级别） | 扩展构建流程（全局级别） |
@@ -38,9 +37,9 @@ Plugin 在各生命周期钩子介入处理
 | 示例 | babel-loader、css-loader | HtmlWebpackPlugin、MiniCssExtractPlugin |
 
 ---
+:::
 
-### 3. Webpack 如何优化构建速度？
-
+::: details 3. Webpack 如何优化构建速度？
 ```javascript
 // 1. 持久化缓存（Webpack 5）
 cache: { type: 'filesystem' }
@@ -63,9 +62,9 @@ externals: { react: 'React', 'react-dom': 'ReactDOM' }
 ```
 
 ---
+:::
 
-### 4. Webpack 代码分割有哪些方式？
-
+::: details 4. Webpack 代码分割有哪些方式？
 ```javascript
 // 1. 入口分割（多 entry）
 entry: { app: './src/app.js', vendor: './src/vendor.js' }
@@ -89,11 +88,11 @@ const Chart = () => import(/* webpackChunkName: "chart" */ './Chart');
 ```
 
 ---
+:::
 
 ## Vite
 
-### 5. Vite 为什么比 Webpack 快？
-
+::: details 5. Vite 为什么比 Webpack 快？
 **开发环境：**
 - 基于原生 ES Module，浏览器直接请求源文件，无需打包
 - 按需编译：只编译当前请求的文件
@@ -105,9 +104,9 @@ const Chart = () => import(/* webpackChunkName: "chart" */ './Chart');
 - esbuild 压缩（比 Terser 快 20-40 倍）
 
 ---
+:::
 
-### 6. Vite 和 Webpack 如何选择？
-
+::: details 6. Vite 和 Webpack 如何选择？
 | 场景 | 推荐 |
 |------|------|
 | 新项目 | Vite（开发体验好，速度快） |
@@ -117,11 +116,11 @@ const Chart = () => import(/* webpackChunkName: "chart" */ './Chart');
 | 库开发 | Vite（内置库模式） |
 
 ---
+:::
 
 ## Babel
 
-### 7. Babel 的工作原理是什么？
-
+::: details 7. Babel 的工作原理是什么？
 ```
 源代码
     ↓ 解析（@babel/parser）
@@ -135,9 +134,9 @@ AST（抽象语法树）
 **三个阶段：Parse → Transform → Generate**
 
 ---
+:::
 
-### 8. @babel/preset-env 和 polyfill 的关系？
-
+::: details 8. @babel/preset-env 和 polyfill 的关系？
 - `@babel/preset-env`：根据目标环境自动转换语法（箭头函数、class 等）
 - `core-js`：提供运行时 polyfill（Promise、Array.from 等新 API）
 
@@ -157,18 +156,18 @@ AST（抽象语法树）
 `useBuiltIns: 'usage'` 会自动分析代码，只引入用到的 polyfill，避免全量引入。
 
 ---
+:::
 
-### 9. .babelrc 和 babel.config.js 的区别？
-
+::: details 9. .babelrc 和 babel.config.js 的区别？
 - `.babelrc`：项目局部配置，只对同目录及子目录生效，适合 monorepo 中的子包
 - `babel.config.js`：项目全局配置，对整个项目生效，适合单仓库项目
 
 ---
+:::
 
 ## CI/CD
 
-### 10. 什么是 CI/CD？前端 CI/CD 流程是什么？
-
+::: details 10. 什么是 CI/CD？前端 CI/CD 流程是什么？
 **CI（持续集成）**：代码提交后自动触发构建和测试，快速发现问题。
 **CD（持续交付/部署）**：CI 通过后自动部署到目标环境。
 
@@ -192,9 +191,9 @@ AST（抽象语法树）
 ```
 
 ---
+:::
 
-### 11. GitHub Actions 的基本结构是什么？
-
+::: details 11. GitHub Actions 的基本结构是什么？
 ```yaml
 name: CI/CD
 
@@ -222,11 +221,11 @@ jobs:
 ```
 
 ---
+:::
 
 ## Monorepo
 
-### 12. 什么是 Monorepo？有什么优缺点？
-
+::: details 12. 什么是 Monorepo？有什么优缺点？
 **Monorepo**：将多个项目/包放在同一个 Git 仓库中管理。
 
 **优点：**
@@ -243,20 +242,20 @@ jobs:
 **主流工具**：pnpm workspace（推荐）、Turborepo（构建缓存）、Nx（大型项目）
 
 ---
+:::
 
-### 13. pnpm 相比 npm/yarn 有什么优势？
-
+::: details 13. pnpm 相比 npm/yarn 有什么优势？
 1. **硬链接 + 符号链接**：所有包存储在全局 store，项目中用链接引用，节省磁盘空间
 2. **严格的依赖隔离**：只能访问 `package.json` 中声明的依赖，避免幽灵依赖
 3. **安装速度快**：并行安装 + 全局缓存
 4. **原生 Monorepo 支持**：`pnpm workspace` 开箱即用
 
 ---
+:::
 
 ## 测试
 
-### 14. 单元测试、集成测试、E2E 测试的区别？
-
+::: details 14. 单元测试、集成测试、E2E 测试的区别？
 | 类型 | 测试范围 | 速度 | 工具 |
 |------|---------|------|------|
 | 单元测试 | 单个函数/组件 | 极快 | Jest、Vitest |
@@ -266,9 +265,9 @@ jobs:
 **测试金字塔**：单元测试（多）> 集成测试（中）> E2E 测试（少）
 
 ---
+:::
 
-### 15. 如何写好单元测试？
-
+::: details 15. 如何写好单元测试？
 **AAA 模式：**
 ```javascript
 test('should add two numbers', () => {
@@ -291,9 +290,9 @@ test('should add two numbers', () => {
 - 合理使用 Mock（隔离外部依赖）
 
 ---
+:::
 
-### 16. Vitest 和 Jest 的区别？
-
+::: details 16. Vitest 和 Jest 的区别？
 | 特性 | Vitest | Jest |
 |------|--------|------|
 | 速度 | 极快（基于 Vite，ESM 原生） | 较慢（需要转换） |
@@ -304,11 +303,11 @@ test('should add two numbers', () => {
 Vite 项目推荐 Vitest，其他项目用 Jest。
 
 ---
+:::
 
 ## 代码规范
 
-### 17. ESLint 和 Prettier 的区别？如何配合使用？
-
+::: details 17. ESLint 和 Prettier 的区别？如何配合使用？
 - **ESLint**：代码质量检查（未使用变量、潜在 bug、最佳实践）
 - **Prettier**：代码格式化（缩进、引号、分号等风格统一）
 
@@ -327,9 +326,9 @@ npm install -D eslint prettier eslint-config-prettier
 **推荐**：ESLint 负责逻辑规则，Prettier 负责格式，两者职责分离。
 
 ---
+:::
 
-### 18. Git Hooks 如何在提交时自动检查代码？
-
+::: details 18. Git Hooks 如何在提交时自动检查代码？
 ```bash
 npm install -D husky lint-staged
 npx husky init
@@ -353,11 +352,11 @@ npx lint-staged
 **流程**：`git commit` → husky 触发 `pre-commit` → lint-staged 只检查暂存区文件 → 通过则提交
 
 ---
+:::
 
 ## 浏览器兼容性
 
-### 19. 如何处理浏览器兼容性问题？
-
+::: details 19. 如何处理浏览器兼容性问题？
 1. **Babel 转译语法**：`@babel/preset-env` + browserslist 配置目标浏览器
 2. **Polyfill 填充 API**：`core-js` 按需引入缺失的 API
 3. **CSS 前缀**：`autoprefixer`（PostCSS 插件）自动添加 `-webkit-` 等前缀
@@ -373,9 +372,9 @@ not IE 11
 ```
 
 ---
+:::
 
-### 20. browserslist 是什么？如何配置？
-
+::: details 20. browserslist 是什么？如何配置？
 browserslist 定义目标浏览器范围，被 Babel、Autoprefixer、ESLint 等工具共享使用。
 
 ```
@@ -387,3 +386,4 @@ not IE 11        # 明确排除 IE 11
 ```
 
 可以用 `npx browserslist` 查看匹配的浏览器列表。
+:::

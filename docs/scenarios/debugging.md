@@ -1084,3 +1084,128 @@ Debugger.timeEnd('API call')
 
 ---
 
+## 常见面试题
+
+::: details 1. 如何排查内存泄漏?
+<details>
+<summary>点击查看答案</summary>
+
+**排查步骤:**
+
+1. **确认是否存在泄漏**
+   - Performance 面板录制,观察 JS Heap 是否持续增长
+   - 强制 GC 后内存是否下降
+
+2. **定位泄漏位置**
+   - Memory 面板拍摄快照
+   - 操作前后对比快照
+   - 查看新增的 Detached DOM、闭包
+
+3. **分析引用关系**
+   - 查看 Retainers,找到谁在引用
+   - 追溯引用链到源头
+
+4. **常见泄漏模式**
+   - 定时器未清除
+   - 事件监听未移除
+   - 闭包引用大对象
+   - DOM 引用未释放
+   - 全局变量污染
+
+5. **修复并验证**
+   - 组件卸载时清理
+   - 使用 WeakMap/WeakSet
+   - 再次检测确认修复
+:::
+
+</details>
+
+::: details 2. 页面卡顿如何优化?
+<details>
+<summary>点击查看答案</summary>
+
+**优化策略:**
+
+1. **JavaScript 优化**
+   - 长任务拆分 (时间切片)
+   - 使用 Web Worker
+   - 防抖节流
+
+2. **渲染优化**
+   - 虚拟列表
+   - 减少重排重绘
+   - 使用 transform/opacity 动画
+   - will-change 提示
+
+3. **资源优化**
+   - 代码分割
+   - 懒加载
+   - 图片优化
+
+4. **框架优化**
+   - Vue: v-once, v-memo, shallowRef
+   - React: memo, useMemo, useCallback, 虚拟化
+
+5. **检测工具**
+   - Performance 面板
+   - Lighthouse
+   - web-vitals 库
+:::
+
+</details>
+
+::: details 3. 白屏问题如何排查?
+<details>
+<summary>点击查看答案</summary>
+
+**排查步骤:**
+
+1. **检查 JS 错误**
+   - 控制台是否有红色错误
+   - 错误边界是否捕获
+
+2. **检查资源加载**
+   - Network 面板查看失败请求
+   - 关键 JS/CSS 是否加载成功
+
+3. **检查路由**
+   - 路由配置是否正确
+   - 懒加载是否成功
+
+4. **检查渲染**
+   - Elements 面板查看 DOM
+   - CSS 是否导致不可见
+
+**预防措施:**
+
+- 错误边界
+- 骨架屏降级
+- 资源加载重试
+- CDN 容灾
+- 白屏检测上报
+:::
+
+---
+
+</details>
+
+## 总结
+
+::: details 调试流程
+1. **复现问题** - 找到稳定复现路径
+2. **收集信息** - 控制台、网络、性能面板
+3. **提出假设** - 根据信息推测原因
+4. **验证假设** - 断点、日志验证
+5. **修复问题** - 编写修复代码
+6. **验证修复** - 确认问题解决
+7. **预防复发** - 添加监控和测试
+:::
+
+::: details 工具箱
+- **Chrome DevTools** - 全能调试工具
+- **React DevTools** - React 专用
+- **Vue DevTools** - Vue 专用
+- **Lighthouse** - 性能审计
+- **Sentry** - 错误监控
+- **LogRocket** - 用户行为回放
+:::

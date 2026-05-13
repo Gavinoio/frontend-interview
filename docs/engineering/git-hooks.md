@@ -612,3 +612,48 @@ module.exports = {
 };
 ```
 
+## 面试常见问题
+
+::: details 1. Git Hooks 有哪些常用钩子？
+- **pre-commit**：提交前执行，用于代码检查
+- **commit-msg**：编辑提交信息后，用于校验信息格式
+- **pre-push**：推送前执行，用于运行测试
+- **post-merge**：合并后执行，用于更新依赖
+:::
+
+::: details 2. Husky 和原生 Git Hooks 的区别？
+- Husky 配置可版本控制，原生钩子在 .git 目录
+- Husky 提供更好的跨平台支持
+- Husky 配置更简单，易于团队共享
+:::
+
+::: details 3. lint-staged 的作用？
+只对 Git 暂存区的文件执行检查，避免检查整个项目，提高提交效率。
+:::
+
+::: details 4. Commitlint 规范有什么好处？
+- 统一提交信息格式
+- 便于自动生成 Changelog
+- 方便追溯代码变更历史
+- 支持语义化版本管理
+:::
+
+::: details 5. 如何跳过 Git Hooks？
+```bash
+git commit --no-verify -m "message"
+# 或
+HUSKY=0 git commit -m "message"
+```
+:::
+
+## 总结
+
+Git Hooks 是保证代码质量的重要工具：
+
+1. **Husky**：现代化的 Git Hooks 管理
+2. **lint-staged**：只检查暂存文件
+3. **Commitlint**：规范提交信息
+4. **Commitizen**：交互式提交
+5. **CI 集成**：自动化检查流程
+
+完整的 Git Hooks 工作流能够显著提升团队协作效率和代码质量。

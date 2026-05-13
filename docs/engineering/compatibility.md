@@ -628,3 +628,103 @@ module.exports = {
 
 ---
 
+## 常见面试题
+
+::: details 1. 如何支持旧版浏览器？
+**JS 层面：**
+- 使用 Babel 转译 ES6+ 语法
+- 使用 core-js 或 polyfill.io 提供 polyfill
+- 使用特性检测而非浏览器检测
+- 配置合适的 browserslist
+
+**CSS 层面：**
+- 使用 Autoprefixer 添加前缀
+- 使用 @supports 进行特性检测
+- 提供降级方案
+- 避免使用太新的 CSS 特性
+:::
+
+::: details 2. Babel 和 Polyfill 的区别？
+```javascript
+// Babel：语法转换
+// 将新语法转换为旧语法
+const fn = (a = 1) => a + 1;
+// ↓ 转换为
+var fn = function(a) {
+  a = a === undefined ? 1 : a;
+  return a + 1;
+};
+
+// Polyfill：API 补充
+// 在运行时添加缺失的 API
+// 如 Promise、Array.prototype.includes
+// Polyfill 会修改原型或全局对象
+```
+:::
+
+::: details 3. useBuiltIns 的三种模式？
+```javascript
+// 'false'：不引入 polyfill（默认）
+// 需要手动引入 core-js
+
+// 'entry'：在入口处全量引入
+// 根据 targets 引入所有可能需要的 polyfill
+import 'core-js/stable';
+// ↓ 转换为很多具体的 import
+
+// 'usage'：按需引入（推荐）
+// 根据代码中实际使用的特性引入
+const arr = [1, 2, 3].includes(1);
+// ↓ 自动添加
+import 'core-js/modules/es.array.includes';
+```
+:::
+
+::: details 4. 如何检测用户浏览器是否支持某个特性？
+```javascript
+// JS 特性检测
+function checkSupport() {
+  return {
+    promise: typeof Promise !== 'undefined',
+    fetch: typeof fetch === 'function',
+    intersectionObserver: 'IntersectionObserver' in window,
+    webp: checkWebPSupport(),
+    serviceWorker: 'serviceWorker' in navigator,
+    cssGrid: CSS.supports('display', 'grid'),
+    cssVariables: CSS.supports('--custom', 'value')
+  };
+}
+
+// 动态加载 polyfill
+async function loadPolyfills() {
+  const polyfills = [];
+
+  if (!('IntersectionObserver' in window)) {
+    polyfills.push(
+      import('intersection-observer')
+    );
+  }
+
+  if (!('fetch' in window)) {
+    polyfills.push(
+      import('whatwg-fetch')
+    );
+  }
+
+  await Promise.all(polyfills);
+}
+```
+
+---
+:::
+
+## 总结
+
+| 技术 | 作用 | 使用场景 |
+|------|------|---------|
+| Babel | JS 语法转换 | ES6+ 语法兼容 |
+| core-js | JS API polyfill | 新 API 兼容 |
+| Autoprefixer | CSS 前缀添加 | CSS 属性兼容 |
+| @supports | CSS 特性检测 | 渐进增强 |
+| browserslist | 目标浏览器配置 | 统一工具链配置 |
+| @vitejs/plugin-legacy | Vite 旧浏览器支持 | 生产环境兼容 |

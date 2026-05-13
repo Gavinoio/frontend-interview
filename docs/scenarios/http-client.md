@@ -927,3 +927,94 @@ userBatcher.fetch('3');
 
 ---
 
+## 常见面试题
+
+::: details 1. HTTP 请求封装需要考虑哪些点？
+**答案要点：**
+- 基础配置：baseURL、timeout、headers
+- 请求拦截：添加 token、loading、请求去重
+- 响应拦截：数据转换、统一错误处理
+- 错误处理：网络错误、业务错误、超时、401 跳转
+- 取消请求：AbortController、组件卸载时取消
+- 重试机制：网络不稳定时自动重试
+- TypeScript：完善的类型定义
+:::
+
+::: details 2. 如何实现请求取消？
+```typescript
+// Axios - 使用 AbortController
+const controller = new AbortController();
+
+axios.get('/api/data', {
+  signal: controller.signal
+});
+
+// 取消请求
+controller.abort();
+
+// Fetch - 同样使用 AbortController
+const controller = new AbortController();
+
+fetch('/api/data', {
+  signal: controller.signal
+});
+
+controller.abort();
+```
+:::
+
+::: details 3. 组件中调用多个无依赖接口如何优化？
+```typescript
+// ❌ 串行，慢
+useEffect(() => {
+  const fetchData = async () => {
+    setUserInfo(await getUserInfo());
+    setOrderList(await getOrderList());
+    setStats(await getStatistics());
+  };
+  fetchData();
+}, []);
+
+// ✅ 并行，快
+useEffect(() => {
+  Promise.all([
+    getUserInfo(),
+    getOrderList(),
+    getStatistics()
+  ]).then(([userInfo, orderList, stats]) => {
+    setUserInfo(userInfo);
+    setOrderList(orderList);
+    setStats(stats);
+  });
+}, []);
+
+// ✅ 或使用 Promise.allSettled 避免单个失败影响其他
+```
+:::
+
+::: details 4. Axios 拦截器的执行顺序？
+```javascript
+// 请求拦截器：后添加的先执行（栈结构）
+axios.interceptors.request.use(config => {
+  console.log('请求拦截器 1');
+  return config;
+});
+axios.interceptors.request.use(config => {
+  console.log('请求拦截器 2');  // 先执行
+  return config;
+});
+
+// 响应拦截器：先添加的先执行（队列结构）
+axios.interceptors.response.use(response => {
+  console.log('响应拦截器 1');  // 先执行
+  return response;
+});
+axios.interceptors.response.use(response => {
+  console.log('响应拦截器 2');
+  return response;
+});
+
+// 执行顺序：
+// 请求拦截器 2 → 请求拦截器 1 → 发送请求 → 响应拦截器 1 → 响应拦截器 2
+```
+:::

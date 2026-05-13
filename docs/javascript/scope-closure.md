@@ -585,7 +585,7 @@ counter = null;  // 彻底释放
 
 ## 4. 经典面试题
 
-### 题目1: 连续调用
+::: details 题目1: 连续调用
 ```javascript
 // 实现一个函数,可以这样调用: add(1)(2)(3)
 function add(a) {
@@ -633,9 +633,11 @@ function add2(a) {
 ```
 
 **考察点**: 闭包、函数式编程、类型转换
+:::
+
 </details>
 
-### 题目2: 创建10个按钮
+::: details 题目2: 创建10个按钮
 ```javascript
 // 创建10个按钮,点击时分别弹出 0-9
 for (var i = 0; i < 10; i++) {
@@ -707,9 +709,11 @@ for (var i = 0; i < 10; i++) {
   document.body.appendChild(btn);
 }
 ```
+:::
+
 </details>
 
-### 题目3: 输出结果
+::: details 题目3: 输出结果
 ```javascript
 function test() {
   var a = 1;
@@ -742,14 +746,15 @@ fn2();  // ?
 - `fn()` 第一次输出 1,然后 a 变成 2
 - `fn()` 第二次输出 2,然后 a 变成 3
 - `fn2()` 是新的闭包,a 从 1 开始
-</details>
+:::
 
 ---
 
+</details>
+
 ## 5. 常见面试题
 
-### 问题1: 闭包是什么？有什么用？
-
+::: details 问题1: 闭包是什么？有什么用？
 #### 一句话答案
 闭包是函数和其词法作用域的组合，可以让函数访问其定义时所在作用域的变量，主要用于数据私有化、函数柯里化、防抖节流等场景。
 
@@ -824,9 +829,9 @@ fn2();  // ?
 > 需要注意的是闭包会让变量一直在内存中，用不好可能造成内存泄漏。比如在循环里创建闭包，或者闭包引用了大对象但只用了其中一小部分，这些都要小心处理。
 
 ---
+:::
 
-### 问题2: 闭包会造成内存泄漏吗？
-
+::: details 问题2: 闭包会造成内存泄漏吗？
 #### 一句话答案
 闭包本身不会造成内存泄漏，但不当使用闭包（如过度使用、引用大对象、忘记清理）会导致内存无法被回收，从而造成内存泄漏。
 
@@ -977,9 +982,9 @@ fn2();  // ?
 > 避免这些问题的话，一是只在闭包里保留真正需要的数据；二是用完后及时清理，比如把闭包赋值为null，或者清除定时器和事件监听；三是可以用WeakMap这种弱引用的数据结构。总之就是要有意识地管理闭包的生命周期。
 
 ---
+:::
 
-### 问题3: 闭包的应用场景有哪些？
-
+::: details 问题3: 闭包的应用场景有哪些？
 #### 一句话答案
 闭包的应用场景主要包括：数据私有化/模块化、防抖节流、函数柯里化、单例模式、缓存优化、偏函数等。
 
@@ -1263,17 +1268,19 @@ console.log(iterator.next());  // { value: 1, done: false }
 > 实际项目里还会用闭包做偏函数、延迟执行、事件处理器工厂这些。总之闭包的核心价值就是能保持状态和实现数据封装，很多设计模式都离不开它。
 
 ---
+:::
 
 ## 总结
 
-### 核心要点
+::: details 核心要点
 1. **作用域**: 变量的可访问范围,JS 使用词法作用域
 2. **作用域链**: 从内到外逐层查找变量
 3. **闭包**: 函数 + 其词法环境的组合
 4. **闭包应用**: 数据私有、柯里化、防抖节流、模块化
 5. **注意内存**: 避免不必要的闭包,及时释放引用
+:::
 
-### 面试加分项
+::: details 面试加分项
 - 能用代码演示闭包的实际应用
 - 了解闭包的内存模型
 - 知道如何避免内存泄漏
@@ -1281,11 +1288,11 @@ console.log(iterator.next());  // { value: 1, done: false }
 - 能手写防抖、节流、柯里化等工具函数
 
 ---
+:::
 
 ## 6. 高级面试题
 
-### 题目4：分析代码输出
-
+::: details 题目4：分析代码输出
 ```javascript
 var a = 10;
 
@@ -1308,11 +1315,11 @@ function foo() {
 JavaScript 使用词法作用域（静态作用域）。`foo` 函数定义在全局作用域，所以它访问的 `a` 是全局的 `a`（值为 10），而不是 IIFE 内部的 `a`（值为 20）。
 
 作用域在函数**定义时**确定，而不是**调用时**确定。
+:::
 
 </details>
 
-### 题目5：实现私有变量
-
+::: details 题目5：实现私有变量
 ```javascript
 // 使用闭包实现一个类，具有私有变量 name 和 age
 // 提供 getName、getAge、setAge 方法
@@ -1380,11 +1387,11 @@ class PersonES6 {
   }
 }
 ```
+:::
 
 </details>
 
-### 题目6：实现 once 函数
-
+::: details 题目6：实现 once 函数
 ```javascript
 // 实现一个 once 函数，让传入的函数只执行一次
 function once(fn) {
@@ -1445,11 +1452,11 @@ const init = once(function() {
 console.log(init());  // '初始化' { initialized: true }
 console.log(init());  // { initialized: true }（不再执行，但返回之前的结果）
 ```
+:::
 
 </details>
 
-### 题目7：实现函数组合 compose
-
+::: details 题目7：实现函数组合 compose
 ```javascript
 // 实现 compose 函数，从右到左执行函数
 // compose(f, g, h)(x) === f(g(h(x)))
@@ -1499,11 +1506,11 @@ function pipe(...fns) {
 const piped = pipe(subtract5, multiply2, add10);
 console.log(piped(10));  // 20
 ```
+:::
 
 </details>
 
-### 题目8：分析复杂闭包
-
+::: details 题目8：分析复杂闭包
 ```javascript
 function createFunctions() {
   var result = [];
@@ -1552,11 +1559,11 @@ for (var i = 0; i < 3; i++) {
 }
 // 全部输出 3
 ```
+:::
 
 </details>
 
-### 题目9：实现 bind 函数
-
+::: details 题目9：实现 bind 函数
 ```javascript
 // 手写实现 Function.prototype.bind
 ```
@@ -1613,11 +1620,11 @@ console.log(dog.name);        // 'Dog'
 console.log(dog.speak());     // 'Dog makes a sound'
 console.log(dog instanceof Animal);  // true
 ```
+:::
 
 </details>
 
-### 题目10：实现 sleep 函数
-
+::: details 题目10：实现 sleep 函数
 ```javascript
 // 实现一个 sleep 函数，使得 await sleep(1000) 后暂停 1 秒
 ```
@@ -1681,15 +1688,15 @@ async function demo3() {
   }
 }
 ```
-
-</details>
+:::
 
 ---
 
+</details>
+
 ## 7. V8 引擎中的闭包
 
-### 闭包的内存模型
-
+::: details 闭包的内存模型
 ```javascript
 /*
 V8 引擎如何处理闭包：
@@ -1725,9 +1732,9 @@ const closure = createClosure();
 // c 已被销毁
 // a 和 b 保存在 Context 对象中
 ```
+:::
 
-### Chrome DevTools 查看闭包
-
+::: details Chrome DevTools 查看闭包
 ```javascript
 function outer() {
   const name = 'closure variable';
@@ -1749,9 +1756,9 @@ const fn = outer();
 console.dir(fn);
 // [[Scopes]] 属性中可以看到闭包信息
 ```
+:::
 
-### 闭包优化建议
-
+::: details 闭包优化建议
 ```javascript
 // 1. 避免在闭包中引用不需要的大对象
 // ❌ 不好
@@ -1826,11 +1833,11 @@ if (obj) {
 ```
 
 ---
+:::
 
 ## 8. 实战应用
 
-### React 中的闭包陷阱
-
+::: details React 中的闭包陷阱
 ```javascript
 // React Hooks 中常见的闭包问题
 
@@ -1881,9 +1888,9 @@ function Counter() {
   return <div>{count}</div>;
 }
 ```
+:::
 
-### 事件处理器的闭包
-
+::: details 事件处理器的闭包
 ```javascript
 // ❌ 内存泄漏风险
 function setupListeners() {
@@ -1927,9 +1934,9 @@ function setupListeners() {
   return () => controller.abort();
 }
 ```
+:::
 
-### 请求缓存
-
+::: details 请求缓存
 ```javascript
 // 使用闭包实现请求缓存
 function createRequestCache() {
@@ -1980,3 +1987,4 @@ async function loadData() {
   const data2 = await cachedFetch('/api/users');  // 从缓存获取
 }
 ```
+:::

@@ -519,3 +519,32 @@ const arr = [1, 2, 3] as const  // readonly [1, 2, 3]
 const obj = { x: 10 } as const  // { readonly x: 10 }
 ```
 
+## 常见面试题
+
+::: details 1. any 和 unknown 的区别？
+- `any` 可以赋值给任何类型，也可以访问任何属性
+- `unknown` 更安全，必须进行类型检查后才能使用
+- 推荐用 `unknown` 代替 `any`
+:::
+
+::: details 2. type 和 interface 的区别？
+- `interface` 可以重复声明（声明合并），`type` 不行
+- `interface` 使用 `extends` 继承，`type` 使用 `&` 交叉
+- `type` 可以定义联合类型、元组、原始类型别名
+- 推荐：对象用 `interface`，其他用 `type`
+:::
+
+::: details 3. never 类型有什么用？
+- 表示永远不会有值的类型
+- 抛出异常的函数返回 `never`
+- 无限循环的函数返回 `never`
+- 在穷尽检查中确保处理了所有情况
+:::
+
+::: details 4. 如何实现类型收窄？
+- `typeof` 检查原始类型
+- `instanceof` 检查类实例
+- `in` 检查属性存在
+- 相等性检查
+- 自定义类型守卫（类型谓词）
+:::

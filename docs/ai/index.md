@@ -1047,8 +1047,7 @@ async function* streamResponse(response) {
 
 ## 面试高频题
 
-### 基础概念题
-
+::: details 基础概念题
 **1. 什么是大语言模型（LLM）？它的工作原理是什么？**
 
 答案要点：
@@ -1083,9 +1082,9 @@ async function* streamResponse(response) {
 - 解决 LLM 知识更新和幻觉问题
 - 流程：检索相关文档 → 增强 Prompt → 生成答案
 - 优势：减少幻觉、引入最新知识、可追溯来源
+:::
 
-### 实践应用题
-
+::: details 实践应用题
 **5. 如何在前端实现流式响应（SSE）？**
 
 ```javascript
@@ -1386,9 +1385,9 @@ function MessageList({ messages }) {
   );
 }
 ```
+:::
 
-### 思考题
-
+::: details 思考题
 **9. AI 会取代前端开发者吗？为什么？**
 
 答案要点：
@@ -1421,11 +1420,11 @@ function MessageList({ messages }) {
   - 保持学习和创新
 
 ---
+:::
 
 ## 总结
 
-### 学习路线
-
+::: details 学习路线
 1. **基础阶段**
    - 了解 AI 基本概念
    - 学习 Prompt Engineering
@@ -1440,9 +1439,9 @@ function MessageList({ messages }) {
    - 学习 LangChain.js
    - 使用向量数据库
    - 构建复杂 AI 应用
+:::
 
-### 推荐资源
-
+::: details 推荐资源
 **官方文档**
 - [OpenAI API 文档](https://platform.openai.com/docs)
 - [Anthropic Claude 文档](https://docs.anthropic.com)
@@ -1458,11 +1457,12 @@ function MessageList({ messages }) {
 - 文档问答系统
 - AI 代码助手
 - 智能搜索引擎
+:::
 
-### 关键要点
-
+::: details 关键要点
 1. AI 正在改变前端开发，但不会取代开发者
 2. 掌握 Prompt Engineering 是核心技能
 3. 理解 RAG 等技术原理很重要
 4. 实践是最好的学习方式
 5. 关注 AI 安全和隐私问题
+:::

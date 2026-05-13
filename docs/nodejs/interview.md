@@ -4,8 +4,7 @@
 
 ## 核心原理
 
-### 1. Node.js 事件循环与浏览器事件循环的区别？
-
+::: details 1. Node.js 事件循环与浏览器事件循环的区别？
 **浏览器事件循环**：宏任务 → 清空微任务 → 渲染 → 下一个宏任务
 
 **Node.js 事件循环**分为 6 个阶段，按顺序循环执行：
@@ -32,9 +31,9 @@ process.nextTick(() => console.log('nextTick'));
 ```
 
 ---
+:::
 
-### 2. process.nextTick 和 setImmediate 的区别？
-
+::: details 2. process.nextTick 和 setImmediate 的区别？
 - `process.nextTick`：在当前操作完成后、事件循环继续前立即执行，优先级最高
 - `setImmediate`：在 check 阶段执行，在 I/O 事件回调之后
 
@@ -50,9 +49,9 @@ fs.readFile('file', () => {
 **推荐**：用 `setImmediate` 代替 `process.nextTick`，避免递归调用 `nextTick` 导致 I/O 饥饿。
 
 ---
+:::
 
-### 3. Node.js 如何处理高并发？
-
+::: details 3. Node.js 如何处理高并发？
 Node.js 是单线程的，但通过以下机制处理高并发：
 
 1. **非阻塞 I/O**：I/O 操作（文件读写、网络请求）异步执行，不阻塞主线程
@@ -65,9 +64,9 @@ Node.js 是单线程的，但通过以下机制处理高并发：
 **不适合场景**：CPU 密集型（图像处理、大量计算）
 
 ---
+:::
 
-### 4. CommonJS 和 ES Module 在 Node.js 中的区别？
-
+::: details 4. CommonJS 和 ES Module 在 Node.js 中的区别？
 | 特性 | CommonJS | ES Module |
 |------|---------|-----------|
 | 语法 | `require/module.exports` | `import/export` |
@@ -78,9 +77,9 @@ Node.js 是单线程的，但通过以下机制处理高并发：
 | `__dirname` | 有 | 无（用 `import.meta.url` 替代） |
 
 ---
+:::
 
-### 5. Node.js 的 Stream 是什么？有哪几种类型？
-
+::: details 5. Node.js 的 Stream 是什么？有哪几种类型？
 Stream 是处理流式数据的抽象接口，避免将大文件全部加载到内存。
 
 **四种类型：**
@@ -99,9 +98,9 @@ readable.pipe(gzip).pipe(writable); // 边读边压缩边写，内存占用极�
 ```
 
 ---
+:::
 
-### 6. Node.js 中如何处理未捕获的异常？
-
+::: details 6. Node.js 中如何处理未捕获的异常？
 ```javascript
 // 1. 同步异常：try/catch
 try {
@@ -128,9 +127,9 @@ process.on('uncaughtException', (err) => {
 **最佳实践**：使用 PM2 等进程管理工具，崩溃后自动重启。
 
 ---
+:::
 
-### 7. Node.js 的 Buffer 是什么？
-
+::: details 7. Node.js 的 Buffer 是什么？
 Buffer 是用于处理二进制数据的类，在处理文件、网络数据时使用。
 
 ```javascript
@@ -147,11 +146,11 @@ buf1.toString('base64'); // 'SGVsbG8='
 ```
 
 ---
+:::
 
 ## 模块与包管理
 
-### 8. Node.js 模块加载机制是什么？
-
+::: details 8. Node.js 模块加载机制是什么？
 ```
 require('module')
     ↓
@@ -171,11 +170,11 @@ require('module')
 **循环依赖**：CommonJS 返回已执行部分的不完整对象，需要注意。
 
 ---
+:::
 
 ## 框架对比
 
-### 9. Express、Koa、Fastify、NestJS 如何选择？
-
+::: details 9. Express、Koa、Fastify、NestJS 如何选择？
 | 框架 | 特点 | 性能（req/s） | 适用场景 |
 |------|------|-------------|---------|
 | **Express** | 轻量灵活，生态最成熟 | ~35k | 小型项目、快速原型 |
@@ -189,9 +188,9 @@ require('module')
 - 大型企业项目、TypeScript → NestJS
 
 ---
+:::
 
-### 10. Koa 的洋葱模型是什么？
-
+::: details 10. Koa 的洋葱模型是什么？
 Koa 中间件按照注册顺序形成"洋葱"结构，请求从外到内穿过所有中间件，响应从内到外返回。
 
 ```javascript
@@ -221,9 +220,9 @@ app.use(async (ctx) => {
 **应用**：日志记录、错误处理、鉴权、响应时间统计等都可以用中间件实现。
 
 ---
+:::
 
-### 11. Node.js 如何实现多进程？
-
+::: details 11. Node.js 如何实现多进程？
 ```javascript
 // Cluster 模块：利用多核 CPU
 const cluster = require('cluster');
@@ -260,3 +259,4 @@ if (isMainThread) {
     });
 }
 ```
+:::

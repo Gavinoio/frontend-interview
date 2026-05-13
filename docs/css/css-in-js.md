@@ -1023,8 +1023,7 @@ document.documentElement.style.setProperty('--color-primary', '#3498db')
 
 ## 九、高频面试题
 
-### 1. CSS-in-JS 的优缺点？
-
+::: details 1. CSS-in-JS 的优缺点？
 ```
 优点:
 - 样式隔离，避免全局污染
@@ -1040,9 +1039,9 @@ document.documentElement.style.setProperty('--color-primary', '#3498db')
 - SSR 配置复杂
 - 调试困难
 ```
+:::
 
-### 2. styled-components vs Emotion？
-
+::: details 2. styled-components vs Emotion？
 ```
 styled-components:
 - API 更简洁
@@ -1059,9 +1058,9 @@ Emotion:
 - 纯 styled 写法选 styled-components
 - 需要灵活性选 Emotion
 ```
+:::
 
-### 3. CSS Modules vs CSS-in-JS？
-
+::: details 3. CSS Modules vs CSS-in-JS？
 ```
 CSS Modules:
 - 零运行时
@@ -1075,9 +1074,9 @@ CSS-in-JS:
 - 更好的 JS 集成
 - 主题系统内置
 ```
+:::
 
-### 4. 如何处理 CSS-in-JS 的 SSR？
-
+::: details 4. 如何处理 CSS-in-JS 的 SSR？
 ```javascript
 // styled-components
 import { ServerStyleSheet } from 'styled-components'
@@ -1090,9 +1089,9 @@ import { CacheProvider } from '@emotion/react'
 import createEmotionServer from '@emotion/server/create-instance'
 const { extractCriticalToChunks, constructStyleTagsFromChunks } = createEmotionServer(cache)
 ```
+:::
 
-### 5. Tailwind CSS 的优缺点？
-
+::: details 5. Tailwind CSS 的优缺点？
 ```
 优点:
 - 开发速度快
@@ -1107,9 +1106,9 @@ const { extractCriticalToChunks, constructStyleTagsFromChunks } = createEmotionS
 - 定制需要配置
 - 可读性差
 ```
+:::
 
-### 6. 如何在大型项目中组织 CSS-in-JS？
-
+::: details 6. 如何在大型项目中组织 CSS-in-JS？
 ```javascript
 // 1. 组件级样式
 // Button/Button.styles.js
@@ -1131,3 +1130,4 @@ import { StyledButton, ButtonIcon } from './Button.styles'
 // 4. 类型定义
 // styles/styled.d.ts
 ```
+:::

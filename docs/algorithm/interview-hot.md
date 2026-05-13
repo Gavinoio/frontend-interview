@@ -156,8 +156,7 @@ console.log(mergeSort([5, 2, 9, 1, 7, 6])); // [1, 2, 5, 6, 7, 9]
 
 ## 数组操作（高频）
 
-### 数组去重 ⭐⭐⭐
-
+::: details 数组去重 ⭐⭐⭐
 ```javascript
 // 方法1：Set（最简单，推荐）
 const unique1 = arr => [...new Set(arr)];
@@ -211,9 +210,9 @@ console.log(uniqueByKey(users, 'id')); // [{ id: 1, name: 'Alice' }, { id: 2, na
 ```
 
 ---
+:::
 
-### 数组扁平化 ⭐⭐⭐
-
+::: details 数组扁平化 ⭐⭐⭐
 ```javascript
 // 方法1：flat（最简单）
 const flatten1 = arr => arr.flat(Infinity);
@@ -275,9 +274,9 @@ console.log(flattenDepth([1, [2, [3, [4]]]], 2)); // [1, 2, 3, [4]]
 ```
 
 ---
+:::
 
-### 两数之和 ⭐⭐⭐
-
+::: details 两数之和 ⭐⭐⭐
 LeetCode 第一题，前端面试高频。
 
 ```javascript
@@ -321,9 +320,9 @@ console.log(twoSum([3, 2, 4], 6)); // [1, 2]
 - 变种：三数之和、四数之和
 
 ---
+:::
 
-### 最大子数组和 ⭐⭐⭐
-
+::: details 最大子数组和 ⭐⭐⭐
 经典动态规划题目。
 
 ```javascript
@@ -376,11 +375,11 @@ console.log(maxSubArrayWithIndices([5, -3, 5])); // { maxSum: 7, subArray: [5, -
 - 核心思想：dp[i] = Math.max(nums[i], dp[i-1] + nums[i])
 
 ---
+:::
 
 ## 字符串操作（高频）
 
-### 字符串反转 ⭐⭐
-
+::: details 字符串反转 ⭐⭐
 ```javascript
 // 方法1：内置方法
 const reverse1 = str => str.split('').reverse().join('');
@@ -419,9 +418,9 @@ console.log(reverse1('hello')); // 'olleh'
 ```
 
 ---
+:::
 
-### 回文判断 ⭐⭐⭐
-
+::: details 回文判断 ⭐⭐⭐
 ```javascript
 // 方法1：双指针（推荐）
 function isPalindrome(str) {
@@ -466,9 +465,9 @@ console.log(isPalindrome('race a car')); // false
 ```
 
 ---
+:::
 
-### 最长公共前缀 ⭐⭐
-
+::: details 最长公共前缀 ⭐⭐
 ```javascript
 // 方法1：纵向扫描
 function longestCommonPrefix(strs) {
@@ -509,11 +508,11 @@ console.log(longestCommonPrefix(['dog', 'racecar', 'car'])); // ''
 ```
 
 ---
+:::
 
 ## 链表操作（常考）
 
-### 反转链表 ⭐⭐⭐
-
+::: details 反转链表 ⭐⭐⭐
 面试最爱考的链表题。
 
 ```javascript
@@ -580,9 +579,9 @@ console.log(listToArray(reversed)); // [5, 4, 3, 2, 1]
 ```
 
 ---
+:::
 
-### 合并两个有序链表 ⭐⭐⭐
-
+::: details 合并两个有序链表 ⭐⭐⭐
 ```javascript
 // 方法1：迭代
 function mergeTwoLists(l1, l2) {
@@ -626,9 +625,9 @@ console.log(listToArray(merged)); // [1, 1, 2, 3, 4, 4]
 ```
 
 ---
+:::
 
-### 检测链表环 ⭐⭐⭐
-
+::: details 检测链表环 ⭐⭐⭐
 ```javascript
 // 快慢指针（Floyd 判圈算法）
 function hasCycle(head) {
@@ -681,11 +680,11 @@ function detectCycle(head) {
 ```
 
 ---
+:::
 
 ## 二叉树操作（高频）
 
-### 二叉树最大深度 ⭐⭐
-
+::: details 二叉树最大深度 ⭐⭐
 ```javascript
 // 树节点定义
 class TreeNode {
@@ -733,9 +732,9 @@ console.log(maxDepth(tree)); // 3
 ```
 
 ---
+:::
 
-### 二叉树层序遍历 ⭐⭐⭐
-
+::: details 二叉树层序遍历 ⭐⭐⭐
 ```javascript
 // BFS 层序遍历
 function levelOrder(root) {
@@ -767,9 +766,9 @@ console.log(levelOrder(tree)); // [[3], [9, 20], [15, 7]]
 ```
 
 ---
+:::
 
-### 翻转二叉树 ⭐⭐
-
+::: details 翻转二叉树 ⭐⭐
 ```javascript
 // 方法1：递归
 function invertTree(root) {
@@ -802,11 +801,11 @@ function invertTreeIterative(root) {
 ```
 
 ---
+:::
 
 ## 动态规划（高频）
 
-### 爬楼梯 ⭐⭐
-
+::: details 爬楼梯 ⭐⭐
 经典的入门 DP 题。
 
 ```javascript
@@ -852,9 +851,9 @@ console.log(climbStairs(5)); // 8
 ```
 
 ---
+:::
 
-### 打家劫舍 ⭐⭐⭐
-
+::: details 打家劫舍 ⭐⭐⭐
 ```javascript
 // 方法1：动态规划（空间优化）
 function rob(nums) {
@@ -892,11 +891,11 @@ console.log(rob([2, 7, 9, 3, 1])); // 12 (2 + 9 + 1)
 ```
 
 ---
+:::
 
 ## 前端特有算法（高频）
 
-### 防抖（Debounce）⭐⭐⭐
-
+::: details 防抖（Debounce）⭐⭐⭐
 ```javascript
 // 防抖：在事件触发 n 秒后执行，如果 n 秒内再次触发，重新计时
 function debounce(func, wait) {
@@ -945,9 +944,9 @@ const handleInput = debounce((e) => {
 ```
 
 ---
+:::
 
-### 节流（Throttle）⭐⭐⭐
-
+::: details 节流（Throttle）⭐⭐⭐
 ```javascript
 // 节流：n 秒内只执行一次
 function throttle(func, wait) {
@@ -990,9 +989,9 @@ const handleScroll = throttle(() => {
 ```
 
 ---
+:::
 
-### 深拷贝 ⭐⭐⭐
-
+::: details 深拷贝 ⭐⭐⭐
 ```javascript
 // 简单版本（JSON）
 function deepCloneSimple(obj) {
@@ -1053,9 +1052,9 @@ console.log(cloned.self === cloned); // true
 ```
 
 ---
+:::
 
-### 函数柯里化 ⭐⭐⭐
-
+::: details 函数柯里化 ⭐⭐⭐
 ```javascript
 // 基础版本
 function curry(fn) {
@@ -1107,9 +1106,9 @@ console.log(curriedAdd2('_', 2)(1, 3)); // 6
 ```
 
 ---
+:::
 
-### LRU 缓存 ⭐⭐⭐
-
+::: details LRU 缓存 ⭐⭐⭐
 ```javascript
 class LRUCache {
   constructor(capacity) {
@@ -1161,9 +1160,9 @@ console.log(lru.get(4)); // 4
 ```
 
 ---
+:::
 
-### Promise 实现 ⭐⭐⭐
-
+::: details Promise 实现 ⭐⭐⭐
 ```javascript
 // 简化版 Promise
 class MyPromise {
@@ -1307,32 +1306,32 @@ p.then(value => {
 ```
 
 ---
+:::
 
 ## 面试技巧
 
-### 解题步骤
-
+::: details 解题步骤
 1. **理解题意** - 确认输入输出、边界条件
 2. **举例分析** - 用具体例子梳理思路
 3. **选择算法** - 确定使用的数据结构和算法
 4. **编写代码** - 先写主逻辑，再处理细节
 5. **测试验证** - 考虑边界情况、特殊输入
+:::
 
-### 复杂度分析
-
+::: details 复杂度分析
 - 时间复杂度：算法执行时间与输入规模的关系
 - 空间复杂度：算法所需额外空间与输入规模的关系
 - 常见优化：双指针、哈希表、二分查找、动态规划
+:::
 
-### 前端算法特点
-
+::: details 前端算法特点
 - **难度适中** - 通常不超过 LeetCode 中等难度
 - **偏向应用** - 重视实际场景（防抖节流、深拷贝等）
 - **基础为主** - 数组、字符串、链表、树最常考
 - **代码质量** - 注重代码可读性和边界处理
+:::
 
-### 高频考点总结
-
+::: details 高频考点总结
 **必须掌握（⭐⭐⭐）：**
 - 快速排序、归并排序
 - 数组去重、扁平化
@@ -1349,6 +1348,7 @@ p.then(value => {
 - 翻转二叉树
 
 ---
+:::
 
 ## 总结
 

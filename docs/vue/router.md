@@ -849,3 +849,53 @@ const router = createRouter({
 })
 ```
 
+## 常见面试题
+
+::: details 1. History 模式和 Hash 模式的区别？
+| 特性 | History 模式 | Hash 模式 |
+|------|-------------|----------|
+| URL 形式 | `/user/123` | `/#/user/123` |
+| 实现原理 | HTML5 History API | URL hash |
+| 服务器配置 | 需要配置 | 不需要 |
+| SEO | 支持 | 不友好 |
+| 兼容性 | IE10+ | 所有浏览器 |
+:::
+
+::: details 2. 路由守卫的执行顺序？
+完整的导航解析流程：
+1. 触发导航
+2. 失活组件的 `beforeRouteLeave`
+3. 全局 `beforeEach`
+4. 重用组件的 `beforeRouteUpdate`
+5. 路由配置的 `beforeEnter`
+6. 解析异步路由组件
+7. 激活组件的 `beforeRouteEnter`
+8. 全局 `beforeResolve`
+9. 导航确认
+10. 全局 `afterEach`
+11. DOM 更新
+:::
+
+::: details 3. 如何实现路由懒加载？
+```javascript
+// 使用动态 import
+const routes = [
+  {
+    path: '/about',
+    component: () => import('@/views/About.vue')
+  }
+]
+```
+:::
+
+::: details 4. 如何实现权限路由？
+1. 定义静态路由和动态路由
+2. 登录后根据用户角色过滤动态路由
+3. 使用 `router.addRoute()` 动态添加路由
+4. 在全局守卫中进行权限验证
+:::
+
+::: details 5. `$route` 和 `$router` 的区别？
+- `$route`：当前路由信息对象（path、params、query 等）
+- `$router`：路由实例，用于导航操作（push、replace、go 等）
+:::

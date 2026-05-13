@@ -520,3 +520,55 @@ app.get('/api/events', (req, res) => {
 
 **总结**：如果只需要服务端向客户端推送数据，优先考虑 SSE，实现简单、兼容性好、自动重连。
 
+## 常见面试题
+
+::: details 1. SSE 和 WebSocket 的区别？
+- SSE 是单向通信（服务端→客户端），WebSocket 是双向通信
+- SSE 基于 HTTP，WebSocket 是独立协议
+- SSE 只能传输文本，WebSocket 支持二进制
+- SSE 自动重连，WebSocket 需要手动实现
+- SSE 实现更简单，适合服务端推送场景
+:::
+
+::: details 2. SSE 断线会自动重连吗？
+是的，`EventSource` 会自动重连。可以通过服务端发送 `retry` 字段控制重连间隔：
+
+```
+retry: 5000
+data: 设置重连间隔为5秒
+```
+:::
+
+::: details 3. EventSource 只支持 GET，如何发送 POST 请求？
+使用 `fetch` API 配合 `ReadableStream` 读取响应流：
+
+```javascript
+const response = await fetch('/api/chat', {
+  method: 'POST',
+  body: JSON.stringify(data)
+})
+const reader = response.body.getReader()
+```
+:::
+
+::: details 4. 为什么 ChatGPT 使用 SSE 而不是 WebSocket？
+- AI 对话本质是请求-响应模式，不需要双向通信
+- SSE 实现更简单，基于 HTTP，无需维护长连接状态
+- 每轮对话独立，通过请求体传递上下文即可
+- SSE 天然支持流式输出，完美匹配 AI 逐字生成的特性
+:::
+
+::: details 5. 如何处理 SSE 的跨域问题？
+SSE 遵循同源策略，跨域需要服务端设置 CORS：
+
+```javascript
+res.setHeader('Access-Control-Allow-Origin', '*')
+res.setHeader('Access-Control-Allow-Credentials', 'true')
+```
+
+客户端可以携带凭证：
+
+```javascript
+const es = new EventSource('/api/events', { withCredentials: true })
+```
+:::

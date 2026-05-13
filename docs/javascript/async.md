@@ -751,8 +751,7 @@ p.then(res => {
 
 ## 6. 常见面试题
 
-### Q1: Promise 的三种状态是什么?
-
+::: details Q1: Promise 的三种状态是什么?
 #### 一句话答案
 Pending(进行中)、Fulfilled(已成功)、Rejected(已失败),状态一旦改变就不可逆。
 
@@ -797,9 +796,9 @@ promise.then(
 "Promise 有三种状态:pending、fulfilled 和 rejected。刚创建的 Promise 处于 pending 状态,当异步操作成功时调用 resolve 进入 fulfilled 状态,失败时调用 reject 进入 rejected 状态。需要注意的是,状态一旦改变就不能再修改了,这保证了 Promise 的可靠性。在实际开发中,我们通过 then 方法获取成功结果,通过 catch 方法处理错误。"
 
 ---
+:::
 
-### Q2: async/await 的原理是什么?
-
+::: details Q2: async/await 的原理是什么?
 #### 一句话答案
 async/await 是 Generator 函数的语法糖,本质上是基于 Promise 和生成器实现的。
 
@@ -935,9 +934,9 @@ function errorDemo() {
 "async/await 本质上是 Generator 函数和 Promise 的语法糖。async 函数会返回一个 Promise,函数内部的返回值会被 Promise.resolve 包装。await 关键字会暂停函数执行,等待 Promise 状态改变后再继续执行,它的实现原理类似于 Generator 的 yield,但提供了自动执行器。当 await 后面的 Promise 变为 fulfilled 时,会恢复函数执行并返回结果值;如果变为 rejected,则会抛出异常。这种机制让我们能用同步的写法处理异步操作,代码更加简洁易读。"
 
 ---
+:::
 
-### Q3: Promise.all 和 Promise.race 的区别?
-
+::: details Q3: Promise.all 和 Promise.race 的区别?
 #### 一句话答案
 Promise.all 等所有 Promise 完成才返回,有一个失败就失败;Promise.race 返回最先完成的那个 Promise 的结果。
 
@@ -1095,9 +1094,9 @@ Promise.any([p1, p2, p3])
 "Promise.all 和 Promise.race 是处理多个 Promise 的两种不同策略。Promise.all 会等待所有 Promise 都完成,返回一个包含所有结果的数组,但只要有一个 Promise 失败,整个就会失败,适合并发请求多个接口且都需要成功的场景。Promise.race 则是竞速模式,返回最先完成的那个 Promise 的结果,不管成功还是失败,常用于实现请求超时控制。实际项目中我还会用 Promise.allSettled,它会等待所有 Promise 完成并返回每个的状态,适合批量操作需要知道每个结果的场景。"
 
 ---
+:::
 
-### Q4: 如何实现 Promise 并发控制?
-
+::: details Q4: 如何实现 Promise 并发控制?
 #### 一句话答案
 通过维护一个执行队列和计数器,控制同时执行的 Promise 数量不超过限制。
 
@@ -1378,9 +1377,9 @@ pool.all(tasks).then(({ results, errors, success }) => {
 "Promise 并发控制的核心思路是维护一个执行队列和计数器,控制同时执行的 Promise 数量。具体实现时,我会创建一个 executing 数组来存储正在执行的 Promise,当数组长度达到限制时,使用 Promise.race 等待其中任意一个完成,然后再继续执行下一个任务。这样可以避免同时发起大量请求导致浏览器连接数超限或服务器压力过大。实际项目中我会封装成一个 PromisePool 类,提供更灵活的配置,比如支持失败重试、错误收集等功能。这个技术在批量上传文件、批量请求接口、爬虫限流等场景都很常用。"
 
 ---
+:::
 
-### Q5: 说说 Event Loop（事件循环）
-
+::: details Q5: 说说 Event Loop（事件循环）
 #### 一句话答案
 Event Loop 是 JavaScript 实现异步的核心机制,它不断从任务队列中取出任务执行,宏任务和微任务交替执行。
 
@@ -1472,9 +1471,9 @@ console.log('script end');
 "Event Loop 是 JS 实现异步的核心机制。JS 是单线程的,通过事件循环来处理异步任务。执行顺序是:先执行同步代码,然后清空微任务队列(Promise.then 等),再执行一个宏任务(setTimeout 等),然后又清空微任务,如此循环。微任务优先级高于宏任务,每次宏任务执行完都会检查并执行所有微任务。"
 
 ---
+:::
 
-### Q6: async/await 如何进行错误处理？
-
+::: details Q6: async/await 如何进行错误处理？
 #### 一句话答案
 使用 try/catch 捕获错误,或者在 await 后面 .catch(),也可以封装统一的错误处理函数。
 
@@ -1542,9 +1541,9 @@ const safeFetch = withErrorHandling(async url => {
 ```
 
 ---
+:::
 
-### Q7: 如何实现 Promise 的超时控制？
-
+::: details Q7: 如何实现 Promise 的超时控制？
 #### 详细解答
 
 ```javascript
@@ -1595,9 +1594,9 @@ async function fetchWithRetry(url, options = {}) {
 ```
 
 ---
+:::
 
-### Q8: Generator 函数与异步编程
-
+::: details Q8: Generator 函数与异步编程
 #### 一句话答案
 Generator 是 ES6 引入的可暂停执行的函数,配合 Promise 可以实现类似 async/await 的效果,是 async/await 的前身。
 
@@ -1658,9 +1657,9 @@ async function asyncFn() {
 "Generator 函数可以暂停和恢复执行,通过 yield 关键字可以把异步代码写成同步的样子。配合一个自动执行器(如 co 库),就能实现类似 async/await 的效果。实际上 async/await 就是 Generator + 自动执行器的语法糖。现在开发中我们直接用 async/await 就好,但了解 Generator 有助于理解 async/await 的原理。"
 
 ---
+:::
 
-### Q9: 宏任务和微任务有哪些？执行优先级？
-
+::: details Q9: 宏任务和微任务有哪些？执行优先级？
 #### 详细解答
 
 | 类型 | 任务 | 备注 |
@@ -1695,9 +1694,9 @@ setTimeout(() => console.log('timeout'), 0);
 ```
 
 ---
+:::
 
-### Q10: 手写 Promise.allSettled
-
+::: details Q10: 手写 Promise.allSettled
 #### 详细解答
 
 ```javascript
@@ -1739,16 +1738,17 @@ Promise.myAllSettled([
 ```
 
 ---
+:::
 
 ## 总结
 
-### 异步编程发展历程
+::: details 异步编程发展历程
 ```
 回调函数 → Promise → Generator + co → async/await
 ```
+:::
 
-### 核心要点速记
-
+::: details 核心要点速记
 | 概念 | 要点 |
 |------|------|
 | Promise 状态 | pending → fulfilled/rejected,不可逆 |
@@ -1756,3 +1756,4 @@ Promise.myAllSettled([
 | async/await | 语法糖,返回 Promise,await 后是微任务 |
 | 错误处理 | try/catch 或 .catch() |
 | 并发控制 | Promise.all/race/allSettled + 限流池 |
+:::

@@ -809,3 +809,66 @@ function App() {
 
 ---
 
+## 常见面试题
+
+::: details 1. 如何实现夜间模式？
+**答案要点：**
+- 使用 CSS 变量定义颜色
+- 通过 `data-theme` 属性切换变量值
+- 使用 `prefers-color-scheme` 媒体查询跟随系统
+- localStorage 保存用户偏好
+- 监听系统主题变化事件
+:::
+
+::: details 2. 如何避免主题切换时的闪烁？
+```javascript
+// 在 <head> 中尽早执行同步脚本设置主题
+// 添加 no-transition 类避免过渡动画
+// 页面加载完成后移除 no-transition
+```
+:::
+
+::: details 3. height: auto 无法过渡怎么办？
+```css
+/* 方案 1：使用 max-height */
+.collapse {
+  max-height: 0;
+  transition: max-height 0.3s;
+}
+.collapse.open {
+  max-height: 500px;
+}
+
+/* 方案 2：使用 grid */
+.collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s;
+}
+.collapse.open {
+  grid-template-rows: 1fr;
+}
+
+/* 方案 3：JS 动态设置 scrollHeight */
+```
+:::
+
+::: details 4. 后台布局如何让内容区占满剩余高度？
+```css
+/* Flexbox 方案 */
+.layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.header { height: 64px; flex-shrink: 0; }
+.main { flex: 1; overflow: auto; }
+
+/* Grid 方案 */
+.layout {
+  display: grid;
+  grid-template-rows: 64px 1fr;
+  height: 100vh;
+}
+```
+:::

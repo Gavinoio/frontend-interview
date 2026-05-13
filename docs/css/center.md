@@ -825,3 +825,263 @@
 </html>
 ```
 
+## 面试题
+
+::: details 1. 如何实现水平垂直居中？说出尽可能多的方案。
+**答案**：
+
+**现代方案**（推荐）：
+1. **Flex**：`display: flex; justify-content: center; align-items: center;`
+2. **Grid**：`display: grid; place-items: center;`
+
+**经典方案**：
+3. **定位 + Transform**：`position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);`
+4. **定位 + Margin Auto**：`position: absolute; inset: 0; margin: auto;`（需固定尺寸）
+
+**其他方案**：
+5. **Table-cell**：`display: table-cell; vertical-align: middle; text-align: center;`
+6. **Flex + Margin**：`display: flex;` + 子元素 `margin: auto;`
+:::
+
+::: details 2. Flex 居中和定位 + Transform 居中有什么区别？
+**答案**：
+
+| 特性 | Flex | 定位 + Transform |
+|------|------|------------------|
+| 文档流 | 正常文档流 | 脱离文档流 |
+| 代码量 | 2 行 | 4 行 |
+| 灵活性 | 更灵活 | 较固定 |
+| 兼容性 | IE10+ | IE9+ |
+| 副作用 | 无 | 脱离文档流 |
+| 推荐度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
+
+**推荐**：优先使用 Flex，兼容老浏览器时使用定位。
+:::
+
+::: details 3. 如何实现不定宽高的元素居中？
+**答案**：
+
+不定宽高意味着不能使用需要固定尺寸的方案。
+
+**推荐方案**：
+1. **Flex**：`display: flex; justify-content: center; align-items: center;`
+2. **Grid**：`display: grid; place-items: center;`
+3. **定位 + Transform**：`position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);`
+
+**不可用方案**：
+- ❌ 定位 + margin auto（需固定尺寸）
+- ❌ 定位 + 负 margin（需固定尺寸）
+:::
+
+::: details 4. margin: auto 为什么可以实现水平居中但不能实现垂直居中？
+**答案**：
+
+**水平方向**：
+- 块级元素在正常文档流中，宽度有明确的计算方式
+- `margin: 0 auto` 时，左右 margin 平分剩余空间
+- 因此可以实现水平居中
+
+**垂直方向**：
+- 正常文档流中，高度由内容决定，没有"剩余空间"的概念
+- `margin: auto 0` 无法计算上下 margin
+- 因此不能实现垂直居中
+
+**特殊情况**：
+在绝对定位 + `top: 0; bottom: 0;` 的情况下，垂直方向有了明确的空间，`margin: auto` 可以实现垂直居中。
+
+```css
+.item {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;  /* 此时可以垂直居中 */
+  width: 200px;  /* 需要固定宽高 */
+  height: 100px;
+}
+```
+:::
+
+::: details 5. 实现一个弹窗的水平垂直居中
+**答案**：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* 遮罩层 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    /* 弹窗 */
+    .modal {
+      background: white;
+      border-radius: 8px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        弹窗标题
+      </div>
+      <div class="modal-body">
+        这是一个水平垂直居中的弹窗示例。
+        使用 Flex 布局实现居中，简单优雅。
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary">取消</button>
+        <button class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+```
+:::
+
+::: details 6. 如何选择居中方案？
+**答案**：
+
+**决策树**：
+
+1. **现代浏览器（IE10+）** → 使用 **Flex** 或 **Grid**
+   ```css
+   /* 首选 */
+   .container {
+     display: flex;
+     justify-content: center;
+     align-items: center;
+   }
+   ```
+
+2. **需要兼容 IE9** → 使用 **定位 + Transform**
+   ```css
+   .container {
+     position: relative;
+   }
+   .item {
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+   }
+   ```
+
+3. **需要兼容所有浏览器且固定尺寸** → **定位 + Margin**
+   ```css
+   .item {
+     position: absolute;
+     top: 0; left: 0; right: 0; bottom: 0;
+     margin: auto;
+     width: 200px;
+     height: 100px;
+   }
+   ```
+
+4. **仅水平居中块级元素** → **margin: auto**
+   ```css
+   .item {
+     width: 200px;
+     margin: 0 auto;
+   }
+   ```
+
+5. **单行文本垂直居中** → **line-height**
+   ```css
+   .item {
+     height: 50px;
+     line-height: 50px;
+   }
+   ```
+:::
+
+## 总结
+
+::: details 推荐方案
+1. **首选**：Flex 布局
+   ```css
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   ```
+
+2. **备选**：Grid 布局
+   ```css
+   display: grid;
+   place-items: center;
+   ```
+
+3. **兼容方案**：定位 + Transform
+   ```css
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   ```
+:::
+
+::: details 关键要点
+1. **优先使用 Flex/Grid**：现代、简洁、灵活
+2. **定位方案需注意**：脱离文档流，可能影响布局
+3. **考虑兼容性**：根据项目需求选择方案
+4. **避免过度设计**：简单场景用简单方案
+:::
+
+## 参考资料
+
+- [MDN - 居中一个元素](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Layout_cookbook/Center_an_element)
+- [CSS Tricks - Centering in CSS](https://css-tricks.com/centering-css-complete-guide/)

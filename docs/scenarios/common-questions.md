@@ -891,3 +891,79 @@ export default {
 
 ---
 
+## 常见面试题汇总
+
+::: details 1. async/await 本质是什么的语法糖？
+**答案：** Generator + 自动执行器的语法糖
+
+```javascript
+// async/await
+async function foo() {
+  const a = await promise1();
+  const b = await promise2(a);
+  return b;
+}
+
+// 等价于 Generator
+function* foo() {
+  const a = yield promise1();
+  const b = yield promise2(a);
+  return b;
+}
+
+// 自动执行器
+function autoRun(gen) {
+  const g = gen();
+
+  function next(data) {
+    const { value, done } = g.next(data);
+    if (done) return Promise.resolve(value);
+    return Promise.resolve(value).then(next);
+  }
+
+  return next();
+}
+```
+:::
+
+::: details 2. SPA 和多页应用的区别？
+| 特性 | SPA | MPA |
+|------|-----|-----|
+| 页面切换 | 前端路由，局部刷新 | 整页刷新 |
+| 首屏加载 | 较慢（需加载框架） | 较快 |
+| SEO | 需要 SSR 支持 | 天然支持 |
+| 用户体验 | 流畅 | 有白屏 |
+| 开发复杂度 | 较高 | 较低 |
+| 服务器压力 | 低（静态资源） | 高（每次渲染） |
+:::
+
+::: details 3. 宏任务和微任务有哪些？执行顺序？
+**宏任务：** setTimeout、setInterval、I/O、UI rendering、requestAnimationFrame
+
+**微任务：** Promise.then、MutationObserver、queueMicrotask
+
+**执行顺序：**
+1. 执行同步代码（主线程）
+2. 执行所有微任务
+3. 执行一个宏任务
+4. 执行所有微任务
+5. 重复 3-4
+:::
+
+::: details 4. nginx try_files 的作用？
+```nginx
+location / {
+  try_files $uri $uri/ /index.html;
+}
+```
+
+**作用：** 按顺序尝试匹配文件
+1. 尝试请求的 URI 对应的文件
+2. 尝试 URI 对应的目录
+3. 都找不到则返回 index.html
+
+**对 SPA 的意义：**
+- 前端路由如 `/user/123` 在服务器没有对应文件
+- try_files 确保返回 index.html
+- 由前端路由处理页面渲染
+:::

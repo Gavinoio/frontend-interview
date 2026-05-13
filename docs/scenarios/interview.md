@@ -4,8 +4,7 @@
 
 ## 系统设计
 
-### 1. 如何设计一个前端监控系统？
-
+::: details 1. 如何设计一个前端监控系统？
 **采集维度：**
 - **性能监控**：FCP、LCP、CLS、TTFB（用 web-vitals 库）
 - **错误监控**：JS 错误、Promise 未捕获、资源加载失败
@@ -27,9 +26,9 @@ new Image().src = `/report?data=${encodeURIComponent(JSON.stringify(data))}`;
 - Source Map 还原（上报压缩后的行列号，服务端还原）
 
 ---
+:::
 
-### 2. 如何设计一个通用的 HTTP 请求封装？
-
+::: details 2. 如何设计一个通用的 HTTP 请求封装？
 ```javascript
 class HttpClient {
     constructor(baseURL, options = {}) {
@@ -68,11 +67,11 @@ class HttpClient {
 ```
 
 ---
+:::
 
 ## 大文件上传
 
-### 3. 大文件上传如何实现？
-
+::: details 3. 大文件上传如何实现？
 **核心方案：分片上传 + 断点续传**
 
 ```javascript
@@ -104,11 +103,11 @@ async function uploadLargeFile(file) {
 **秒传**：上传前先发送文件 hash，服务端已有则直接返回成功。
 
 ---
+:::
 
 ## 虚拟列表
 
-### 4. 虚拟列表的实现原理？
-
+::: details 4. 虚拟列表的实现原理？
 只渲染可视区域内的列表项，通过 padding 或 transform 撑开滚动区域。
 
 ```javascript
@@ -144,11 +143,11 @@ function VirtualList({ items, itemHeight, containerHeight }) {
 **不定高虚拟列表**：预估高度渲染，渲染后用 ResizeObserver 更新实际高度，用 Map 缓存已知高度。
 
 ---
+:::
 
 ## 搜索建议
 
-### 5. 搜索建议（Autocomplete）如何实现？
-
+::: details 5. 搜索建议（Autocomplete）如何实现？
 **关键点：防抖 + 取消过期请求 + 缓存**
 
 ```javascript
@@ -184,11 +183,11 @@ function useSearchSuggestions(delay = 300) {
 ```
 
 ---
+:::
 
 ## 请求重试
 
-### 6. 如何实现请求重试机制？
-
+::: details 6. 如何实现请求重试机制？
 ```javascript
 async function fetchWithRetry(url, options = {}, retries = 3, delay = 1000) {
     for (let i = 0; i <= retries; i++) {
@@ -213,11 +212,11 @@ function shouldRetry(error) {
 ```
 
 ---
+:::
 
 ## 拖拽排序
 
-### 7. 拖拽排序如何实现？
-
+::: details 7. 拖拽排序如何实现？
 **方案一：HTML5 Drag and Drop API**
 ```javascript
 // 核心：dragstart 记录源，dragover 允许放置，drop 交换位置
@@ -237,11 +236,11 @@ container.addEventListener('drop', e => {
 **方案三：成熟库**：`@dnd-kit/core`（React）、`vue-draggable-next`（Vue）、`Sortable.js`（框架无关）
 
 ---
+:::
 
 ## 国际化
 
-### 8. 前端国际化方案如何设计？
-
+::: details 8. 前端国际化方案如何设计？
 ```javascript
 // i18n 核心实现
 class I18n {
@@ -271,11 +270,11 @@ class I18n {
 - 动态加载语言包（按需，减少首屏体积）
 
 ---
+:::
 
 ## 错误边界
 
-### 9. 前端错误边界如何处理？
-
+::: details 9. 前端错误边界如何处理？
 ```javascript
 // React 错误边界
 class ErrorBoundary extends React.Component {
@@ -306,11 +305,11 @@ app.config.errorHandler = (err, instance, info) => {
 ```
 
 ---
+:::
 
 ## 数据可视化
 
-### 10. 前端数据可视化方案如何选择？
-
+::: details 10. 前端数据可视化方案如何选择？
 | 方案 | 特点 | 适用场景 |
 |------|------|---------|
 | **ECharts** | 功能全面，配置式，社区活跃 | 通用图表，快速开发 |
@@ -321,3 +320,4 @@ app.config.errorHandler = (err, instance, info) => {
 | **SVG** | 矢量，可交互 | 少量元素，需要交互 |
 
 **大数据量优化**：数据采样、WebGL 渲染（deck.gl）、Web Worker 处理数据、虚拟化（只渲染可视区域）
+:::

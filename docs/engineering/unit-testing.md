@@ -688,3 +688,57 @@ module.exports = {
 };
 ```
 
+## 面试常见问题
+
+::: details 1. 什么是单元测试？
+单元测试是对代码最小可测试单元（函数、组件）进行独立验证的测试。目的是确保每个单元按预期工作。
+:::
+
+::: details 2. Jest 和 Vitest 的区别？
+- Vitest 更快，基于 Vite
+- Vitest 原生支持 ESM 和 TypeScript
+- Jest 生态更成熟
+- API 基本兼容
+:::
+
+::: details 3. Mock 和 Spy 的区别？
+- **Mock**：完全替换函数实现
+- **Spy**：监视函数调用，可选择是否替换实现
+:::
+
+::: details 4. 如何测试异步代码？
+```javascript
+// async/await
+it('async test', async () => {
+  const result = await asyncFunction();
+  expect(result).toBe('expected');
+});
+
+// Promise
+it('promise test', () => {
+  return asyncFunction().then(result => {
+    expect(result).toBe('expected');
+  });
+});
+```
+:::
+
+::: details 5. 如何提高测试覆盖率？
+- 测试所有分支条件
+- 测试边界情况
+- 测试错误处理
+- 测试异步代码
+- 使用覆盖率报告找出未覆盖代码
+:::
+
+## 总结
+
+单元测试最佳实践：
+
+1. **选择合适框架**：Vitest 适合 Vite 项目，Jest 适合通用项目
+2. **Mock 与 Spy**：合理使用，隔离依赖
+3. **组件测试**：使用 Testing Library，测试用户行为
+4. **命名规范**：清晰描述测试意图
+5. **覆盖率**：追求有意义的覆盖，不是数字
+
+完善的单元测试是高质量代码的重要保障。

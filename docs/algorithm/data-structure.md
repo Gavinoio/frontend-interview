@@ -1160,3 +1160,84 @@ class Graph {
 }
 ```
 
+## 常见面试题
+
+::: details 1. 用两个栈实现队列
+```javascript
+class QueueWithStacks {
+  constructor() {
+    this.stackIn = []
+    this.stackOut = []
+  }
+
+  push(x) {
+    this.stackIn.push(x)
+  }
+
+  pop() {
+    if (this.stackOut.length === 0) {
+      while (this.stackIn.length) {
+        this.stackOut.push(this.stackIn.pop())
+      }
+    }
+    return this.stackOut.pop()
+  }
+
+  peek() {
+    const val = this.pop()
+    this.stackOut.push(val)
+    return val
+  }
+
+  empty() {
+    return this.stackIn.length === 0 && this.stackOut.length === 0
+  }
+}
+```
+:::
+
+::: details 2. LRU 缓存
+```javascript
+class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity
+    this.cache = new Map()
+  }
+
+  get(key) {
+    if (!this.cache.has(key)) return -1
+    const value = this.cache.get(key)
+    // 移到末尾（最近使用）
+    this.cache.delete(key)
+    this.cache.set(key, value)
+    return value
+  }
+
+  put(key, value) {
+    if (this.cache.has(key)) {
+      this.cache.delete(key)
+    }
+    this.cache.set(key, value)
+    if (this.cache.size > this.capacity) {
+      // 删除最久未使用的（第一个）
+      const firstKey = this.cache.keys().next().value
+      this.cache.delete(firstKey)
+    }
+  }
+}
+```
+:::
+
+::: details 3. 各数据结构时间复杂度
+| 数据结构 | 访问 | 查找 | 插入 | 删除 |
+|---------|------|------|------|------|
+| 数组 | O(1) | O(n) | O(n) | O(n) |
+| 链表 | O(n) | O(n) | O(1) | O(1) |
+| 栈 | O(n) | O(n) | O(1) | O(1) |
+| 队列 | O(n) | O(n) | O(1) | O(1) |
+| 哈希表 | - | O(1) | O(1) | O(1) |
+| 二叉搜索树 | O(log n) | O(log n) | O(log n) | O(log n) |
+| 堆 | O(1)* | O(n) | O(log n) | O(log n) |
+
+*堆的 O(1) 访问仅限于堆顶元素
+:::

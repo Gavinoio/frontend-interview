@@ -551,3 +551,33 @@ class _HomePageState extends State<HomePage> {
 - 愿意学习 Dart
 - 需要自定义 UI
 
+## 常见面试题
+
+::: details 1. 跨端开发的原理是什么？
+不同框架有不同实现：
+- **编译时转换**：uni-app/Taro 将代码编译为各平台代码
+- **运行时桥接**：React Native 通过 Bridge 调用原生组件
+- **自绘引擎**：Flutter 使用 Skia 自己绘制 UI
+:::
+
+::: details 2. uni-app 和 Taro 如何实现多端？
+通过编译时转换：
+- 将框架代码转换为目标平台代码
+- 使用条件编译处理平台差异
+- 封装统一 API 适配各平台
+:::
+
+::: details 3. React Native 新架构有什么改进？
+- **JSI**：替代 Bridge，支持同步调用
+- **Fabric**：新渲染系统，性能更好
+- **TurboModules**：按需加载原生模块
+- **Codegen**：类型安全的原生接口
+:::
+
+::: details 4. 如何选择跨端方案？
+考虑因素：
+- 目标平台：小程序为主还是 App 为主
+- 团队技术栈：Vue 还是 React
+- 性能要求：普通应用还是高性能应用
+- 开发效率：快速迭代还是长期维护
+:::

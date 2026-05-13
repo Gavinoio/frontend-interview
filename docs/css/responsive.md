@@ -850,3 +850,441 @@ img {
 </picture>
 ```
 
+## 面试题
+
+::: details 1. 什么是响应式设计？如何实现？
+**答案**：
+
+**定义**：响应式设计是一种网页设计方法，使网站能够在不同设备和屏幕尺寸上提供最佳体验。
+
+**实现方式**：
+1. **媒体查询**：根据设备特性应用不同样式
+2. **流式布局**：使用相对单位（rem、%、vw）
+3. **弹性图片**：`max-width: 100%`
+4. **Flex/Grid**：现代布局方式
+5. **viewport 设置**：`<meta name="viewport">`
+
+**示例**：
+```css
+/* 移动优先 */
+.container {
+  width: 100%;
+  padding: 15px;
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 750px;
+    margin: 0 auto;
+  }
+}
+```
+:::
+
+::: details 2. rem、em、vw 的区别和使用场景？
+**答案**：
+
+| 单位 | 相对于 | 特点 | 使用场景 |
+|------|--------|------|----------|
+| rem | 根元素字体 | 不累加，统一管理 | 布局、字体（首选） |
+| em | 父元素字体 | 可能累加 | 按钮、组件内部 |
+| vw | 视口宽度 | 真正响应式 | 全屏、大标题 |
+
+**示例**：
+```css
+/* rem：布局 */
+html { font-size: 16px; }
+.container { width: 75rem; }  /* 1200px */
+
+/* em：组件 */
+.button {
+  font-size: 1em;
+  padding: 0.5em 1em;  /* 跟随字体缩放 */
+}
+
+/* vw：全屏 */
+.hero {
+  height: 100vh;
+  font-size: 5vw;
+}
+```
+:::
+
+::: details 3. 移动端适配方案有哪些？
+**答案**：
+
+**1. vw 方案（推荐）**：
+```css
+/* PostCSS 自动转换 px 为 vw */
+.box { width: 375px; }  /* 转为 50vw（设计稿750px） */
+```
+
+**2. Flexible 方案（淘宝）**：
+```javascript
+// 动态设置 rem
+document.documentElement.style.fontSize =
+  document.documentElement.clientWidth / 10 + 'px';
+```
+
+**3. 媒体查询 + rem**：
+```css
+html { font-size: 16px; }
+@media (min-width: 768px) {
+  html { font-size: 18px; }
+}
+```
+
+**推荐**：vw 方案（无需 JS，性能好）
+:::
+
+::: details 4. 如何解决 1px 边框问题？
+**答案**：
+
+**问题**：高清屏上 1px 边框显示较粗。
+
+**解决方案**：
+
+```css
+/* 方案 1: transform scale（推荐） */
+.border::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: #e5e5e5;
+  transform: scaleY(0.5);
+}
+
+/* 方案 2: box-shadow */
+.border {
+  box-shadow: 0 1px 1px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* 方案 3: viewport scale */
+<meta name="viewport" content="initial-scale=0.5">
+```
+:::
+
+::: details 5. 媒体查询的断点如何设置？
+**答案**：
+
+**方法 1：基于常见设备**
+```css
+/* 移动端 */
+@media (max-width: 767px) { }
+
+/* 平板 */
+@media (min-width: 768px) and (max-width: 1023px) { }
+
+/* 桌面 */
+@media (min-width: 1024px) { }
+```
+
+**方法 2：基于内容（推荐）**
+- 根据内容在何时需要调整来设置断点
+- 而非固定的设备尺寸
+
+**方法 3：参考框架**
+- Bootstrap: 576px, 768px, 992px, 1200px
+- Tailwind: 640px, 768px, 1024px, 1280px, 1536px
+
+**建议**：
+- 移动优先：使用 `min-width`
+- 3-4 个断点即可
+- 根据实际内容调整
+:::
+
+::: details 6. 如何实现响应式字体？
+**答案**：
+
+```css
+/* 方案 1: 媒体查询 */
+.title {
+  font-size: 20px;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 24px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .title {
+    font-size: 28px;
+  }
+}
+
+/* 方案 2: vw 单位 */
+.title {
+  font-size: 5vw;
+}
+
+/* 方案 3: clamp（推荐） */
+.title {
+  font-size: clamp(20px, 5vw, 40px);
+  /* 最小 20px，理想 5vw，最大 40px */
+}
+
+/* 方案 4: calc */
+.title {
+  font-size: calc(16px + 1vw);
+}
+```
+:::
+
+::: details 7. viewport 的作用是什么？
+**答案**：
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+```
+
+**作用**：
+1. **控制视口大小**：`width=device-width` 设置视口宽度等于设备宽度
+2. **控制缩放**：`initial-scale=1.0` 设置初始缩放比例
+3. **禁止缩放**：`user-scalable=no`（不推荐）
+
+**参数**：
+- `width`：视口宽度（device-width 或具体数值）
+- `height`：视口高度
+- `initial-scale`：初始缩放（0.0 - 10.0）
+- `maximum-scale`：最大缩放
+- `minimum-scale`：最小缩放
+- `user-scalable`：是否允许用户缩放（yes/no）
+
+**不设置的后果**：
+- 移动端显示桌面版布局
+- 文字和元素过小
+- 需要手动缩放
+:::
+
+::: details 8. 移动优先和桌面优先的区别？
+**答案**：
+
+**移动优先（Mobile First）**：
+```css
+/* 默认：移动端样式 */
+.container {
+  width: 100%;
+}
+
+/* 渐进增强 */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+```
+
+**桌面优先（Desktop First）**：
+```css
+/* 默认：桌面样式 */
+.container {
+  width: 1200px;
+}
+
+/* 渐进降级 */
+@media (max-width: 767px) {
+  .container {
+    width: 100%;
+  }
+}
+```
+
+**对比**：
+
+| 特性 | 移动优先 | 桌面优先 |
+|------|----------|----------|
+| 默认样式 | 移动端 | 桌面端 |
+| 媒体查询 | min-width | max-width |
+| 理念 | 渐进增强 | 优雅降级 |
+| 性能 | 更好（移动端加载少） | 较差 |
+| 推荐度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
+
+**推荐**：移动优先（性能更好，符合趋势）
+:::
+
+::: details 9. 如何实现响应式图片？
+**答案**：
+
+```html
+<!-- 方案 1: CSS max-width -->
+<img src="image.jpg" style="max-width: 100%; height: auto;">
+
+<!-- 方案 2: srcset（不同分辨率） -->
+<img
+  src="image.jpg"
+  srcset="image-1x.jpg 1x, image-2x.jpg 2x"
+  alt="响应式图片"
+>
+
+<!-- 方案 3: srcset + sizes（不同尺寸） -->
+<img
+  srcset="small.jpg 320w, medium.jpg 640w, large.jpg 960w"
+  sizes="(max-width: 320px) 280px, (max-width: 640px) 600px, 960px"
+  src="large.jpg"
+>
+
+<!-- 方案 4: picture 元素 -->
+<picture>
+  <source media="(min-width: 1024px)" srcset="large.jpg">
+  <source media="(min-width: 768px)" srcset="medium.jpg">
+  <img src="small.jpg" alt="响应式图片">
+</picture>
+
+<!-- 方案 5: CSS background-image -->
+<style>
+  .hero {
+    background-image: url('small.jpg');
+  }
+
+  @media (min-width: 768px) {
+    .hero {
+      background-image: url('large.jpg');
+    }
+  }
+</style>
+```
+:::
+
+::: details 10. 实现一个响应式导航栏
+**答案**：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .navbar {
+      background: #333;
+      color: white;
+      padding: 1rem;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .nav-menu {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-menu a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: white;
+      margin: 3px 0;
+      transition: 0.3s;
+    }
+
+    /* 移动端 */
+    @media (max-width: 768px) {
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 60px;
+        flex-direction: column;
+        background: #333;
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        padding: 2rem 0;
+      }
+
+      .nav-menu.active {
+        left: 0;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">LOGO</div>
+
+      <ul class="nav-menu">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">产品</a></li>
+        <li><a href="#">关于</a></li>
+        <li><a href="#">联系</a></li>
+      </ul>
+
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+
+    hamburger.addEventListener('click', () => {
+      navMenu.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>
+```
+:::
+
+## 总结
+
+::: details 响应式设计核心
+1. **移动优先**：从小屏幕开始设计
+2. **流式布局**：使用相对单位（rem、%、vw）
+3. **媒体查询**：适配不同断点
+4. **弹性图片**：`max-width: 100%`
+5. **Flex/Grid**：现代布局工具
+:::
+
+::: details 最佳实践
+1. **使用 rem 做布局**：便于统一管理
+2. **vw 方案优于 Flexible**：无需 JS，性能好
+3. **移动优先开发**：性能更好
+4. **3-4 个断点足够**：不要过度细分
+5. **测试真机**：模拟器不够准确
+:::
+
+## 参考资料
+
+- [MDN - 响应式设计](https://developer.mozilla.org/zh-CN/docs/Learn/CSS/CSS_layout/Responsive_Design)
+- [Google - 响应式 Web 设计基础](https://developers.google.com/web/fundamentals/design-and-ux/responsive)
+- [使用媒体查询](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Media_Queries/Using_media_queries)

@@ -2197,3 +2197,270 @@ console.log('报告摘要:', reportingSystem.getSummary())
 
 ---
 
+## 面试题
+
+::: details 1. IntersectionObserver 如何实现图片懒加载？
+**答案：**
+
+图片懒加载的核心思路是：先不设置 img 的 src，将真实 URL 存在 data-src 中，当图片进入视口时再加载。
+
+```javascript
+// 1. HTML 结构
+<img data-src="real-image.jpg" alt="图片">
+
+// 2. 创建 Observer
+const imageObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target
+      const src = img.dataset.src
+
+      // 加载图片
+      img.src = src
+
+      // 加载完成后停止观察
+      img.onload = () => {
+        img.removeAttribute('data-src')
+        observer.unobserve(img)
+      }
+    }
+  })
+}, {
+  rootMargin: '50px' // 提前 50px 加载
+})
+
+// 3. 观察所有图片
+document.querySelectorAll('img[data-src]').forEach(img => {
+  imageObserver.observe(img)
+})
+```
+
+**优势：**
+- 自动化管理，无需手动监听 scroll
+- 性能好，异步执行
+- 可配置提前加载距离（rootMargin）
+
+---
+:::
+
+::: details 2. MutationObserver 和 Vue 的 nextTick 有什么关系？
+**答案：**
+
+Vue 2.x 的 `nextTick` 使用了微任务队列，优先级为：
+1. **Promise.then** （首选）
+2. **MutationObserver** （降级方案）
+3. **setImmediate** （仅 IE）
+4. **setTimeout** （最后兜底）
+
+**MutationObserver 实现微任务：**
+
+```javascript
+const callbacks = []
+let pending = false
+
+// 创建文本节点
+const textNode = document.createTextNode('0')
+
+// 创建观察器
+const observer = new MutationObserver(() => {
+  // 微任务中执行所有回调
+  const copies = callbacks.slice(0)
+  callbacks.length = 0
+  pending = false
+  copies.forEach(cb => cb())
+})
+
+// 观察文本节点
+observer.observe(textNode, { characterData: true })
+
+function nextTick(cb) {
+  callbacks.push(cb)
+
+  if (!pending) {
+    pending = true
+    // 触发 MutationObserver（微任务）
+    textNode.data = String(Math.random())
+  }
+}
+```
+
+**为什么用 MutationObserver？**
+- 在不支持 Promise 的环境中，MutationObserver 可以创建微任务
+- 微任务在 DOM 更新后、浏览器渲染前执行，正好适合 nextTick 的需求
+
+---
+:::
+
+::: details 3. 如何用 PerformanceObserver 监控页面性能？
+**答案：**
+
+监控页面性能需要采集多个指标，包括：
+
+```javascript
+class PerformanceMonitor {
+  constructor() {
+    this.metrics = {}
+    this.init()
+  }
+
+  init() {
+    // 1. 监控 FCP（首次内容绘制）
+    this.observePaint()
+
+    // 2. 监控 LCP（最大内容绘制）
+    this.observeLCP()
+
+    // 3. 监控 FID（首次输入延迟）
+    this.observeFID()
+
+    // 4. 监控 CLS（累积布局偏移）
+    this.observeCLS()
+
+    // 5. 监控资源加载
+    this.observeResource()
+
+    // 6. 监控长任务
+    this.observeLongTask()
+  }
+
+  observePaint() {
+    new PerformanceObserver((list) => {
+      list.getEntries().forEach(entry => {
+        if (entry.name === 'first-contentful-paint') {
+          this.metrics.FCP = entry.startTime
+          console.log('FCP:', entry.startTime)
+        }
+      })
+    }).observe({ type: 'paint', buffered: true })
+  }
+
+  observeLCP() {
+    new PerformanceObserver((list) => {
+      const entries = list.getEntries()
+      const lastEntry = entries[entries.length - 1]
+      this.metrics.LCP = lastEntry.startTime
+      console.log('LCP:', lastEntry.startTime)
+    }).observe({ type: 'largest-contentful-paint', buffered: true })
+  }
+
+  observeFID() {
+    new PerformanceObserver((list) => {
+      list.getEntries().forEach(entry => {
+        const fid = entry.processingStart - entry.startTime
+        this.metrics.FID = fid
+        console.log('FID:', fid)
+      })
+    }).observe({ type: 'first-input', buffered: true })
+  }
+
+  observeCLS() {
+    let clsScore = 0
+    new PerformanceObserver((list) => {
+      list.getEntries().forEach(entry => {
+        if (!entry.hadRecentInput) {
+          clsScore += entry.value
+          this.metrics.CLS = clsScore
+          console.log('CLS:', clsScore)
+        }
+      })
+    }).observe({ type: 'layout-shift', buffered: true })
+  }
+
+  observeResource() {
+    new PerformanceObserver((list) => {
+      list.getEntries().forEach(entry => {
+        if (entry.duration > 1000) {
+          console.warn('慢速资源:', entry.name, entry.duration)
+        }
+      })
+    }).observe({ type: 'resource', buffered: true })
+  }
+
+  observeLongTask() {
+    if (PerformanceObserver.supportedEntryTypes.includes('longtask')) {
+      new PerformanceObserver((list) => {
+        list.getEntries().forEach(entry => {
+          console.warn('长任务:', entry.duration, 'ms')
+        })
+      }).observe({ type: 'longtask', buffered: true })
+    }
+  }
+
+  getMetrics() {
+    return this.metrics
+  }
+}
+
+// 使用
+const monitor = new PerformanceMonitor()
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    console.log('性能指标:', monitor.getMetrics())
+  }, 3000)
+})
+```
+
+---
+:::
+
+::: details 4. 这些 Observer 相比传统的事件监听有什么优势？
+**答案：**
+
+| 对比维度 | Observer API | 传统事件监听 |
+|---------|-------------|------------|
+| **性能** | 异步执行，批量处理 | 同步执行，频繁触发 |
+| **精确度** | 专门针对特定场景优化 | 需要额外计算判断 |
+| **代码复杂度** | 简洁，声明式 | 复杂，需要防抖节流 |
+| **内存管理** | 自动管理生命周期 | 需要手动解绑 |
+| **浏览器优化** | 底层优化 | 依赖开发者优化 |
+
+**具体示例：**
+
+**1. IntersectionObserver vs scroll 事件**
+
+```javascript
+// 传统方式：scroll 事件
+window.addEventListener('scroll', throttle(() => {
+  const rect = element.getBoundingClientRect()
+  if (rect.top < window.innerHeight) {
+    // 进入视口
+  }
+}, 100))
+
+// Observer 方式
+new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    // 进入视口
+  }
+}).observe(element)
+```
+
+**优势：**
+- 不需要手动计算位置
+- 不需要防抖/节流
+- 性能更好（浏览器底层优化）
+
+**2. ResizeObserver vs window.resize**
+
+```javascript
+// 传统方式
+window.addEventListener('resize', debounce(() => {
+  const width = element.offsetWidth
+  // 处理尺寸变化
+}, 200))
+
+// Observer 方式
+new ResizeObserver((entries) => {
+  const width = entries[0].contentRect.width
+  // 处理尺寸变化
+}).observe(element)
+```
+
+**优势：**
+- 只监听特定元素，不是整个窗口
+- 自动批量处理
+- 无需防抖
+
+**总结：**
+Observer API 是浏览器提供的现代化解决方案，专门针对特定场景优化，比传统事件监听更高效、更简洁、更易维护。
+:::

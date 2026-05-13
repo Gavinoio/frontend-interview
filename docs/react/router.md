@@ -507,3 +507,40 @@ function App() {
 }
 ```
 
+## 常见面试题
+
+::: details 1. BrowserRouter 和 HashRouter 的区别？
+- `BrowserRouter` 使用 HTML5 History API，URL 更美观
+- `HashRouter` 使用 URL hash，兼容性更好，不需要服务器配置
+- `BrowserRouter` 需要服务器支持，将所有路由指向 index.html
+:::
+
+::: details 2. 如何实现路由懒加载？
+使用 `React.lazy` 和 `Suspense`：
+
+```jsx
+const Page = lazy(() => import('./Page'))
+
+<Suspense fallback={<Loading />}>
+  <Route path="/page" element={<Page />} />
+</Suspense>
+```
+:::
+
+::: details 3. 如何实现路由守卫？
+创建高阶组件或包装组件，在渲染前进行权限检查：
+
+```jsx
+function RequireAuth({ children }) {
+  const { user } = useAuth()
+  if (!user) return <Navigate to="/login" />
+  return children
+}
+```
+:::
+
+::: details 4. useNavigate 和 Link 的区别？
+- `Link` 是声明式导航，用于 JSX 中
+- `useNavigate` 是编程式导航，用于事件处理等场景
+- `Link` 渲染为 `<a>` 标签
+:::

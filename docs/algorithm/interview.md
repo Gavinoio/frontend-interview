@@ -4,8 +4,7 @@
 
 ## 排序算法
 
-### 1. 手写快速排序
-
+::: details 1. 手写快速排序
 ```javascript
 function quickSort(arr) {
     if (arr.length <= 1) return arr;
@@ -20,9 +19,9 @@ function quickSort(arr) {
 **时间复杂度**：平均 O(n log n)，最坏 O(n²)（已排序数组）
 
 ---
+:::
 
-### 2. 常见排序算法复杂度对比
-
+::: details 2. 常见排序算法复杂度对比
 | 算法 | 平均时间 | 最坏时间 | 空间 | 稳定性 |
 |------|---------|---------|------|--------|
 | 冒泡排序 | O(n²) | O(n²) | O(1) | 稳定 |
@@ -33,11 +32,11 @@ function quickSort(arr) {
 | 堆排序 | O(n log n) | O(n log n) | O(1) | 不稳定 |
 
 ---
+:::
 
 ## 数组操作
 
-### 3. 数组去重（多种方法）
-
+::: details 3. 数组去重（多种方法）
 ```javascript
 const arr = [1, 2, 2, 3, 3, 4];
 
@@ -61,9 +60,9 @@ const unique = (arr, key) => {
 ```
 
 ---
+:::
 
-### 4. 数组扁平化
-
+::: details 4. 数组扁平化
 ```javascript
 const arr = [1, [2, [3, [4]]]];
 
@@ -88,9 +87,9 @@ function flatten(arr) {
 ```
 
 ---
+:::
 
-### 5. 两数之和（LeetCode 1）
-
+::: details 5. 两数之和（LeetCode 1）
 ```javascript
 function twoSum(nums, target) {
     const map = new Map(); // 值 → 索引
@@ -105,9 +104,9 @@ function twoSum(nums, target) {
 ```
 
 ---
+:::
 
-### 6. 最大子数组和（LeetCode 53，Kadane 算法）
-
+::: details 6. 最大子数组和（LeetCode 53，Kadane 算法）
 ```javascript
 function maxSubArray(nums) {
     let maxSum = nums[0], currentSum = nums[0];
@@ -121,11 +120,11 @@ function maxSubArray(nums) {
 ```
 
 ---
+:::
 
 ## 字符串操作
 
-### 7. 判断回文串
-
+::: details 7. 判断回文串
 ```javascript
 function isPalindrome(s) {
     s = s.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -139,9 +138,9 @@ function isPalindrome(s) {
 ```
 
 ---
+:::
 
-### 8. 最长不重复子串（LeetCode 3）
-
+::: details 8. 最长不重复子串（LeetCode 3）
 ```javascript
 function lengthOfLongestSubstring(s) {
     const map = new Map(); // 字符 → 最新索引
@@ -159,11 +158,11 @@ function lengthOfLongestSubstring(s) {
 ```
 
 ---
+:::
 
 ## 链表
 
-### 9. 反转链表（LeetCode 206）
-
+::: details 9. 反转链表（LeetCode 206）
 ```javascript
 function reverseList(head) {
     let prev = null, curr = head;
@@ -179,9 +178,9 @@ function reverseList(head) {
 ```
 
 ---
+:::
 
-### 10. 判断链表是否有环（LeetCode 141，快慢指针）
-
+::: details 10. 判断链表是否有环（LeetCode 141，快慢指针）
 ```javascript
 function hasCycle(head) {
     let slow = head, fast = head;
@@ -195,11 +194,11 @@ function hasCycle(head) {
 ```
 
 ---
+:::
 
 ## 二叉树
 
-### 11. 二叉树的三种遍历（迭代版）
-
+::: details 11. 二叉树的三种遍历（迭代版）
 ```javascript
 // 前序遍历（根左右）
 function preorder(root) {
@@ -234,9 +233,9 @@ function levelOrder(root) {
 ```
 
 ---
+:::
 
-### 12. 二叉树最大深度（LeetCode 104）
-
+::: details 12. 二叉树最大深度（LeetCode 104）
 ```javascript
 function maxDepth(root) {
     if (!root) return 0;
@@ -245,11 +244,11 @@ function maxDepth(root) {
 ```
 
 ---
+:::
 
 ## 动态规划
 
-### 13. 爬楼梯（LeetCode 70）
-
+::: details 13. 爬楼梯（LeetCode 70）
 ```javascript
 function climbStairs(n) {
     if (n <= 2) return n;
@@ -263,9 +262,9 @@ function climbStairs(n) {
 ```
 
 ---
+:::
 
-### 14. 背包问题（0-1 背包）
-
+::: details 14. 背包问题（0-1 背包）
 ```javascript
 function knapsack(weights, values, capacity) {
     const n = weights.length;
@@ -281,11 +280,11 @@ function knapsack(weights, values, capacity) {
 ```
 
 ---
+:::
 
 ## 前端特色算法
 
-### 15. 实现 LRU 缓存（LeetCode 146）
-
+::: details 15. 实现 LRU 缓存（LeetCode 146）
 ```javascript
 class LRUCache {
     constructor(capacity) {
@@ -312,9 +311,9 @@ class LRUCache {
 ```
 
 ---
+:::
 
-### 16. 深度优先搜索（DFS）和广度优先搜索（BFS）
-
+::: details 16. 深度优先搜索（DFS）和广度优先搜索（BFS）
 ```javascript
 // DFS：递归或栈，适合找路径、判断连通性
 function dfs(graph, start, visited = new Set()) {
@@ -340,3 +339,4 @@ function bfs(graph, start) {
     return visited;
 }
 ```
+:::

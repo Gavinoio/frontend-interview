@@ -4,8 +4,7 @@
 
 ## HTML 基础
 
-### 1. HTML5 有哪些新特性？
-
+::: details 1. HTML5 有哪些新特性？
 **答：**
 - **语义化标签**：header, nav, main, article, section, aside, footer
 - **表单增强**：新输入类型（email, url, date, number 等），required、pattern 等验证属性
@@ -17,9 +16,9 @@
 - **API**：Geolocation 地理定位、Drag and Drop 拖放、History API
 
 ---
+:::
 
-### 2. DOCTYPE 的作用是什么？
-
+::: details 2. DOCTYPE 的作用是什么？
 **答：**
 DOCTYPE 告诉浏览器使用哪种 HTML 规范解析文档，主要作用：
 - 触发**标准模式**渲染，避免**怪异模式**（Quirks Mode）
@@ -30,9 +29,9 @@ HTML5 的 DOCTYPE 非常简洁：`<!DOCTYPE html>`
 没有 DOCTYPE 会触发怪异模式，导致盒模型等表现异常（IE 盒模型）。
 
 ---
+:::
 
-### 3. 块级元素和内联元素有什么区别？
-
+::: details 3. 块级元素和内联元素有什么区别？
 | 特性 | 块级元素 | 内联元素 | 行内块元素 |
 |------|---------|---------|-----------|
 | 是否独占一行 | 是 | 否 | 否 |
@@ -42,9 +41,9 @@ HTML5 的 DOCTYPE 非常简洁：`<!DOCTYPE html>`
 | 常见元素 | div, p, h1 | span, a, em | img, input |
 
 ---
+:::
 
-### 4. script 标签的 async 和 defer 有什么区别？
-
+::: details 4. script 标签的 async 和 defer 有什么区别？
 | 特性 | async | defer |
 |------|-------|-------|
 | 下载方式 | 异步 | 异步 |
@@ -59,9 +58,9 @@ HTML5 的 DOCTYPE 非常简洁：`<!DOCTYPE html>`
 - ES Module（`type="module"`）默认具有 `defer` 行为
 
 ---
+:::
 
-### 5. meta viewport 的作用是什么？
-
+::: details 5. meta viewport 的作用是什么？
 **答：**
 viewport 用于控制移动端页面的视口大小和缩放行为，实现响应式布局。
 
@@ -78,9 +77,9 @@ viewport 用于控制移动端页面的视口大小和缩放行为，实现响�
 - `viewport-fit=cover`：iOS 刘海屏适配
 
 ---
+:::
 
-### 6. src 和 href 的区别？
-
+::: details 6. src 和 href 的区别？
 **答：**
 
 | | href | src |
@@ -90,9 +89,9 @@ viewport 用于控制移动端页面的视口大小和缩放行为，实现响�
 | 是否阻塞 | 不阻塞解析 | script 会阻塞解析 |
 
 ---
+:::
 
-### 7. 如何实现浏览器多个标签页之间的通信？
-
+::: details 7. 如何实现浏览器多个标签页之间的通信？
 **答：**
 
 1. **localStorage + storage 事件**（最常用）
@@ -117,9 +116,9 @@ channel.onmessage = (e) => console.log(e.data);
 5. **WebSocket**：通过服务器中转
 
 ---
+:::
 
-### 8. Canvas 和 SVG 的区别？
-
+::: details 8. Canvas 和 SVG 的区别？
 | 特性 | Canvas | SVG |
 |------|--------|-----|
 | 类型 | 位图（像素） | 矢量图 |
@@ -130,11 +129,11 @@ channel.onmessage = (e) => console.log(e.data);
 | 可访问性 | 差 | 好 |
 
 ---
+:::
 
 ## 语义化
 
-### 9. 什么是 HTML 语义化？有什么好处？
-
+::: details 9. 什么是 HTML 语义化？有什么好处？
 **答：**
 语义化是指使用恰当的 HTML 标签描述内容的含义，让标签本身就能表达内容的性质。
 
@@ -153,9 +152,9 @@ channel.onmessage = (e) => console.log(e.data);
 ```
 
 ---
+:::
 
-### 10. article 和 section 的区别？
-
+::: details 10. article 和 section 的区别？
 **答：**
 
 **article**：独立的、完整的内容单元，可以单独分发或重用（如 RSS）。
@@ -183,17 +182,17 @@ channel.onmessage = (e) => console.log(e.data);
 ```
 
 ---
+:::
 
-### 11. 一个页面可以有多个 main 标签吗？
-
+::: details 11. 一个页面可以有多个 main 标签吗？
 **答：** 不可以。每个页面只能有**一个可见的** `<main>` 标签。
 
 `<main>` 表示文档的主要内容，帮助屏幕阅读器快速定位。SPA 中可以有多个 `<main>`，但只能有一个可见（其余加 `hidden` 属性）。
 
 ---
+:::
 
-### 12. 如何选择合适的语义化标签？
-
+::: details 12. 如何选择合适的语义化标签？
 **决策流程：**
 1. 导航链接 → `<nav>`
 2. 页面/区块头部 → `<header>`
@@ -205,11 +204,11 @@ channel.onmessage = (e) => console.log(e.data);
 8. 都不是 → `<div>`
 
 ---
+:::
 
 ## 无障碍访问（A11y）
 
-### 13. 什么是 Web 无障碍？WCAG 四大原则是什么？
-
+::: details 13. 什么是 Web 无障碍？WCAG 四大原则是什么？
 **答：**
 Web 无障碍是指让网站对所有人可用，包括残障人士（视觉、听觉、运动、认知障碍）。
 
@@ -222,9 +221,9 @@ Web 无障碍是指让网站对所有人可用，包括残障人士（视觉、�
 | **健壮性**（Robust） | 使用语义化 HTML，兼容各种用户代理 |
 
 ---
+:::
 
-### 14. ARIA 属性有什么作用？常用的有哪些？
-
+::: details 14. ARIA 属性有什么作用？常用的有哪些？
 **答：**
 ARIA（Accessible Rich Internet Applications）是在原生 HTML 语义不足时，为辅助技术提供额外信息的属性。
 
@@ -248,9 +247,9 @@ ARIA（Accessible Rich Internet Applications）是在原生 HTML 语义不足时
 **原则：** 优先使用原生语义化 HTML，ARIA 是补充而非替代。
 
 ---
+:::
 
-### 15. 如何确保表单的可访问性？
-
+::: details 15. 如何确保表单的可访问性？
 **答：**
 
 ```html
@@ -275,11 +274,11 @@ ARIA（Accessible Rich Internet Applications）是在原生 HTML 语义不足时
 - 表单分组用 `<fieldset>` + `<legend>`
 
 ---
+:::
 
 ## Web Components
 
-### 16. Web Components 的三大核心技术是什么？
-
+::: details 16. Web Components 的三大核心技术是什么？
 **答：**
 
 | 技术 | 作用 |
@@ -289,9 +288,9 @@ ARIA（Accessible Rich Internet Applications）是在原生 HTML 语义不足时
 | **HTML Templates** | 定义可复用的 HTML 片段（`<template>` + `<slot>`） |
 
 ---
+:::
 
-### 17. Shadow DOM 和 Virtual DOM 的区别？
-
+::: details 17. Shadow DOM 和 Virtual DOM 的区别？
 | 特性 | Shadow DOM | Virtual DOM |
 |------|------------|-------------|
 | 本质 | 浏览器原生 API | JavaScript 抽象层 |
@@ -300,9 +299,9 @@ ARIA（Accessible Rich Internet Applications）是在原生 HTML 语义不足时
 | 框架依赖 | 无需框架 | React/Vue 等框架实现 |
 
 ---
+:::
 
-### 18. Web Components 的优势和局限是什么？
-
+::: details 18. Web Components 的优势和局限是什么？
 **优势：**
 - 原生支持，无框架依赖
 - Shadow DOM 提供完美的样式隔离
@@ -316,9 +315,9 @@ ARIA（Accessible Rich Internet Applications）是在原生 HTML 语义不足时
 - 学习曲线相对较高，生态不如主流框架成熟
 
 ---
+:::
 
-### 19. 如何在 Web Components 中实现跨组件通信？
-
+::: details 19. 如何在 Web Components 中实现跨组件通信？
 **答：**
 
 ```javascript
@@ -339,11 +338,11 @@ el.updateData({ key: 'value' });
 ```
 
 ---
+:::
 
 ## 综合题
 
-### 20. 从输入 URL 到页面渲染，HTML 解析阶段发生了什么？
-
+::: details 20. 从输入 URL 到页面渲染，HTML 解析阶段发生了什么？
 **答：**
 
 1. **接收 HTML 字节流** → 解码为字符串
@@ -354,3 +353,4 @@ el.updateData({ key: 'value' });
 6. **遇到 `<script defer/async>`** → 异步下载，不阻塞解析
 7. **DOM 构建完成** → 触发 `DOMContentLoaded` 事件
 8. **所有资源加载完成** → 触发 `load` 事件
+:::

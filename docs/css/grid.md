@@ -819,8 +819,7 @@ CSS Grid 是一个强大的二维布局系统，可以同时处理行和列，�
 
 ## Grid 面试题
 
-### 1. Grid 和 Flex 的区别是什么？
-
+::: details 1. Grid 和 Flex 的区别是什么？
 **答案**：
 
 | 维度 | Grid | Flex |
@@ -835,9 +834,9 @@ CSS Grid 是一个强大的二维布局系统，可以同时处理行和列，�
 - 页面布局、二维排列 → Grid
 - 组件布局、一维排列 → Flex
 - 两者可以嵌套使用
+:::
 
-### 2. fr 单位是什么？
-
+::: details 2. fr 单位是什么？
 **答案**：
 
 `fr`（fraction，分数）是 Grid 布局特有的单位，表示可用空间的一份。
@@ -861,9 +860,9 @@ CSS Grid 是一个强大的二维布局系统，可以同时处理行和列，�
 /* 100px 固定，剩余 300px 按 1:2 分配
    结果：100px, 100px, 200px */
 ```
+:::
 
-### 3. repeat() 函数的作用？
-
+::: details 3. repeat() 函数的作用？
 **答案**：
 
 `repeat()` 用于简化重复的网格定义。
@@ -887,9 +886,9 @@ grid-template-columns: repeat(auto-fill, 200px);
 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 /* 自动适配，每列最小 200px，最大 1fr */
 ```
+:::
 
-### 4. auto-fill 和 auto-fit 的区别？
-
+::: details 4. auto-fill 和 auto-fit 的区别？
 **答案**：
 
 ```css
@@ -913,9 +912,9 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 **使用场景**：
 - 固定大小项目 → `auto-fill`
 - 响应式弹性项目 → `auto-fit`
+:::
 
-### 5. 如何实现响应式网格布局？
-
+::: details 5. 如何实现响应式网格布局？
 **答案**：
 
 ```css
@@ -971,9 +970,9 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 ```
+:::
 
-### 6. grid-template-areas 的优势是什么？
-
+::: details 6. grid-template-areas 的优势是什么？
 **答案**：
 
 **优势**：
@@ -996,9 +995,9 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 .nav { grid-area: nav; }
 /* ... */
 ```
+:::
 
-### 7. 如何实现网格项目的跨行跨列？
-
+::: details 7. 如何实现网格项目的跨行跨列？
 **答案**：
 
 ```css
@@ -1020,9 +1019,9 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   grid-area: 1 / 1 / 3 / 3;
 }
 ```
+:::
 
-### 8. Grid 的兼容性如何？
-
+::: details 8. Grid 的兼容性如何？
 **答案**：
 
 | 浏览器 | 支持情况 | 备注 |
@@ -1053,9 +1052,9 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 ```
+:::
 
-### 9. 实现一个圣杯布局（头部、三栏、底部）
-
+::: details 9. 实现一个圣杯布局（头部、三栏、底部）
 **答案**：
 
 ```html
@@ -1104,9 +1103,9 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 </body>
 </html>
 ```
+:::
 
-### 10. Grid 和 Table 的区别？
-
+::: details 10. Grid 和 Table 的区别？
 **答案**：
 
 | 特性 | Grid | Table |
@@ -1122,11 +1121,11 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 - 用 Grid 做布局
 - 用 Table 显示表格数据
 - 不要用 Table 做布局（过时做法）
+:::
 
 ## 总结
 
-### Grid 核心要点
-
+::: details Grid 核心要点
 1. **容器属性**：
    - `grid-template-columns/rows`：定义网格
    - `gap`：间距
@@ -1145,14 +1144,15 @@ grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
    - `auto-fill/auto-fit`
    - 媒体查询
    - `grid-template-areas` 重排
+:::
 
-### 最佳实践
-
+::: details 最佳实践
 1. **页面布局优先使用 Grid**
 2. **组件布局优先使用 Flex**
 3. **Grid 和 Flex 可以嵌套使用**
 4. **使用命名区域提升可读性**
 5. **使用 auto-fit/auto-fill 实现响应式**
+:::
 
 ## 参考资料
 

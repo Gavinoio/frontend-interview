@@ -584,3 +584,35 @@ function EventExample() {
 }
 ```
 
+## 常见面试题
+
+::: details 1. React 的核心特点是什么？
+- **声明式**：描述 UI 应该是什么样子
+- **组件化**：将 UI 拆分为独立可复用的组件
+- **单向数据流**：数据从上往下流动
+- **虚拟 DOM**：提高渲染性能
+:::
+
+::: details 2. JSX 是什么？
+JSX 是 JavaScript 的语法扩展，允许在 JS 中写类似 HTML 的代码。它会被编译为 `React.createElement` 调用，最终生成虚拟 DOM 对象。
+:::
+
+::: details 3. 为什么列表渲染需要 key？
+- key 帮助 React 识别列表中哪些元素改变了
+- 提高 Diff 算法效率，避免不必要的重新渲染
+- key 应该是稳定、唯一的，不推荐使用 index
+:::
+
+::: details 4. 函数组件和类组件的区别？
+- 函数组件语法更简洁，使用 Hooks 管理状态
+- 类组件需要继承 React.Component，使用 this.state
+- 函数组件没有 this，避免了 this 绑定问题
+- 函数组件是 React 推荐的写法
+:::
+
+::: details 5. 虚拟 DOM 的优势？
+- 减少直接操作真实 DOM 的次数
+- 通过 Diff 算法计算最小更新
+- 批量更新，避免重复渲染
+- 跨平台能力（React Native）
+:::

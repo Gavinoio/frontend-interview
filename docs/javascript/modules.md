@@ -504,3 +504,308 @@ module.exports = {
 
 ---
 
+## 高频面试题
+
+::: details 1. CommonJS 和 ES Module 的区别？
+**一句话答案：** CommonJS 是运行时同步加载，值的拷贝；ES Module 是编译时静态分析，值的引用，支持 Tree Shaking。
+
+**详细解答：**
+
+```javascript
+// 1. 加载时机
+// CommonJS - 运行时加载
+const path = condition ? './a' : './b';
+const module = require(path);  // 可以动态路径
+
+// ES Module - 编译时静态分析
+import { foo } from './module';  // 必须是静态路径
+// 动态导入需要用 import()
+
+// 2. 导出值
+// CommonJS - 值的拷贝
+// counter.js
+let count = 0;
+module.exports = { count, increment() { count++; } };
+
+// main.js
+const counter = require('./counter');
+counter.increment();
+console.log(counter.count);  // 0（不变）
+
+// ES Module - 值的引用
+// counter.mjs
+export let count = 0;
+export function increment() { count++; }
+
+// main.mjs
+import { count, increment } from './counter.mjs';
+increment();
+console.log(count);  // 1（更新了）
+
+// 3. this 指向
+// CommonJS: this 指向 module.exports
+console.log(this === module.exports);  // true
+
+// ES Module: this 是 undefined
+console.log(this);  // undefined
+
+// 4. Tree Shaking
+// CommonJS 不支持（运行时才知道导出什么）
+// ES Module 支持（编译时就能确定）
+```
+
+**面试回答：**
+
+"CommonJS 和 ES Module 主要有四个区别：
+
+第一，加载时机不同。CommonJS 是运行时加载，require 可以出现在任何地方，路径可以是变量。ES Module 是编译时静态分析，import 必须在顶层，路径必须是字符串字面量。
+
+第二，导出值的本质不同。CommonJS 导出的是值的拷贝，模块内部的变量变化不会影响已经导出的值。ES Module 导出的是值的引用，或者叫动态绑定，模块内部变量的变化会实时反映到导入方。
+
+第三，this 指向不同。CommonJS 中 this 指向当前模块的 exports 对象，ES Module 中 this 是 undefined。
+
+第四，Tree Shaking。因为 ES Module 是静态的，打包工具可以在编译时分析出哪些代码没被使用并移除，CommonJS 做不到这一点。
+
+这些区别决定了 ES Module 更适合现代前端开发，特别是需要打包优化的场景。"
+
+---
+:::
+
+::: details 2. require 的查找规则？
+```javascript
+require('xxx')
+
+// 1. 核心模块（优先级最高）
+require('fs');  // 直接加载内置模块
+
+// 2. 路径模块（./ ../ /）
+require('./foo');
+// 尝试顺序：
+// ./foo.js
+// ./foo.json
+// ./foo.node
+// ./foo/package.json (main 字段)
+// ./foo/index.js
+
+// 3. node_modules（向上递归查找）
+require('lodash');
+// 从当前目录开始，向上查找 node_modules
+// ./node_modules/lodash
+// ../node_modules/lodash
+// ../../node_modules/lodash
+// 直到根目录
+```
+
+---
+:::
+
+::: details 3. import() 动态导入有什么用？
+```javascript
+// 1. 代码分割 / 懒加载
+button.onclick = async () => {
+  const module = await import('./heavy-module.js');
+  module.init();
+};
+
+// 2. 条件导入
+const module = await import(
+  process.env.NODE_ENV === 'production'
+    ? './prod-config.js'
+    : './dev-config.js'
+);
+
+// 3. 运行时确定模块路径
+const locale = getUserLocale();
+const messages = await import(`./locales/${locale}.js`);
+
+// 4. 按需加载组件（React）
+const LazyComponent = React.lazy(() => import('./HeavyComponent'));
+
+// 5. Webpack 魔法注释
+const module = await import(
+  /* webpackChunkName: "my-chunk" */
+  /* webpackPreload: true */
+  './module.js'
+);
+```
+
+---
+:::
+
+::: details 4. 如何解决循环依赖？
+```javascript
+// 问题场景
+// a.js 依赖 b.js，b.js 又依赖 a.js
+
+// 解决方案 1：重构代码，提取公共模块
+// common.js - 提取共享的部分
+export const shared = { ... };
+
+// a.js
+import { shared } from './common.js';
+export const a = { ... };
+
+// b.js
+import { shared } from './common.js';
+export const b = { ... };
+
+
+// 解决方案 2：延迟访问
+// a.js
+import { getB } from './b.js';
+
+export function getA() {
+  return 'A';
+}
+
+export function useB() {
+  // 在函数内部访问，而不是模块顶层
+  const b = getB();
+  return `A uses ${b}`;
+}
+
+
+// 解决方案 3：依赖注入
+// a.js
+export function createA(b) {
+  return {
+    useB() {
+      return b.getValue();
+    }
+  };
+}
+
+// main.js
+import { createA } from './a.js';
+import { b } from './b.js';
+
+const a = createA(b);
+```
+
+---
+:::
+
+::: details 5. exports 和 module.exports 的区别？
+```javascript
+// 初始状态
+// module.exports = {}
+// exports = module.exports（引用同一个对象）
+
+// 1. 添加属性时，两者等效
+exports.foo = 'bar';
+module.exports.foo = 'bar';
+// 最终导出 { foo: 'bar' }
+
+// 2. 重新赋值时，只有 module.exports 生效
+exports = { foo: 'bar' };  // ❌ 不生效，断开了引用
+module.exports = { foo: 'bar' };  // ✅ 生效
+
+// 3. 记住：真正导出的永远是 module.exports
+// exports 只是它的一个引用/快捷方式
+
+// 最佳实践：
+// - 导出对象用 module.exports = { ... }
+// - 添加属性用 exports.xxx = xxx 或 module.exports.xxx = xxx
+// - 不要混用，容易出错
+```
+
+---
+:::
+
+::: details 6. package.json 中 type 字段的作用？
+```json
+// package.json
+{
+  "type": "module"  // 或 "commonjs"（默认）
+}
+```
+
+```javascript
+// type: "module" 时
+// - .js 文件被视为 ES Module
+// - 需要 CommonJS 用 .cjs 扩展名
+// - 支持顶层 await
+// - import.meta 可用
+
+// type: "commonjs" 时（默认）
+// - .js 文件被视为 CommonJS
+// - 需要 ES Module 用 .mjs 扩展名
+// - 不支持顶层 await
+```
+
+---
+:::
+
+::: details 7. 如何在 ES Module 中获取 __dirname 和 __filename？
+```javascript
+// CommonJS 中直接可用
+console.log(__dirname);
+console.log(__filename);
+
+// ES Module 中需要手动构造
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// 或者使用 import.meta
+console.log(import.meta.url);  // file:///path/to/file.mjs
+```
+
+---
+:::
+
+::: details 8. 打包工具如何处理模块？
+```javascript
+// Webpack 打包原理（简化版）
+
+// 输入：多个模块
+// a.js
+import { b } from './b.js';
+export const a = 'A' + b;
+
+// b.js
+export const b = 'B';
+
+// 输出：bundle.js
+(function(modules) {
+  // 模块缓存
+  var installedModules = {};
+
+  // require 函数
+  function __webpack_require__(moduleId) {
+    // 检查缓存
+    if (installedModules[moduleId]) {
+      return installedModules[moduleId].exports;
+    }
+
+    // 创建新模块
+    var module = installedModules[moduleId] = {
+      exports: {}
+    };
+
+    // 执行模块函数
+    modules[moduleId].call(
+      module.exports,
+      module,
+      module.exports,
+      __webpack_require__
+    );
+
+    return module.exports;
+  }
+
+  // 加载入口模块
+  return __webpack_require__('./a.js');
+})({
+  './a.js': function(module, exports, __webpack_require__) {
+    var _b = __webpack_require__('./b.js');
+    exports.a = 'A' + _b.b;
+  },
+  './b.js': function(module, exports) {
+    exports.b = 'B';
+  }
+});
+```
+:::

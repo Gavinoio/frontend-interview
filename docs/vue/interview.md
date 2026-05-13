@@ -4,8 +4,7 @@
 
 ## 核心原理
 
-### 1. Vue 2 和 Vue 3 响应式原理的区别？
-
+::: details 1. Vue 2 和 Vue 3 响应式原理的区别？
 **Vue 2（Object.defineProperty）：**
 - 递归遍历对象，对每个属性设置 getter/setter
 - 无法检测属性的新增/删除（需要 `Vue.set`/`Vue.delete`）
@@ -37,9 +36,9 @@ function reactive(obj) {
 ```
 
 ---
+:::
 
-### 2. 什么是虚拟 DOM？Vue 的 Diff 算法是怎样的？
-
+::: details 2. 什么是虚拟 DOM？Vue 的 Diff 算法是怎样的？
 **虚拟 DOM**：用 JavaScript 对象描述真实 DOM 结构，通过对比新旧虚拟 DOM 的差异（Diff）来最小化真实 DOM 操作。
 
 **优势**：跨平台、批量更新、声明式编程
@@ -53,9 +52,9 @@ function reactive(obj) {
 **key 的作用**：帮助 Diff 算法识别节点身份，复用 DOM，避免不必要的重建。不要用 index 作为 key（会导致错误复用）。
 
 ---
+:::
 
-### 3. Vue 3 相比 Vue 2 有哪些重要改进？
-
+::: details 3. Vue 3 相比 Vue 2 有哪些重要改进？
 | 方面 | Vue 2 | Vue 3 |
 |------|-------|-------|
 | 响应式 | Object.defineProperty | Proxy |
@@ -69,9 +68,9 @@ function reactive(obj) {
 | 生命周期 | beforeDestroy/destroyed | onBeforeUnmount/onUnmounted |
 
 ---
+:::
 
-### 4. ref 和 reactive 如何选择？
-
+::: details 4. ref 和 reactive 如何选择？
 | 特性 | ref | reactive |
 |------|-----|----------|
 | 适用类型 | 基本类型 + 对象 | 对象/数组 |
@@ -82,11 +81,11 @@ function reactive(obj) {
 **推荐**：基本类型用 `ref`，复杂对象用 `reactive`；或统一用 `ref`（更一致）。
 
 ---
+:::
 
 ## 组件通信
 
-### 5. Vue 组件通信方式有哪些？
-
+::: details 5. Vue 组件通信方式有哪些？
 | 方式 | 适用场景 | 说明 |
 |------|---------|------|
 | `props` / `emit` | 父子组件 | 最基础，单向数据流 |
@@ -97,9 +96,9 @@ function reactive(obj) {
 | Pinia / Vuex | 全局状态 | 复杂应用的状态管理 |
 
 ---
+:::
 
-### 6. v-model 的原理是什么？Vue 2 和 Vue 3 有什么区别？
-
+::: details 6. v-model 的原理是什么？Vue 2 和 Vue 3 有什么区别？
 **本质**：`v-model` 是 `props` + `emit` 的语法糖。
 
 **Vue 2**：
@@ -124,11 +123,11 @@ function reactive(obj) {
 **主要区别**：Vue 3 支持多个 v-model 绑定，prop 名从 `value` 改为 `modelValue`，event 从 `input` 改为 `update:modelValue`。
 
 ---
+:::
 
 ## 生命周期
 
-### 7. Vue 3 生命周期钩子有哪些？父子组件的执行顺序？
-
+::: details 7. Vue 3 生命周期钩子有哪些？父子组件的执行顺序？
 **Vue 3 生命周期（Composition API）：**
 `setup` → `onBeforeMount` → `onMounted` → `onBeforeUpdate` → `onUpdated` → `onBeforeUnmount` → `onUnmounted`
 
@@ -150,17 +149,17 @@ function reactive(obj) {
 **created vs mounted**：`created` 时 DOM 未挂载（可发请求），`mounted` 时 DOM 已挂载（可操作 DOM）。
 
 ---
+:::
 
-### 8. setup 函数在哪个生命周期执行？
-
+::: details 8. setup 函数在哪个生命周期执行？
 `setup` 在 `beforeCreate` 之前执行，是 Composition API 的入口。此时组件实例尚未创建，无法访问 `this`。
 
 ---
+:::
 
 ## Composition API
 
-### 9. Composition API 相比 Options API 有什么优势？
-
+::: details 9. Composition API 相比 Options API 有什么优势？
 1. **逻辑复用**：通过 composable 函数复用逻辑，解决 mixin 的命名冲突和来源不清晰问题
 2. **代码组织**：相关逻辑集中在一起，而非分散在 data/methods/computed/watch 中
 3. **TypeScript 支持**：更好的类型推断
@@ -177,9 +176,9 @@ function useCounter(initial = 0) {
 ```
 
 ---
+:::
 
-### 10. watch 和 watchEffect 的区别？
-
+::: details 10. watch 和 watchEffect 的区别？
 | 特性 | watch | watchEffect |
 |------|-------|-------------|
 | 依赖声明 | 显式指定 | 自动收集 |
@@ -188,9 +187,9 @@ function useCounter(initial = 0) {
 | 适用场景 | 需要对比新旧值、精确控制 | 副作用自动追踪 |
 
 ---
+:::
 
-### 11. computed 和 watch 的区别？
-
+::: details 11. computed 和 watch 的区别？
 | 特性 | computed | watch |
 |------|---------|-------|
 | 用途 | 派生数据（有返回值） | 监听变化执行副作用 |
@@ -199,11 +198,11 @@ function useCounter(initial = 0) {
 | 适用场景 | 模板中的计算值 | 数据变化时的异步操作 |
 
 ---
+:::
 
 ## 路由
 
-### 12. Vue Router 的 History 模式和 Hash 模式有什么区别？
-
+::: details 12. Vue Router 的 History 模式和 Hash 模式有什么区别？
 | 特性 | Hash 模式 | History 模式 |
 |------|----------|-------------|
 | URL 格式 | `/#/path` | `/path` |
@@ -213,9 +212,9 @@ function useCounter(initial = 0) {
 | 原理 | `hashchange` 事件 | `pushState` / `popstate` |
 
 ---
+:::
 
-### 13. 路由守卫的执行顺序是什么？
-
+::: details 13. 路由守卫的执行顺序是什么？
 完整导航解析流程：
 1. `beforeEach`（全局前置守卫）
 2. `beforeEnter`（路由独享守卫）
@@ -227,18 +226,18 @@ function useCounter(initial = 0) {
 8. 组件内 `beforeRouteLeave`（离开时）
 
 ---
+:::
 
-### 14. $route 和 $router 的区别？
-
+::: details 14. $route 和 $router 的区别？
 - `$route`：当前路由信息对象（只读），包含 `path`、`params`、`query`、`name` 等
 - `$router`：路由实例，用于编程式导航（`push`、`replace`、`go` 等）
 
 ---
+:::
 
 ## 状态管理
 
-### 15. Pinia 和 Vuex 的区别？
-
+::: details 15. Pinia 和 Vuex 的区别？
 | 特性 | Pinia | Vuex |
 |------|-------|------|
 | mutations | 无（直接修改 state） | 有（必须通过 mutation） |
@@ -251,19 +250,19 @@ function useCounter(initial = 0) {
 **为什么 Pinia 去掉了 mutations？** mutations 的设计初衷是让状态变更可追踪，但 actions 已经可以做到，mutations 只是增加了样板代码。
 
 ---
+:::
 
-### 16. Vuex 的核心概念是什么？为什么 mutations 必须是同步的？
-
+::: details 16. Vuex 的核心概念是什么？为什么 mutations 必须是同步的？
 **核心概念**：`state`（状态）、`getters`（计算属性）、`mutations`（同步变更）、`actions`（异步操作）、`modules`（模块化）
 
 **mutations 必须同步**：DevTools 需要在每次 mutation 前后捕获状态快照，异步操作会导致快照时序混乱，无法追踪状态变化。异步操作应放在 actions 中，通过 commit 调用 mutation。
 
 ---
+:::
 
 ## 性能优化
 
-### 17. Vue 3 在性能上做了哪些优化？
-
+::: details 17. Vue 3 在性能上做了哪些优化？
 **编译层面：**
 1. **静态提升（Static Hoisting）**：静态节点提升到渲染函数外，避免重复创建
 2. **补丁标志（Patch Flags）**：标记动态节点类型，Diff 时跳过静态内容
@@ -275,9 +274,9 @@ function useCounter(initial = 0) {
 3. **Teleport/Suspense**：更灵活的渲染控制
 
 ---
+:::
 
-### 18. v-if 和 v-show 的区别？如何选择？
-
+::: details 18. v-if 和 v-show 的区别？如何选择？
 | 特性 | v-if | v-show |
 |------|------|--------|
 | 实现方式 | 条件渲染/销毁 DOM | CSS `display: none` |
@@ -286,20 +285,20 @@ function useCounter(initial = 0) {
 | 适用场景 | 条件很少改变 | 频繁切换显隐 |
 
 ---
+:::
 
-### 19. 大列表如何优化？
-
+::: details 19. 大列表如何优化？
 1. **虚拟滚动**：只渲染可视区域内的节点（vue-virtual-scroller、vue-virtual-scroll-grid）
 2. **分页/懒加载**：减少一次性渲染数量
 3. **v-memo**：缓存子树，跳过不必要的更新
 4. **shallowRef/shallowReactive**：大对象只做浅层响应式
 
 ---
+:::
 
 ## 自定义指令
 
-### 20. 自定义指令的使用场景和生命周期？
-
+::: details 20. 自定义指令的使用场景和生命周期？
 **适用场景**：需要直接操作 DOM 的逻辑（权限控制、防抖、懒加载图片、拖拽等）
 
 **Vue 3 指令钩子：**
@@ -320,11 +319,11 @@ const vFocus = {
 **指令 vs 组件**：指令用于 DOM 操作，组件用于 UI 封装。如果逻辑涉及模板/状态，用组件；如果只是 DOM 操作，用指令。
 
 ---
+:::
 
 ## Nuxt
 
-### 21. Nuxt 3 的渲染模式有哪些？
-
+::: details 21. Nuxt 3 的渲染模式有哪些？
 | 模式 | 说明 | 适用场景 |
 |------|------|---------|
 | SSR | 每次请求服务端渲染 | 动态内容、SEO 要求高 |
@@ -334,10 +333,11 @@ const vFocus = {
 | 混合渲染 | 不同路由使用不同模式 | 复杂应用 |
 
 ---
+:::
 
-### 22. useFetch 和 useAsyncData 的区别？
-
+::: details 22. useFetch 和 useAsyncData 的区别？
 - `useFetch`：封装了 `useAsyncData` + `$fetch`，适合简单的 HTTP 请求
 - `useAsyncData`：更底层，可以包裹任意异步函数，适合复杂数据获取逻辑
 
 两者都支持 SSR 数据预取，在服务端执行后将数据序列化传给客户端，避免客户端重复请求。
+:::

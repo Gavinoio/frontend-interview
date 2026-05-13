@@ -663,3 +663,34 @@ export const request = new Request({
 })
 ```
 
+## 常见面试题
+
+::: details 1. tsconfig.json 中 strict 包含哪些选项？
+- `noImplicitAny`: 禁止隐式 any
+- `noImplicitThis`: 禁止隐式 this
+- `strictNullChecks`: 严格空值检查
+- `strictFunctionTypes`: 严格函数类型检查
+- `strictBindCallApply`: 严格检查 bind/call/apply
+- `strictPropertyInitialization`: 严格属性初始化
+- `alwaysStrict`: 使用严格模式
+:::
+
+::: details 2. 如何为第三方库添加类型声明？
+1. 安装 `@types/xxx` 包
+2. 创建 `.d.ts` 文件，使用 `declare module`
+3. 扩展现有类型声明
+:::
+
+::: details 3. Partial、Required、Pick、Omit 的作用？
+- `Partial<T>`: 所有属性变为可选
+- `Required<T>`: 所有属性变为必填
+- `Pick<T, K>`: 选择指定属性
+- `Omit<T, K>`: 排除指定属性
+:::
+
+::: details 4. 如何在 Vue/React 中使用 TypeScript？
+- 配置 tsconfig.json
+- 使用泛型定义组件 props
+- 正确标注事件处理函数类型
+- 使用工具类型简化类型定义
+:::

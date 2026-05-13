@@ -399,3 +399,36 @@ export default {
 }
 ```
 
+## 常见面试题
+
+::: details 1. 什么是 Tree Shaking？如何确保它生效？
+Tree Shaking 是移除未使用代码的技术。确保生效：
+- 使用 ES Module
+- 设置 `sideEffects: false`
+- 使用 production 模式
+- 避免 CommonJS 模块
+:::
+
+::: details 2. splitChunks 的 chunks 有哪些值？
+- `all`: 对所有模块进行分割
+- `async`: 只分割异步模块（默认）
+- `initial`: 只分割入口模块
+:::
+
+::: details 3. 如何优化 Webpack 构建速度？
+- 使用持久化缓存
+- 缩小 loader 作用范围
+- 使用 thread-loader 多进程
+- 合理配置 resolve
+- 使用 externals 外部化依赖
+:::
+
+::: details 4. 如何减小打包体积？
+- Tree Shaking
+- 代码压缩
+- 代码分割
+- 按需加载
+- 使用 CDN
+- 图片压缩
+- Gzip/Brotli 压缩
+:::

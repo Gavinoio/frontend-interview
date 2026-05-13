@@ -1023,3 +1023,104 @@ export default {
 ```
 
 ---
+
+## 常见面试题
+
+::: details Q1: Web Components 的优势是什么？
+**答案**：
+
+1. **原生支持** - 无需框架依赖，浏览器原生支持
+2. **样式隔离** - Shadow DOM 提供完美的样式封装
+3. **可复用性** - 跨框架使用，React/Vue/Angular 都能用
+4. **标准化** - W3C 标准，长期维护有保障
+5. **互操作性** - 与现有 HTML/JS/CSS 无缝集成
+:::
+
+::: details Q2: Shadow DOM 和 Virtual DOM 的区别？
+**答案**：
+
+| 特性 | Shadow DOM | Virtual DOM |
+|------|------------|-------------|
+| **本质** | 浏览器原生 API | JavaScript 抽象层 |
+| **目的** | 样式和 DOM 封装 | 性能优化 |
+| **可见性** | DOM 树中真实存在 | 内存中的 JS 对象 |
+| **框架** | 无需框架 | React/Vue 等框架实现 |
+| **使用场景** | 组件封装 | 高效 DOM 更新 |
+:::
+
+::: details Q3: 如何在 Web Components 中实现双向绑定？
+**答案**：
+
+```javascript
+class TwoWayInput extends HTMLElement {
+  constructor() {
+    super();
+    const shadow = this.attachShadow({ mode: 'open' });
+
+    shadow.innerHTML = `
+      <input type="text">
+    `;
+
+    this.input = shadow.querySelector('input');
+  }
+
+  static get observedAttributes() {
+    return ['value'];
+  }
+
+  connectedCallback() {
+    this.input.addEventListener('input', (e) => {
+      // 更新属性
+      this.setAttribute('value', e.target.value);
+
+      // 触发自定义事件
+      this.dispatchEvent(new CustomEvent('value-change', {
+        detail: { value: e.target.value },
+        bubbles: true
+      }));
+    });
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'value' && this.input.value !== newValue) {
+      this.input.value = newValue || '';
+    }
+  }
+
+  get value() {
+    return this.getAttribute('value') || '';
+  }
+
+  set value(val) {
+    this.setAttribute('value', val);
+  }
+}
+
+customElements.define('two-way-input', TwoWayInput);
+```
+
+---
+:::
+
+## 总结
+
+::: details 核心要点
+1. **Custom Elements** - 定义自定义 HTML 元素
+2. **Shadow DOM** - 封装样式和结构
+3. **HTML Templates** - 定义可复用模板
+4. **Slots** - 内容分发机制
+:::
+
+::: details 适用场景
+- 跨框架的 UI 组件库
+- 微前端架构中的组件共享
+- 设计系统的底层实现
+- 需要长期维护的基础组件
+:::
+
+::: details 注意事项
+- IE 不支持，需要 polyfill
+- 部分框架需要额外配置
+- SSR 支持有限
+- 学习曲线相对较高
+:::

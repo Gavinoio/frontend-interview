@@ -1148,3 +1148,111 @@ window.addEventListener('beforeunload', () => {
 
 ---
 
+## 常见面试题
+
+::: details 1. 首屏加载慢如何优化?
+<details>
+<summary>点击查看答案</summary>
+
+**优化策略:**
+
+1. **资源优化**
+   - 代码压缩 (JS/CSS/HTML)
+   - Tree Shaking
+   - 图片优化 (WebP、压缩、懒加载)
+
+2. **加载优化**
+   - 路由懒加载
+   - 组件懒加载
+   - 代码分割 (splitChunks)
+   - 预加载关键资源 (preload)
+
+3. **缓存优化**
+   - HTTP 缓存策略
+   - Service Worker
+   - 文件指纹 (contenthash)
+
+4. **网络优化**
+   - CDN 加速
+   - Gzip/Brotli 压缩
+   - HTTP/2
+   - DNS 预解析
+
+5. **渲染优化**
+   - SSR/SSG
+   - 骨架屏
+   - 关键 CSS 内联
+
+6. **监控分析**
+   - Lighthouse 审计
+   - 性能监控
+   - 用户体验指标
+:::
+
+</details>
+
+::: details 2. 如何实现按需加载?
+<details>
+<summary>点击查看答案</summary>
+
+```javascript
+// 1. 路由懒加载
+const routes = [
+  {
+    path: '/home',
+    component: () => import('./views/Home.vue')
+  }
+]
+
+// 2. 组件懒加载
+const AsyncComponent = defineAsyncComponent(() =>
+  import('./components/AsyncComponent.vue')
+)
+
+// 3. 第三方库按需引入
+import debounce from 'lodash/debounce'  // 而非 import _ from 'lodash'
+
+// 4. 条件加载
+if (needFeature) {
+  const module = await import('./feature')
+  module.init()
+}
+
+// 5. Webpack 魔法注释
+const Component = () => import(
+  /* webpackChunkName: "my-chunk" */
+  /* webpackPrefetch: true */
+  './Component.vue'
+)
+```
+:::
+
+---
+
+</details>
+
+## 总结
+
+::: details 加载优化清单
+**资源层面:**
+- [ ] JavaScript 压缩和 Tree Shaking
+- [ ] CSS 压缩和无用代码移除
+- [ ] 图片压缩和格式优化 (WebP)
+- [ ] 字体子集化
+
+**加载层面:**
+- [ ] 代码分割和懒加载
+- [ ] 预加载关键资源
+- [ ] DNS 预解析
+- [ ] CDN 加速
+
+**缓存层面:**
+- [ ] HTTP 强缓存和协商缓存
+- [ ] Service Worker
+- [ ] 文件指纹
+
+**服务器层面:**
+- [ ] Gzip/Brotli 压缩
+- [ ] HTTP/2
+- [ ] SSR/SSG
+:::

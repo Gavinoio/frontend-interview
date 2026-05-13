@@ -542,3 +542,204 @@ const { count, doubleCount } = storeToRefs(store)
 const { increment } = store
 ```
 
+## 常见面试题
+
+::: details 1. Vue 组件通信有哪些方式？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 父子通信用 props/emit，跨层级用 provide/inject，任意组件用状态管理。
+
+**详细答案**:
+
+| 场景 | 通信方式 | 说明 |
+|------|---------|------|
+| 父 → 子 | props | 最常用，单向数据流 |
+| 子 → 父 | emit | 触发自定义事件 |
+| 父 ↔ 子 | v-model | 双向绑定语法糖 |
+| 父访问子 | ref + expose | 直接调用子组件方法 |
+| 跨层级 | provide/inject | 祖先向后代传递 |
+| 任意组件 | Pinia/Vuex | 全局���态管理 |
+| 任意组件 | EventBus/mitt | 事件总线（Vue 3 推荐 mitt） |
+
+**口语化回答**:
+"Vue 组件通信主要看组件之间的关系。父子组件用 props 和 emit 最直接，props 负责父传子，emit 负责子传父。如果是多层嵌套的祖孙组件，可以用 provide/inject 避免逐层传递。任意组件之间通信，通常用 Pinia 这样的状态管理库。另外 Vue 3 可以用 mitt 实现简单的事件总线。"
+:::
+
+</details>
+
+::: details 2. props 和 data 的区别？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: props 是外部传入的只读数据，data 是组件内部的私有数据。
+
+**对比**:
+
+| 特性 | props | data |
+|------|-------|------|
+| 来源 | 父组件传入 | 组件内部定义 |
+| 修改 | 只读，不能直接修改 | 可以自由修改 |
+| 响应式 | 是 | 是 |
+| 用途 | 接收外部配置 | 管理内部状态 |
+
+```javascript
+// 如果需要修改 props 的值
+const props = defineProps(['initialCount'])
+const count = ref(props.initialCount)  // 用 data 保存一份副本
+```
+
+**口语化回答**:
+"props 是从父组件传进来的，相当于函数的参数，是只读的不能直接改。data 是组件自己的私有数据，可以随便改。如果需要基于 props 做修改，应该把 props 的值复制一份到 data 或 computed 里。"
+:::
+
+</details>
+
+::: details 3. provide/inject 和 props 的区别？什么时候用 provide/inject？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: props 只能逐层传递，provide/inject 可以跨层级直接传递。
+
+**对比**:
+
+| 特性 | props | provide/inject |
+|------|-------|----------------|
+| 传递方式 | 逐层传递 | 跨层级直接传递 |
+| 数据追踪 | 清晰，易于调试 | 隐式依赖，不易追踪 |
+| 使用场景 | 父子组件 | 深层嵌套组件 |
+| 响应式 | 自动响应式 | 需要手动传递 ref |
+
+**适用场景**:
+1. 主题切换（theme）
+2. 国际化（i18n）
+3. 用户登录状态
+4. 全局配置
+
+**口语化回答**:
+"props 是一层一层往下传的，如果组件嵌套很深，比如 A → B → C → D，每一层都要写 props 很麻烦。provide/inject 可以直接从 A 传到 D，中间的 B、C 不用管。但要注意 provide/inject 的数据来源不太好追踪，只适合传一些全局性的数据，比如主题、语言设置这些。"
+:::
+
+</details>
+
+::: details 4. 什么是单向数据流？为什么 Vue 推荐单向数据流？
+<details>
+<summary>点击查看答案</summary>
+
+**一句话答案**: 单向数据流是指数据只能从父组件流向子组件，子组件不能直接修改父组件的数据。
+
+**为什么推荐**:
+1. **可预测性**: 数据变化来源清晰，易于追踪
+2. **易于调试**: 出问题时容易定位
+3. **组件解耦**: 子组件不依赖父组件的实现细节
+
+```javascript
+// ❌ 错误做法：直接修改 props
+const props = defineProps(['user'])
+props.user.name = 'Bob'  // 不推荐！
+
+// ✅ 正确做法：通知父组件修改
+const emit = defineEmits(['update'])
+emit('update', { ...props.user, name: 'Bob' })
+```
+
+**口语化回答**:
+"单向数据流就是数据只能从父组件往子组件传，子组件要改数据不能直接改，得通过 emit 告诉父组件去改。这样做的好处是数据流向清晰，出 bug 了容易排查。如果子组件能随便改父组件的数据，项目大了之后根本不知道数据在哪被改了。"
+:::
+
+</details>
+
+::: details 5. 如何实现兄弟组件通信？
+<details>
+<summary>点击查看答案</summary>
+
+**方案一：通过共同父组件**
+
+```vue
+<!-- 父组件 -->
+<template>
+  <BrotherA :data="sharedData" @update="handleUpdate" />
+  <BrotherB :data="sharedData" />
+</template>
+
+<script setup>
+const sharedData = ref('初始值')
+
+function handleUpdate(newData) {
+  sharedData.value = newData
+}
+</script>
+```
+
+**方案二：EventBus / mitt**
+
+```javascript
+// BrotherA
+emitter.emit('dataChange', newData)
+
+// BrotherB
+emitter.on('dataChange', (data) => {
+  // 处理数据
+})
+```
+
+**方案三：状态管理（推荐）**
+
+```javascript
+// store
+export const useSharedStore = defineStore('shared', () => {
+  const data = ref('')
+  return { data }
+})
+
+// 两个组件都可以访问和修改
+const store = useSharedStore()
+```
+
+**口语化回答**:
+"兄弟组件通信有几种方式。最简单的是状态提升，把数据放到它们共同的父组件里。或者用 EventBus，一个组件发事件，另一个组件监听。但最推荐的还是用 Pinia 这样的状态管理，把共享数据放到 store 里，两个组件都能访问和修改。"
+:::
+
+</details>
+
+::: details 6. $refs 和 props 传递方法有什么区别？什么时候用 $refs？
+<details>
+<summary>点击查看答案</summary>
+
+**对比**:
+
+| 方式 | 数据流向 | 耦合度 | 使用场景 |
+|------|---------|-------|---------|
+| props 传方法 | 父 → 子 | 低 | 子组件触发父组件行为 |
+| $refs | 父 → 子 | 高 | 父组件主动调用子组件方法 |
+
+**$refs 适用场景**:
+1. 聚焦输入框
+2. 调用子组件的表单验证
+3. 触发子组件的动画
+4. 访问子组件暴露的数据
+
+```vue
+<!-- $refs 典型用法：表单验证 -->
+<template>
+  <MyForm ref="formRef" />
+  <button @click="submitForm">提交</button>
+</template>
+
+<script setup>
+const formRef = ref(null)
+
+async function submitForm() {
+  const isValid = await formRef.value.validate()
+  if (isValid) {
+    // 提交表单
+  }
+}
+</script>
+```
+
+**口语化回答**:
+"$refs 是父组件直接访问子组件的方式，相当于拿到子组件的引用。一般用在需要主动调用子组件方法的场景，比如让输入框聚焦、调用表单验证。但 $refs 耦合度比较高，能用 props 和 emit 解决的就不要用 $refs。"
+:::
+
+</details>

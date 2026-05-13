@@ -373,3 +373,171 @@ class ReliableUDP {
 // - 实时音视频 (WebRTC)
 ```
 
+## 常见面试题
+
+::: details 1. 为什么 TCP 握手是三次，不是两次或四次？
+```javascript
+// 核心目的：确保双方都确认对方的收发能力
+
+// 为什么不能两次？
+// 场景：网络延迟导致旧的连接请求到达服务器
+// 1. 客户端发送 SYN（已过期）
+// 2. 服务器回复 SYN+ACK，以为连接建立
+// 3. 客户端不会理会这个过期的响应
+// 4. 服务器一直等待，资源被浪费
+
+// 三次握手如何解决：
+// 客户端收到 SYN+ACK 后会检查序列号
+// 如果是旧连接，发送 RST 重置
+// 服务器收到 RST 后释放资源
+
+// 为什么不需要四次？
+// 三次已经足够确认双方收发能力
+// 第一次：服务器知道客户端能发
+// 第二次：客户端知道服务器能收能发
+// 第三次：服务器知道客户端能收
+```
+:::
+
+::: details 2. 为什么 TCP 挥手是四次？
+```javascript
+// 因为 TCP 是全双工通信
+
+// 客户端发送 FIN：客户端没有数据发了
+// 服务器回复 ACK：知道了
+// 但是！服务器可能还有数据要发
+// 服务器发送 FIN：服务器也没有数据发了
+// 客户端回复 ACK：知道了，关闭连接
+
+// 关闭一个方向需要 FIN + ACK
+// 全双工有两个方向
+// 所以需要 2 × 2 = 4 次
+```
+:::
+
+::: details 3. TIME_WAIT 为什么是 2MSL？
+```javascript
+// MSL: Maximum Segment Lifetime，报文最大生存时间
+
+// 原因1：确保最后一个 ACK 到达
+// 如果服务器没收到 ACK，会重发 FIN
+// 一个 FIN 的传输时间最多 MSL
+// 客户端等待 2MSL 确保能处理重发的 FIN
+
+// 原因2：让网络中的旧数据包消失
+// 一个数据包从发送到接收最多 MSL
+// 一个响应从接收方返回最多 MSL
+// 所以一个完整的交互最多 2MSL
+
+// 2MSL 典型值：Linux 默认 60 秒 (MSL=30秒)
+```
+:::
+
+::: details 4. TCP 如何保证可靠传输？
+```javascript
+// 1. 序列号和确认号
+// 每个字节都有编号，接收方确认收到的字节
+
+// 2. 校验和
+// 检测数据在传输过程中是否损坏
+
+// 3. 超时重传
+// 发送后启动定时器，超时未确认则重传
+
+// 4. 流量控制
+// 接收方告知窗口大小，防止发送过快
+
+// 5. 拥塞控制
+// 慢启动、拥塞避免、快速重传、快速恢复
+
+// 6. 数据排序
+// 接收方根据序列号重新排序
+```
+:::
+
+::: details 5. SYN 洪泛攻击是什么？如何防御？
+```javascript
+// SYN Flood 攻击原理：
+// 攻击者发送大量 SYN 包，但不完成三次握手
+// 服务器为每个半连接分配资源，等待 ACK
+// 大量半连接耗尽服务器资源
+
+// 防御措施：
+// 1. SYN Cookie - 不立即分配资源
+// 2. 缩短 SYN Timeout
+// 3. 增大半连接队列
+// 4. 防火墙过滤
+// 5. CDN/高防 IP
+```
+:::
+
+::: details 6. HTTP/3 为什么使用 QUIC (UDP)？
+```javascript
+// HTTP/2 的问题：TCP 队头阻塞
+// TCP 保证顺序，一个包丢失会阻塞后续所有包
+
+// QUIC 的优势：
+// 1. 解决队头阻塞 - 流独立，互不影响
+// 2. 更快的连接建立 - 0-RTT 或 1-RTT
+// 3. 连接迁移 - 用 Connection ID 而非 IP:Port
+// 4. 改进的拥塞控制
+// 5. 内置加密 - 默认 TLS 1.3
+```
+:::
+
+## 实际应用
+
+::: details Node.js TCP 服务器
+```javascript
+const net = require('net');
+
+const server = net.createServer((socket) => {
+  console.log('客户端连接');
+
+  let buffer = Buffer.alloc(0);
+
+  socket.on('data', (data) => {
+    buffer = Buffer.concat([buffer, data]);
+
+    while (buffer.length >= 4) {
+      const length = buffer.readUInt32BE(0);
+      if (buffer.length < 4 + length) break;
+
+      const message = buffer.slice(4, 4 + length).toString();
+      buffer = buffer.slice(4 + length);
+
+      console.log('收到消息:', message);
+    }
+  });
+
+  socket.on('end', () => console.log('客户端断开'));
+});
+
+server.listen(8080);
+```
+:::
+
+::: details Node.js UDP 服务器
+```javascript
+const dgram = require('dgram');
+
+const server = dgram.createSocket('udp4');
+
+server.on('message', (msg, rinfo) => {
+  console.log(\`收到来自 \${rinfo.address}:\${rinfo.port} 的消息: \${msg}\`);
+  server.send(Buffer.from('收到'), rinfo.port, rinfo.address);
+});
+
+server.bind(8081);
+```
+:::
+
+## 总结
+
+| 要点 | TCP | UDP |
+|------|-----|-----|
+| 连接管理 | 三次握手建立，四次挥手释放 | 无需连接管理 |
+| 可靠性保证 | 序列号、确认、重传、校验 | 无（需应用层实现） |
+| 流量/拥塞控制 | 滑动窗口、慢启动等 | 无 |
+| 传输效率 | 较低，有握手和确认开销 | 较高，首部仅8字节 |
+| 适用场景 | HTTP、文件传输、邮件 | 视频直播、DNS、游戏 |

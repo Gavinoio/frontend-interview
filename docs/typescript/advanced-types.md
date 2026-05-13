@@ -1729,3 +1729,604 @@ function createLoading(): Loading {
 const state: AsyncState<User> = createSuccess({ id: 1, name: 'John' })
 ```
 
+## 常见面试题
+
+::: details 1. 如何实现 DeepRequired？
+```typescript
+type DeepRequired<T> = {
+  [P in keyof T]-?: T[P] extends object
+    ? DeepRequired<T[P]>
+    : T[P];
+};
+```
+:::
+
+::: details 2. 如何获取对象所有值的类型？
+```typescript
+type ValueOf<T> = T[keyof T];
+
+interface Config {
+  name: string;
+  count: number;
+  enabled: boolean;
+}
+
+type ConfigValue = ValueOf<Config>;  // string | number | boolean
+```
+:::
+
+::: details 3. 如何实现 Flatten 类型？
+```typescript
+type Flatten<T> = T extends Array<infer U> ? U : T;
+
+type Num = Flatten<number[]>;  // number
+type Str = Flatten<string>;    // string
+```
+:::
+
+::: details 4. 联合类型和交叉类型的区别？
+```typescript
+// ==================== 联合类型 (Union Types) ====================
+// 使用 | 符号，表示"或"的关系
+// 一个值可以是多种类型之一
+
+type StringOrNumber = string | number
+
+const a: StringOrNumber = 'hello'  // OK
+const b: StringOrNumber = 42       // OK
+
+// 只能访问所有类型共有的成员
+function process(value: string | number) {
+  // value.toUpperCase()  // Error: number 没有 toUpperCase
+  // 需要类型收窄
+  if (typeof value === 'string') {
+    value.toUpperCase()  // OK
+  }
+}
+
+// ==================== 交叉类型 (Intersection Types) ====================
+// 使用 & 符号，表示"且"的关系
+// 一个值必须同时满足所有类型
+
+interface Person {
+  name: string
+}
+
+interface Employee {
+  employeeId: number
+}
+
+type Staff = Person & Employee
+// Staff 必须同时有 name 和 employeeId
+
+const staff: Staff = {
+  name: 'John',
+  employeeId: 123
+}
+
+// ==================== 主要区别 ====================
+
+// 1. 语义不同
+//    - 联合类型：多选一（A 或 B）
+//    - 交叉类型：全都要（A 且 B）
+
+// 2. 成员访问
+//    - 联合类型：只能访问共有成员
+//    - 交叉类型：可以访问所有成员
+
+// 3. 类型冲突
+//    - 联合类型：类型保持独立
+//    - 交叉类型：冲突属性变为 never
+
+interface A { name: string; age: number }
+interface B { name: string; age: string }
+
+type AB = A & B
+// { name: string; age: never }  // number & string = never
+
+// 4. 函数重载
+//    - 联合类型参数：需要处理所有可能
+//    - 交叉类型：函数签名合并为重载
+
+// 5. 分布式行为
+//    - 条件类型中联合类型会分布
+type ToArray<T> = T extends any ? T[] : never
+type Result = ToArray<string | number>  // string[] | number[]
+```
+:::
+
+::: details 5. 什么是类型守卫？如何实现？
+```typescript
+// ==================== 类型守卫的作用 ====================
+// 类型守卫是运行时检查，用于在特定代码块内收窄类型
+
+// ==================== 实现方式 ====================
+
+// 1. typeof 类型守卫
+function process(value: string | number) {
+  if (typeof value === 'string') {
+    // value 的类型是 string
+    return value.toUpperCase()
+  }
+  // value 的类型是 number
+  return value.toFixed(2)
+}
+
+// 2. instanceof 类型守卫
+class Dog { bark() {} }
+class Cat { meow() {} }
+
+function speak(animal: Dog | Cat) {
+  if (animal instanceof Dog) {
+    animal.bark()
+  } else {
+    animal.meow()
+  }
+}
+
+// 3. in 操作符
+interface Fish { swim(): void }
+interface Bird { fly(): void }
+
+function move(animal: Fish | Bird) {
+  if ('swim' in animal) {
+    animal.swim()
+  } else {
+    animal.fly()
+  }
+}
+
+// 4. 自定义类型守卫（类型谓词）
+function isString(value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+function process(value: unknown) {
+  if (isString(value)) {
+    // value 的类型是 string
+    console.log(value.toUpperCase())
+  }
+}
+
+// 5. 断言函数
+function assertIsNumber(value: unknown): asserts value is number {
+  if (typeof value !== 'number') {
+    throw new Error('Not a number!')
+  }
+}
+
+function double(value: unknown): number {
+  assertIsNumber(value)
+  // 此后 value 的类型是 number
+  return value * 2
+}
+
+// 6. 可辨识联合
+interface Square { kind: 'square'; size: number }
+interface Circle { kind: 'circle'; radius: number }
+type Shape = Square | Circle
+
+function area(shape: Shape): number {
+  switch (shape.kind) {
+    case 'square':
+      return shape.size ** 2
+    case 'circle':
+      return Math.PI * shape.radius ** 2
+  }
+}
+```
+:::
+
+::: details 6. 如何实现一个 PickByType 类型？
+```typescript
+// 从对象类型中挑选指定值类型的属性
+type PickByType<T, U> = {
+  [P in keyof T as T[P] extends U ? P : never]: T[P]
+}
+
+interface Example {
+  name: string
+  age: number
+  email: string
+  active: boolean
+}
+
+type StringProps = PickByType<Example, string>
+// { name: string; email: string }
+
+type NumberProps = PickByType<Example, number>
+// { age: number }
+
+// 排除指定值类型的属性
+type OmitByType<T, U> = {
+  [P in keyof T as T[P] extends U ? never : P]: T[P]
+}
+
+type NonStringProps = OmitByType<Example, string>
+// { age: number; active: boolean }
+```
+:::
+
+::: details 7. 如何实现一个 Mutable 类型（移除 readonly）？
+```typescript
+// 移除所有属性的 readonly
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P]
+}
+
+interface ReadonlyUser {
+  readonly id: number
+  readonly name: string
+}
+
+type User = Mutable<ReadonlyUser>
+// { id: number; name: string }
+
+// 深度移除 readonly
+type DeepMutable<T> = {
+  -readonly [P in keyof T]: T[P] extends object
+    ? DeepMutable<T[P]>
+    : T[P]
+}
+
+interface DeepReadonly {
+  readonly user: {
+    readonly profile: {
+      readonly name: string
+    }
+  }
+}
+
+type MutableDeep = DeepMutable<DeepReadonly>
+// 所有嵌套属性的 readonly 都被移除
+```
+:::
+
+::: details 8. 如何获取函数的参数类型和返回值类型？
+```typescript
+// ==================== 内置工具类型 ====================
+
+// Parameters<T> - 获取函数参数类型（元组）
+type Fn = (a: string, b: number, c: boolean) => void
+type Params = Parameters<Fn>  // [string, number, boolean]
+
+// ReturnType<T> - 获取函数返回值类型
+type GetUser = (id: number) => { name: string; age: number }
+type User = ReturnType<GetUser>  // { name: string; age: number }
+
+// ==================== 手动实现 ====================
+
+// Parameters 实现
+type MyParameters<T extends (...args: any) => any> =
+  T extends (...args: infer P) => any ? P : never
+
+// ReturnType 实现
+type MyReturnType<T extends (...args: any) => any> =
+  T extends (...args: any) => infer R ? R : never
+
+// ==================== 其他函数相关工具类型 ====================
+
+// 获取构造函数参数
+type ConstructorParameters<T extends abstract new (...args: any) => any> =
+  T extends abstract new (...args: infer P) => any ? P : never
+
+class User {
+  constructor(public name: string, public age: number) {}
+}
+
+type UserParams = ConstructorParameters<typeof User>
+// [string, number]
+
+// 获取构造函数实例类型
+type InstanceType<T extends abstract new (...args: any) => any> =
+  T extends abstract new (...args: any) => infer R ? R : never
+
+type UserInstance = InstanceType<typeof User>
+// User
+
+// 获取 this 参数类型
+type ThisParameterType<T> = T extends (this: infer U, ...args: any) => any ? U : unknown
+
+function greet(this: { name: string }) {
+  console.log(`Hello, ${this.name}`)
+}
+
+type ThisType = ThisParameterType<typeof greet>  // { name: string }
+
+// 移除 this 参数
+type OmitThisParameter<T> = unknown extends ThisParameterType<T>
+  ? T
+  : T extends (...args: infer A) => infer R
+  ? (...args: A) => R
+  : T
+```
+:::
+
+::: details 9. 如何实现一个 UnionToIntersection 类型？
+```typescript
+// 将联合类型转换为交叉类型
+// 利用逆变位置的特性
+
+type UnionToIntersection<U> =
+  (U extends any ? (k: U) => void : never) extends
+  (k: infer I) => void ? I : never
+
+type Union = { a: string } | { b: number } | { c: boolean }
+type Intersection = UnionToIntersection<Union>
+// { a: string } & { b: number } & { c: boolean }
+
+// 原理解释：
+// 1. (U extends any ? (k: U) => void : never)
+//    将 U 分布为函数参数：
+//    ((k: { a: string }) => void) | ((k: { b: number }) => void) | ((k: { c: boolean }) => void)
+//
+// 2. ... extends (k: infer I) => void ? I : never
+//    函数参数在逆变位置，推断 I 时会产生交叉类型
+//    I = { a: string } & { b: number } & { c: boolean }
+```
+:::
+
+::: details 10. 如何实现 IsNever 类型？
+```typescript
+// 判断类型是否为 never
+// 注意：直接使用 T extends never 不行，因为 never 在条件类型中会分布为 never
+
+type IsNever<T> = [T] extends [never] ? true : false
+
+type Test1 = IsNever<never>    // true
+type Test2 = IsNever<string>   // false
+type Test3 = IsNever<unknown>  // false
+
+// 错误的实现（会返回 never）
+type WrongIsNever<T> = T extends never ? true : false
+type Wrong = WrongIsNever<never>  // never（因为 never 分布为空）
+
+// 为什么用 [T] extends [never]？
+// 将 T 包装在元组中，阻止分布式条件类型的行为
+```
+:::
+
+::: details 11. 如何实现 IsUnion 类型？
+```typescript
+// 判断类型是否为联合类型
+type IsUnion<T, U = T> =
+  T extends any
+    ? [U] extends [T]
+      ? false
+      : true
+    : never
+
+type Test1 = IsUnion<string>           // false
+type Test2 = IsUnion<string | number>  // true
+type Test3 = IsUnion<never>            // false
+
+// 原理：
+// 当 T = string | number 时：
+// 1. T extends any 会分布，分别处理 string 和 number
+// 2. U 仍然是完整的 string | number
+// 3. 对于 T = string：[string | number] extends [string] = false
+//    所以返回 true
+// 4. 对于 T = number：[string | number] extends [number] = false
+//    所以返回 true
+// 5. 最终结果是 true | true = true
+//
+// 当 T = string 时：
+// 1. T extends any 得到 string
+// 2. U = string
+// 3. [string] extends [string] = true
+// 4. 返回 false
+```
+:::
+
+::: details 12. 如何实现类型安全的 EventEmitter？
+```typescript
+// 定义事件映射
+interface EventMap {
+  click: { x: number; y: number }
+  change: string
+  error: Error
+}
+
+// 类型安全的事件发射器
+class TypedEventEmitter<T extends Record<string, any>> {
+  private listeners = new Map<keyof T, Set<(data: any) => void>>()
+
+  on<K extends keyof T>(event: K, listener: (data: T[K]) => void): void {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set())
+    }
+    this.listeners.get(event)!.add(listener)
+  }
+
+  off<K extends keyof T>(event: K, listener: (data: T[K]) => void): void {
+    this.listeners.get(event)?.delete(listener)
+  }
+
+  emit<K extends keyof T>(event: K, data: T[K]): void {
+    this.listeners.get(event)?.forEach(listener => listener(data))
+  }
+}
+
+// 使用
+const emitter = new TypedEventEmitter<EventMap>()
+
+emitter.on('click', ({ x, y }) => {
+  console.log(`Clicked at (${x}, ${y})`)
+})
+
+emitter.emit('click', { x: 100, y: 200 })  // OK
+// emitter.emit('click', 'invalid')  // Error: 类型不匹配
+```
+:::
+
+::: details 13. 分布式条件类型是什么？如何避免？
+```typescript
+// ==================== 分布式条件类型 ====================
+
+// 当条件类型的检查类型是裸类型参数时，会对联合类型进行分布
+
+type ToArray<T> = T extends any ? T[] : never
+
+type Result = ToArray<string | number>
+// 分布式行为：ToArray<string> | ToArray<number>
+// 结果：string[] | number[]
+
+// ==================== 如何避免分布式行为 ====================
+
+// 方法1：用元组包装
+type ToArrayNonDist<T> = [T] extends [any] ? T[] : never
+
+type Result1 = ToArrayNonDist<string | number>
+// 结果：(string | number)[]
+
+// 方法2：用 { [K in keyof T]: ... } 包装
+type WrapInObject<T> = { value: T }
+type ToArrayViaObject<T> = WrapInObject<T> extends { value: infer U } ? U[] : never
+
+// ==================== 利用分布式特性 ====================
+
+// 过滤联合类型中的某些成员
+type Exclude<T, U> = T extends U ? never : T
+type Result2 = Exclude<'a' | 'b' | 'c', 'a'>  // 'b' | 'c'
+
+// 提取联合类型中的某些成员
+type Extract<T, U> = T extends U ? T : never
+type Result3 = Extract<string | number | boolean, number | string>
+// string | number
+
+// 过滤 null 和 undefined
+type NonNullable<T> = T extends null | undefined ? never : T
+type Result4 = NonNullable<string | null | undefined>  // string
+```
+:::
+
+::: details 14. infer 关键字的作用和使用场景？
+```typescript
+// ==================== infer 基础 ====================
+
+// infer 用于在条件类型中声明一个待推断的类型变量
+// 只能在 extends 子句中使用
+
+// 提取数组元素类型
+type ElementType<T> = T extends (infer E)[] ? E : T
+type E1 = ElementType<number[]>  // number
+
+// 提取 Promise 值类型
+type PromiseType<T> = T extends Promise<infer V> ? V : T
+type P1 = PromiseType<Promise<string>>  // string
+
+// ==================== 函数类型推断 ====================
+
+// 提取参数类型
+type Parameters<T extends (...args: any) => any> =
+  T extends (...args: infer P) => any ? P : never
+
+// 提取返回值类型
+type ReturnType<T extends (...args: any) => any> =
+  T extends (...args: any) => infer R ? R : never
+
+// 提取第一个参数类型
+type FirstParameter<T extends (...args: any) => any> =
+  T extends (first: infer F, ...rest: any) => any ? F : never
+
+type First = FirstParameter<(a: string, b: number) => void>  // string
+
+// ==================== 元组推断 ====================
+
+// 提取元组第一个元素
+type First<T extends any[]> = T extends [infer F, ...any[]] ? F : never
+
+// 提取元组最后一个元素
+type Last<T extends any[]> = T extends [...any[], infer L] ? L : never
+
+// 提取除第一个外的剩余元素
+type Tail<T extends any[]> = T extends [any, ...infer R] ? R : never
+
+// ==================== 字符串推断 ====================
+
+// 提取字符串开头
+type StartsWith<T extends string, U extends string> =
+  T extends \`\${U}\${infer Rest}\` ? true : false
+
+type S1 = StartsWith<'hello world', 'hello'>  // true
+
+// 提取路由参数
+type ExtractParams<T extends string> =
+  T extends \`\${string}:\${infer Param}/\${infer Rest}\`
+    ? Param | ExtractParams<Rest>
+    : T extends \`\${string}:\${infer Param}\`
+    ? Param
+    : never
+
+type RouteParams = ExtractParams<'/user/:id/post/:postId'>
+// 'id' | 'postId'
+
+// ==================== 协变与逆变位置的推断 ====================
+
+// 协变位置（返回值）：推断为联合类型
+type UnionFromFunctions<T> =
+  T extends { a: () => infer R } | { b: () => infer R }
+    ? R
+    : never
+
+type U1 = UnionFromFunctions<{ a: () => string } | { b: () => number }>
+// string | number
+
+// 逆变位置（参数）：推断为交叉类型
+type IntersectionFromFunctions<T> =
+  T extends { a: (x: infer R) => void } | { b: (x: infer R) => void }
+    ? R
+    : never
+
+type I1 = IntersectionFromFunctions<
+  { a: (x: { name: string }) => void } |
+  { b: (x: { age: number }) => void }
+>
+// { name: string } & { age: number }
+```
+:::
+
+::: details 15. 如何实现一个 DeepKeyOf 类型？
+```typescript
+// 获取嵌套对象的所有路径
+type DeepKeyOf<T, Prefix extends string = ''> = T extends object
+  ? {
+      [K in keyof T & string]: T[K] extends object
+        ? `${Prefix}${K}` | DeepKeyOf<T[K], `${Prefix}${K}.`>
+        : `${Prefix}${K}`
+    }[keyof T & string]
+  : never
+
+interface User {
+  name: string
+  profile: {
+    age: number
+    address: {
+      city: string
+      country: string
+    }
+  }
+  settings: {
+    theme: 'light' | 'dark'
+  }
+}
+
+type UserKeys = DeepKeyOf<User>
+// 'name' | 'profile' | 'profile.age' | 'profile.address' |
+// 'profile.address.city' | 'profile.address.country' |
+// 'settings' | 'settings.theme'
+
+// 根据路径获取类型
+type DeepValue<T, P extends string> =
+  P extends `${infer K}.${infer Rest}`
+    ? K extends keyof T
+      ? DeepValue<T[K], Rest>
+      : never
+    : P extends keyof T
+    ? T[P]
+    : never
+
+type CityType = DeepValue<User, 'profile.address.city'>  // string
+type ThemeType = DeepValue<User, 'settings.theme'>  // 'light' | 'dark'
+```
+:::

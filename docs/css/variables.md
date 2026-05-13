@@ -664,3 +664,60 @@ $breakpoints: (
 }
 ```
 
+## 面试常见问题
+
+::: details 1. CSS 变量和 Sass 变量的区别？
+- CSS 变量可在运行时修改，Sass 变量在编译时确定
+- CSS 变量有作用域和继承，Sass 变量是全局的
+- CSS 变量可通过 JavaScript 访问和修改
+- CSS 变量在开发者工具中可见
+:::
+
+::: details 2. 如何实现主题切换？
+三种主要方案：
+1. CSS 类切换（:root.dark）
+2. data 属性切换（:root[data-theme="dark"]）
+3. JavaScript 直接修改 CSS 变量
+
+推荐方案 1 或 2，便于 CSS 管理。
+:::
+
+::: details 3. CSS 变量的兼容性如何处理？
+```css
+.element {
+  /* 回退值 */
+  color: #333;
+  color: var(--text-color, #333);
+}
+
+/* 或使用 @supports */
+@supports (--css: variables) {
+  .element {
+    color: var(--text-color);
+  }
+}
+```
+:::
+
+::: details 4. 如何避免主题切换时的闪烁？
+```javascript
+// 在 HTML 头部立即执行
+<script>
+  const theme = localStorage.getItem('theme') ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = theme;
+</script>
+```
+:::
+
+## 总结
+
+CSS 变量是现代前端主题系统的核心：
+
+1. **原生支持**：无需编译，运行时动态修改
+2. **作用域继承**：支持组件级和全局级变量
+3. **主题切换**：配合类切换或 JavaScript 实现
+4. **框架集成**：Vue/React 中配合状态管理
+5. **性能优化**：合理使用作用域和命名
+
+掌握 CSS 变量是实现现代化主题系统的必备技能。

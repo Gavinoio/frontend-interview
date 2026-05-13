@@ -871,3 +871,59 @@ export default {
 ></micro-app>
 ```
 
+## 常见面试题
+
+::: details 1. Micro App 的核心原理？
+Micro App 基于 Web Components 实现：
+- 使用 Custom Elements 定义 `<micro-app>` 标签
+- 通过 fetch 获取子应用 HTML
+- 解析 HTML 提取 JS/CSS 资源
+- 使用 Proxy 创建 JS 沙箱隔离全局变量
+- 通过样式前缀实现 CSS 隔离
+:::
+
+::: details 2. Micro App 与 qiankun 的区别？
+| 维度 | Micro App | qiankun |
+|------|-----------|---------|
+| 底层 | Web Components | single-spa |
+| 依赖 | 零依赖 | 依赖 single-spa |
+| 接入成本 | 极低 | 中等 |
+| 沙箱 | Proxy + iframe | Proxy + Snapshot |
+| 使用方式 | 组件化 | 路由式 |
+:::
+
+::: details 3. 如何处理子应用间的样式冲突？
+- 使用默认的 scoped 样式隔离
+- 使用 shadowDOM 完全隔离
+- 子应用使用 CSS Modules
+- 子应用使用 CSS-in-JS
+- 使用命名空间前缀
+:::
+
+::: details 4. 如何实现子应用间的数据共享？
+- 使用全局数据：`microApp.setGlobalData()`
+- 使用发布订阅模式
+- 使用状态管理库（如 Vuex、Redux）
+- 使用 localStorage/sessionStorage
+- 使用 URL 参数
+:::
+
+::: details 5. Micro App 的预加载是如何实现的？
+- 使用 `requestIdleCallback` 在空闲时加载
+- 提前 fetch 子应用 HTML 和静态资源
+- 缓存解析后的资源信息
+- 实际渲染时直接使用缓存
+:::
+
+::: details 6. 子应用独立运行和嵌入运行如何兼容？
+```javascript
+// 检测是否在微前端环境
+if (window.__MICRO_APP_ENVIRONMENT__) {
+  // 微前端环境：注册生命周期
+  window['micro-app-name'] = { mount, unmount }
+} else {
+  // 独立运行：直接挂载
+  mount()
+}
+```
+:::

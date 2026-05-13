@@ -554,3 +554,31 @@ window.addEventListener('pagehide', () => {
 })
 ```
 
+## 常见面试题
+
+::: details 1. 什么是 LCP、FID、CLS？
+- **LCP（最大内容绘制）**：页面最大元素渲染完成的时间，反映加载性能
+- **FID（首次输入延迟）**：用户首次交互到浏览器响应的时间，反映交互性
+- **CLS（累积布局偏移）**：页面布局偏移的累积分数，反映视觉稳定性
+:::
+
+::: details 2. 如何采集前端性能数据？
+- 使用 Performance API 获取页面加载指标
+- 使用 PerformanceObserver 监听 Web Vitals
+- 使用 web-vitals 库简化采集
+- 使用 sendBeacon 上报数据
+:::
+
+::: details 3. 如何实现前端错误监控？
+- window.onerror 捕获 JS 错误
+- unhandledrejection 事件捕获 Promise 错误
+- 资源加载错误通过 error 事件捕获
+- 框架提供的错误处理机制（Vue errorHandler、React ErrorBoundary）
+:::
+
+::: details 4. 为什么推荐使用 sendBeacon？
+- 异步发送，不阻塞页面卸载
+- 保证数据可靠发送
+- 即使页面关闭也能完成发送
+- 适合性能数据和行为数据上报
+:::

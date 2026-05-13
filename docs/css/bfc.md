@@ -650,8 +650,7 @@ BFC 是页面上的一个**独立渲染区域**，内部元素的布局不会影
 
 ## BFC 面试题
 
-### 1. 什么是 BFC？
-
+::: details 1. 什么是 BFC？
 **答案**：
 
 BFC（Block Formatting Context）是块级格式化上下文，是一个独立的渲染区域，拥有自己的布局规则：
@@ -661,9 +660,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 3. BFC 区域不会与浮动元素重叠
 4. BFC 是独立容器，内外互不影响
 5. 计算 BFC 高度时包含浮动元素
+:::
 
-### 2. 如何触发 BFC？
-
+::: details 2. 如何触发 BFC？
 **答案**：
 
 常用方式：
@@ -674,9 +673,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 - `position: absolute/fixed`
 
 推荐使用 `overflow: hidden` 或 `display: flow-root`。
+:::
 
-### 3. BFC 的应用场景有哪些？
-
+::: details 3. BFC 的应用场景有哪些？
 **答案**：
 
 1. **清除浮动**：解决父元素高度塌陷
@@ -700,9 +699,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
    ```
 
 4. **阻止元素被浮动元素覆盖**
+:::
 
-### 4. BFC 和 IFC 的区别？
-
+::: details 4. BFC 和 IFC 的区别？
 **答案**：
 
 | 特性 | BFC（块级格式化上下文） | IFC（行内格式化上下文） |
@@ -712,9 +711,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 | 宽度 | 占满容器宽度 | 由内容决定 |
 | 高度 | 由内容决定 | 由 line-height 决定 |
 | 触发方式 | overflow、float 等 | 包含行内元素的块级元素 |
+:::
 
-### 5. 为什么 overflow: hidden 可以清除浮动？
-
+::: details 5. 为什么 overflow: hidden 可以清除浮动？
 **答案**：
 
 `overflow: hidden` 会触发 BFC，根据 BFC 的规则：
@@ -724,9 +723,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 3. 解决了高度塌陷问题
 
 原理：创建 BFC 后，父元素成为一个独立的渲染区域，必须包含其所有子元素（包括浮动元素）来计算自身高度。
+:::
 
-### 6. margin 重叠的三种情况？
-
+::: details 6. margin 重叠的三种情况？
 **答案**：
 
 1. **相邻兄弟元素**：垂直 margin 会合并
@@ -754,9 +753,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 - 触发 BFC
 - 使用 padding 代替 margin
 - 添加 border 或 padding 阻断
+:::
 
-### 7. display: flow-root 和 overflow: hidden 触发 BFC 的区别？
-
+::: details 7. display: flow-root 和 overflow: hidden 触发 BFC 的区别？
 **答案**：
 
 | 特性 | display: flow-root | overflow: hidden |
@@ -767,9 +766,9 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 | 推荐度 | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 
 **推荐**：优先使用 `display: flow-root`，兼容性要求高时使用 `overflow: hidden`。
+:::
 
-### 8. 实现一个自适应三栏布局（两侧固定，中间自适应）
-
+::: details 8. 实现一个自适应三栏布局（两侧固定，中间自适应）
 **答案**：
 
 使用 BFC 实现：
@@ -813,22 +812,23 @@ BFC（Block Formatting Context）是块级格式化上下文，是一个独立�
 </body>
 </html>
 ```
+:::
 
 ## 总结
 
-### BFC 关键点
-
+::: details BFC 关键点
 1. **定义**：独立的渲染区域，内外互不影响
 2. **触发**：`overflow: hidden`、`display: flow-root` 等
 3. **应用**：清除浮动、防止 margin 重叠、自适应布局
+:::
 
-### 最佳实践
-
+::: details 最佳实践
 1. 清除浮动优先使用 `display: flow-root` 或 clearfix 伪元素
 2. 避免滥用 BFC，理解其副作用
 3. 布局优先考虑 Flex 或 Grid，BFC 作为辅助手段
+:::
 
-### 参考资料
-
+::: details 参考资料
 - [MDN - Block Formatting Context](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context)
 - [理解 CSS 中的 BFC](https://www.w3cplus.com/css/understanding-block-formatting-contexts-in-css.html)
+:::

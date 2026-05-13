@@ -251,8 +251,7 @@ eventBus.emit('message', 'Hello'); // 完全解耦，通过事件名通信
 
 ## 手写 EventEmitter/EventBus（面试必考）
 
-### 完整版 EventEmitter
-
+::: details 完整版 EventEmitter
 ```javascript
 class EventEmitter {
   constructor() {
@@ -415,9 +414,9 @@ emitter
   .emit('chain1')
   .emit('chain2');
 ```
+:::
 
-### 支持命名空间的 EventBus
-
+::: details 支持命名空间的 EventBus
 ```javascript
 class NamespacedEventBus {
   constructor() {
@@ -498,11 +497,11 @@ bus.emit('product:add', { id: 1, name: '商品A' });
 
 bus.removeNamespace('user'); // 移除所有 user 相关事件
 ```
+:::
 
 ## Vue 响应式原理中的应用
 
-### Vue 2 响应式（观察者模式）
-
+::: details Vue 2 响应式（观察者模式）
 ```javascript
 // 依赖收集器（Dep）
 class Dep {
@@ -626,9 +625,9 @@ vm.$watch('message', (newVal, oldVal) => {
 
 vm.message = 'Hello World'; // 触发 Watcher 更新
 ```
+:::
 
-### Vue 3 响应式（Proxy + 发布订阅）
-
+::: details Vue 3 响应式（Proxy + 发布订阅）
 ```javascript
 // 依赖收集（发布订阅模式）
 const targetMap = new WeakMap();
@@ -700,11 +699,11 @@ effect(() => {
 state.count++; // 输出: count: 1
 state.message = 'World'; // 输出: message: World
 ```
+:::
 
 ## 实际应用场景
 
-### 1. DOM 事件监听（观察者模式）
-
+::: details 1. DOM 事件监听（观察者模式）
 ```javascript
 // 浏览器的 DOM 事件就是观察者模式
 const button = document.querySelector('#btn');
@@ -719,9 +718,9 @@ button.addEventListener('click', handler2);
 // 移除观察者
 button.removeEventListener('click', handler1);
 ```
+:::
 
-### 2. 跨组件通信（发布订阅）
-
+::: details 2. 跨组件通信（发布订阅）
 ```javascript
 // eventBus.js
 import EventEmitter from './EventEmitter';
@@ -752,9 +751,9 @@ export default {
   }
 };
 ```
+:::
 
-### 3. 状态管理（观察者模式）
-
+::: details 3. 状态管理（观察者模式）
 ```javascript
 // 简易状态管理
 class Store {
@@ -804,9 +803,9 @@ store.setState({ count: 1 }); // 输出: 状态更新: { count: 1 }
 unsubscribe(); // 取消订阅
 store.setState({ count: 2 }); // 不会触发回调
 ```
+:::
 
-### 4. Promise 链式调用（观察者模式）
-
+::: details 4. Promise 链式调用（观察者模式）
 ```javascript
 // Promise 内部使用观察者模式
 class MyPromise {
@@ -861,4 +860,164 @@ class MyPromise {
   }
 }
 ```
+:::
 
+## 面试高频题
+
+::: details 1. 观察者模式和发布订阅模式的区别？（必考）
+**参考答案**：
+
+**核心区别**：
+1. **耦合度**：观察者模式耦合度高，Subject 和 Observer 直接关联；发布订阅完全解耦，通过事件通道通信
+2. **中介者**：观察者模式无中介者；发布订阅有事件通道作为中介
+3. **关系**：观察者是一对多；发布订阅是多对多
+4. **调用方式**：观察者是 Subject 直接调用 Observer；发布订阅通过事件名间接调用
+
+**举例说明**：
+- **观察者模式**：Vue 2 响应式系统，Dep 和 Watcher 直接关联
+- **发布订阅模式**：EventBus、Vue 的 $emit/$on、Node.js 的 EventEmitter
+:::
+
+::: details 2. 手写一个 EventEmitter
+参考前面的完整实现，至少要实现 on、off、emit、once 四个方法。
+:::
+
+::: details 3. Vue 响应式原理是观察者模式还是发布订阅模式？
+**参考答案**：
+
+**Vue 2**：观察者模式
+- Dep 是 Subject（被观察者）
+- Watcher 是 Observer（观察者）
+- Dep 直接通知 Watcher 更新
+
+**Vue 3**：更接近发布订阅
+- 使用 targetMap、depsMap、dep 三层 Map/Set 结构
+- 通过 track 收集依赖，trigger 触发更新
+- 解耦度更高
+:::
+
+::: details 4. 如何取消事件监听？
+**参考答案**：
+
+```javascript
+// 方式1：保存回调引用
+const handler = () => console.log('clicked');
+eventBus.on('click', handler);
+eventBus.off('click', handler);
+
+// 方式2：返回取消函数
+const unsubscribe = eventBus.on('click', () => {});
+unsubscribe();
+
+// 方式3：once 自动取消
+eventBus.once('click', () => {});
+
+// 方式4：移除所有监听
+eventBus.off('click'); // 移除所有 click 事件
+eventBus.removeAllListeners(); // 移除所有事件
+```
+:::
+
+::: details 5. EventEmitter 的 once 如何实现？
+**参考答案**：
+
+```javascript
+once(eventName, callback) {
+  const wrapper = (...args) => {
+    callback.apply(this, args);
+    this.off(eventName, wrapper); // 执行后立即取消订阅
+  };
+
+  // 保存原始函数，用于 off 时比对
+  wrapper.origin = callback;
+
+  this.on(eventName, wrapper);
+  return this;
+}
+```
+:::
+
+::: details 6. 如何防止 EventEmitter 的内存泄漏？
+**参考答案**：
+
+```javascript
+class EventEmitter {
+  constructor(options = {}) {
+    this.events = {};
+    this.maxListeners = options.maxListeners || 10; // 最大监听器数量
+  }
+
+  on(eventName, callback) {
+    if (!this.events[eventName]) {
+      this.events[eventName] = [];
+    }
+
+    // 检查监听器数量
+    if (this.events[eventName].length >= this.maxListeners) {
+      console.warn(
+        `Warning: Possible EventEmitter memory leak detected. ` +
+        `${this.events[eventName].length + 1} ${eventName} listeners added. ` +
+        `Use emitter.setMaxListeners() to increase limit`
+      );
+    }
+
+    this.events[eventName].push(callback);
+    return this;
+  }
+
+  setMaxListeners(n) {
+    this.maxListeners = n;
+    return this;
+  }
+}
+
+// 使用
+const emitter = new EventEmitter({ maxListeners: 5 });
+
+// 在组件销毁时取消订阅
+class Component {
+  constructor() {
+    this.emitter = new EventEmitter();
+    this.handlers = [];
+  }
+
+  mount() {
+    const handler = () => console.log('event');
+    this.emitter.on('event', handler);
+    this.handlers.push({ event: 'event', handler });
+  }
+
+  unmount() {
+    // 清理所有监听器
+    this.handlers.forEach(({ event, handler }) => {
+      this.emitter.off(event, handler);
+    });
+    this.handlers = [];
+  }
+}
+```
+:::
+
+## 总结
+
+观察者模式和发布订阅模式是前端最重要的设计模式之一，必须深刻理解：
+
+**核心要点**：
+1. **区别**：观察者直接关联，发布订阅通过事件通道解耦
+2. **实现**：必须会手写 EventEmitter
+3. **应用**：Vue 响应式、事件总线、DOM 事件等
+4. **原理**：理解 Vue 2/3 响应式原理
+
+**面试准备**：
+- 手写 EventEmitter（on、off、emit、once）
+- 说清楚两种模式的区别
+- 理解 Vue 响应式原理
+- 知道实际应用场景
+
+**学习建议**：
+- 先掌握基础实现
+- 深入理解框架源码
+- 在项目中实践应用
+- 总结面试题和答案
+
+这两种模式是前端面试的必考内容，务必熟练掌握！

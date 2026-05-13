@@ -403,7 +403,7 @@ console.log(`价格: ${price}`); // '价格: ¥100' - 调用 toString
 
 ## 4. 常见面试题
 
-### 题目1: 输出结果
+::: details 题目1: 输出结果
 ```javascript
 console.log(typeof typeof 1);
 ```
@@ -417,9 +417,11 @@ console.log(typeof typeof 1);
 2. `typeof 'number'` 返回 `'string'`
 
 任何 `typeof` 操作都返回字符串类型。
+:::
+
 </details>
 
-### 题目2: 比较结果
+::: details 题目2: 比较结果
 ```javascript
 console.log([] == ![]);
 ```
@@ -436,9 +438,11 @@ console.log([] == ![]);
 5. `0 == 0` 为 `true`
 
 这是一个经典的"坑",实际开发中永远不要这样写,用 `===`!
+:::
+
 </details>
 
-### 题目3: 输出结果
+::: details 题目3: 输出结果
 ```javascript
 console.log(1 + '1');
 console.log(1 - '1');
@@ -457,14 +461,15 @@ console.log(1 / '2');
 ```
 
 **解析**: 只有 `+` 运算符在遇到字符串时会进行拼接,其他算术运算符都会将操作数转为数字。
-</details>
+:::
 
 ---
 
+</details>
+
 ## 5. 高频面试题
 
-### Q1: typeof 和 instanceof 的区别？
-
+::: details Q1: typeof 和 instanceof 的区别？
 #### 一句话答案
 typeof 返回类型字符串，适合判断基本类型；instanceof 检查原型链，适合判断对象的具体类型。
 
@@ -532,9 +537,9 @@ function myInstanceof(obj, constructor) {
 > 最准确的类型判断方法是 Object.prototype.toString.call()，它能正确识别所有类型，包括 null、数组、Date、RegExp 等。"
 
 ---
+:::
 
-### Q2: null 和 undefined 的区别？
-
+::: details Q2: null 和 undefined 的区别？
 #### 一句话答案
 undefined 表示变量已声明但未赋值，null 表示空对象指针，是主动设置的"空值"。
 
@@ -606,9 +611,9 @@ value === null || value === undefined
 > 它们还有几个区别：typeof null 返回 'object'，这是个历史 bug；转数字时 undefined 是 NaN，null 是 0；用 == 比较它们是相等的，但 === 不相等。另外 undefined 不是关键字，在函数作用域内可以被重新赋值，所以有时候会用 void 0 来代替 undefined。"
 
 ---
+:::
 
-### Q3: 如何判断一个变量是否是数组？
-
+::: details Q3: 如何判断一个变量是否是数组？
 #### 一句话答案
 推荐用 Array.isArray()，最准确且能处理跨 iframe 的情况。
 
@@ -656,9 +661,9 @@ function isArray(value) {
 ```
 
 ---
+:::
 
-### Q4: == 和 === 的区别？
-
+::: details Q4: == 和 === 的区别？
 #### 一句话答案
 == 会进行类型转换后比较，=== 不会转换类型，必须类型和值都相等。
 
@@ -709,9 +714,9 @@ if (value == null) {
 ```
 
 ---
+:::
 
-### Q5: 0.1 + 0.2 为什么不等于 0.3？如何解决？
-
+::: details Q5: 0.1 + 0.2 为什么不等于 0.3？如何解决？
 #### 一句话答案
 因为 JavaScript 使用 IEEE 754 双精度浮点数，某些十进制小数无法精确表示为二进制，导致精度丢失。
 
@@ -758,9 +763,9 @@ const displayPrice = (total / 100).toFixed(2);
 ```
 
 ---
+:::
 
-### Q6: 说说 JavaScript 中的隐式类型转换
-
+::: details Q6: 说说 JavaScript 中的隐式类型转换
 #### 一句话答案
 隐式类型转换发生在运算和比较时，JavaScript 会自动将操作数转换为需要的类型，主要涉及 ToPrimitive、ToNumber、ToString、ToBoolean 四种转换。
 
@@ -831,9 +836,9 @@ obj + 1      // 43 - 优先调用 valueOf
 ```
 
 ---
+:::
 
-### Q7: Object.is() 和 === 有什么区别？
-
+::: details Q7: Object.is() 和 === 有什么区别？
 #### 一句话答案
 Object.is() 修复了 === 的两个特殊情况：NaN 等于 NaN，+0 不等于 -0。
 
@@ -882,9 +887,9 @@ Object.is(+0, -0)  // false
 ```
 
 ---
+:::
 
-### Q8: 什么是包装类型？
-
+::: details Q8: 什么是包装类型？
 #### 一句话答案
 包装类型是 JavaScript 为基本类型（Number、String、Boolean）提供的临时对象包装，使得基本类型可以调用方法。
 
@@ -942,11 +947,11 @@ if (new Boolean(false)) {
 ```
 
 ---
+:::
 
 ## 6. 类型转换速查表
 
-### 转换为 Number
-
+::: details 转换为 Number
 | 原始值 | 结果 |
 |--------|------|
 | undefined | NaN |
@@ -962,9 +967,9 @@ if (new Boolean(false)) {
 | [1,2] | NaN |
 | {} | NaN |
 | function(){} | NaN |
+:::
 
-### 转换为 String
-
+::: details 转换为 String
 | 原始值 | 结果 |
 |--------|------|
 | undefined | 'undefined' |
@@ -978,9 +983,9 @@ if (new Boolean(false)) {
 | [1,2,3] | '1,2,3' |
 | {} | '[object Object]' |
 | function(){} | 'function(){}' |
+:::
 
-### 转换为 Boolean（假值列表）
-
+::: details 转换为 Boolean（假值列表）
 ```javascript
 // 只有以下 8 个值转为 false，其他都是 true
 false
@@ -994,24 +999,26 @@ NaN
 ```
 
 ---
+:::
 
 ## 总结
 
-### 核心要点
+::: details 核心要点
 1. JavaScript 有 7 种基本类型和 1 种引用类型
 2. 使用 `Object.prototype.toString.call()` 最准确
 3. 理解显式转换和隐式转换的区别
 4. 掌握假值列表(8个)
 5. 优先使用 `===` 避免类型转换的坑
+:::
 
-### 面试加分项
+::: details 面试加分项
 - 能说出 `typeof null` 返回 `'object'` 的历史原因
 - 了解 V8 引擎中的 Smi 和 HeapNumber
 - 理解 Symbol 和 BigInt 的使用场景
 - 掌握对象转原始类型的完整流程
+:::
 
-### 高频考点速记
-
+::: details 高频考点速记
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                   数据类型高频考点                        │
@@ -1024,3 +1031,4 @@ NaN
 └─────────────────────────────────────────────────────────┘
 ✓ 常考  ✓✓ 高频重点
 ```
+:::

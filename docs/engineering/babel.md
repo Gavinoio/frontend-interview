@@ -2372,3 +2372,649 @@ babel-plugin-my-transform/
 // Preset: babel-preset-xxx 或 @scope/babel-preset-xxx
 ```
 
+## 常见面试题
+
+::: details 1. Babel 的编译流程？
+```javascript
+// 1. 解析 (Parse)
+//    - 词法分析：代码 → Token
+//    - 语法分析：Token → AST
+
+// 2. 转换 (Transform)
+//    - 遍历 AST
+//    - 应用 Plugin 转换
+
+// 3. 生成 (Generate)
+//    - AST → 代码
+
+// 详细说明：
+// 1. 解析阶段
+//    输入: const fn = (a) => a + 1
+//    词法分析产出: ['const', 'fn', '=', '(', 'a', ')', '=>', 'a', '+', '1']
+//    语法分析产出: AST 树形结构
+
+// 2. 转换阶段
+//    遍历 AST，访问者模式
+//    每个插件处理特定节点类型
+//    如：ArrowFunctionExpression → FunctionExpression
+
+// 3. 生成阶段
+//    将 AST 转回代码字符串
+//    可生成 source map
+```
+:::
+
+::: details 2. preset-env 和 runtime 的区别？
+```javascript
+// ==================== @babel/preset-env ====================
+// 功能：
+// - 转换 ES6+ 语法到 ES5
+// - 通过 useBuiltIns 引入 polyfill
+// - 根据 targets 按需转换
+
+// 特点：
+// - 全局 polyfill（修改全局对象）
+// - 适合开发应用
+// - 一次引入，全局可用
+
+// ==================== @babel/plugin-transform-runtime ====================
+// 功能：
+// - 共享辅助函数（减少代码体积）
+// - 沙盒化 polyfill（corejs: 3）
+// - 处理 regenerator（async/await）
+
+// 特点：
+// - 不污染全局
+// - 适合开发库
+// - 按模块引入
+
+// ==================== 配合使用 ====================
+
+// 应用开发（推荐）
+{
+  presets: [
+    ['@babel/preset-env', {
+      useBuiltIns: 'usage',
+      corejs: 3
+    }]
+  ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      helpers: true,  // 只用于辅助函数去重
+      corejs: false
+    }]
+  ]
+}
+
+// 库开发（推荐）
+{
+  presets: [
+    ['@babel/preset-env', {
+      modules: false
+    }]
+  ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      corejs: 3  // 沙盒化 polyfill
+    }]
+  ]
+}
+```
+:::
+
+::: details 3. useBuiltIns 的三个值？
+```javascript
+// ==================== false ====================
+// 不自动引入 polyfill
+// 需要手动全量引入
+import 'core-js'
+
+// ==================== 'entry' ====================
+// 在入口处根据 targets 替换为需要的 polyfill
+// 需要手动引入入口
+
+// 入口文件
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
+
+// Babel 转换后
+import 'core-js/modules/es.array.includes'
+import 'core-js/modules/es.promise'
+// ... 所有目标环境需要的 polyfill
+
+// ==================== 'usage'（推荐）====================
+// 按需引入，自动分析代码中使用的 API
+
+// 源代码
+const a = [1, 2].includes(1)
+new Promise()
+
+// 转换后
+import 'core-js/modules/es.array.includes'
+import 'core-js/modules/es.promise'
+const a = [1, 2].includes(1)
+new Promise()
+
+// 优点：最小化 polyfill 体积
+// 缺点：可能遗漏动态使用的 API
+```
+:::
+
+::: details 4. Babel 插件和预设的执行顺序？
+```javascript
+// 执行顺序规则：
+// 1. 插件在预设之前执行
+// 2. 插件按数组顺序从前往后执行
+// 3. 预设按数组顺序从后往前执行
+
+{
+  plugins: ['A', 'B', 'C'],  // 执行顺序: A → B → C
+  presets: ['D', 'E', 'F']   // 执行顺序: F → E → D
+}
+
+// 完整执行顺序: A → B → C → F → E → D
+
+// 原因：
+// 预设从后往前是为了让用户可以把最通用的预设放在前面
+// 更具体的预设放在后面，后面的预设可以覆盖前面的配置
+```
+:::
+
+::: details 5. 如何编写一个 Babel 插件？
+```javascript
+// 基本结构
+module.exports = function(babel) {
+  const { types: t } = babel
+
+  return {
+    name: 'my-plugin',
+    visitor: {
+      // 访问特定类型的节点
+      Identifier(path, state) {
+        // path: 节点路径，包含节点信息和操作方法
+        // state: 插件状态，包含用户配置 state.opts
+
+        // 常用操作
+        path.node          // 当前节点
+        path.parent        // 父节点
+        path.scope         // 作用域
+        path.replaceWith() // 替换节点
+        path.remove()      // 删除节点
+        path.insertBefore() // 在之前插入
+        path.insertAfter()  // 在之后插入
+      }
+    }
+  }
+}
+
+// 实际示例：移除 console.log
+module.exports = ({ types: t }) => ({
+  name: 'remove-console',
+  visitor: {
+    CallExpression(path) {
+      if (
+        t.isMemberExpression(path.node.callee) &&
+        t.isIdentifier(path.node.callee.object, { name: 'console' }) &&
+        t.isIdentifier(path.node.callee.property, { name: 'log' })
+      ) {
+        path.remove()
+      }
+    }
+  }
+})
+```
+:::
+
+::: details 6. AST 是什么？有什么作用？
+```javascript
+// AST = Abstract Syntax Tree（抽象语法树）
+// 是源代码的树形结构表示
+
+// 源代码
+const a = 1 + 2
+
+// 对应的 AST
+{
+  type: 'Program',
+  body: [{
+    type: 'VariableDeclaration',
+    kind: 'const',
+    declarations: [{
+      type: 'VariableDeclarator',
+      id: { type: 'Identifier', name: 'a' },
+      init: {
+        type: 'BinaryExpression',
+        operator: '+',
+        left: { type: 'NumericLiteral', value: 1 },
+        right: { type: 'NumericLiteral', value: 2 }
+      }
+    }]
+  }]
+}
+
+// AST 的作用：
+// 1. 代码转换（Babel、TypeScript）
+// 2. 代码检查（ESLint）
+// 3. 代码格式化（Prettier）
+// 4. 代码压缩（Terser）
+// 5. 代码高亮（编辑器）
+// 6. 自动补全（IDE）
+// 7. 依赖分析（Webpack）
+
+// 工具：https://astexplorer.net/
+```
+:::
+
+::: details 7. Babel 如何处理 async/await？
+```javascript
+// async/await 被转换为 generator + regenerator-runtime
+
+// 源代码
+async function fetchData() {
+  const res = await fetch('/api')
+  return res.json()
+}
+
+// 转换后（简化版）
+function fetchData() {
+  return _asyncToGenerator(function* () {
+    const res = yield fetch('/api')
+    return res.json()
+  })()
+}
+
+// _asyncToGenerator 辅助函数使用 regenerator-runtime
+// 来模拟 async/await 行为
+
+// regenerator-runtime 处理方式：
+// 1. @babel/preset-env 自动引入（推荐）
+// 2. @babel/plugin-transform-runtime 共享引入
+
+// 配置示例
+{
+  presets: [
+    ['@babel/preset-env', {
+      useBuiltIns: 'usage',
+      corejs: 3  // 自动处理 regenerator
+    }]
+  ]
+}
+```
+:::
+
+::: details 8. 如何减少 Babel 编译后的代码体积？
+```javascript
+// 1. 使用 @babel/plugin-transform-runtime
+//    - 共享辅助函数，避免重复
+{
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      helpers: true
+    }]
+  ]
+}
+
+// 2. 合理配置 targets
+//    - 只转换需要支持的浏览器
+{
+  presets: [
+    ['@babel/preset-env', {
+      targets: '> 1%, not dead'  // 不要支持过旧的浏览器
+    }]
+  ]
+}
+
+// 3. 使用 useBuiltIns: 'usage'
+//    - 按需引入 polyfill
+{
+  presets: [
+    ['@babel/preset-env', {
+      useBuiltIns: 'usage',
+      corejs: 3
+    }]
+  ]
+}
+
+// 4. 使用 bugfixes: true
+//    - Babel 7.9+ 生成更优化的代码
+{
+  presets: [
+    ['@babel/preset-env', {
+      bugfixes: true
+    }]
+  ]
+}
+
+// 5. 保留 ES modules
+//    - 让 Webpack/Rollup 进行 tree-shaking
+{
+  presets: [
+    ['@babel/preset-env', {
+      modules: false
+    }]
+  ]
+}
+
+// 6. 排除不需要的转换
+{
+  presets: [
+    ['@babel/preset-env', {
+      exclude: [
+        '@babel/plugin-transform-regenerator',
+        '@babel/plugin-transform-typeof-symbol'
+      ]
+    }]
+  ]
+}
+```
+:::
+
+::: details 9. babel-loader 和 @babel/core 的关系？
+```javascript
+// @babel/core
+// - Babel 的核心编译功能
+// - 提供 transform、parse 等 API
+// - 可以独立使用
+
+const babel = require('@babel/core')
+const result = babel.transformSync(code, options)
+
+// babel-loader
+// - Webpack 的 loader
+// - 在 Webpack 构建流程中调用 @babel/core
+// - 处理 .js/.jsx/.ts/.tsx 文件
+
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [{
+      test: /\.js$/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          // 传递给 @babel/core 的配置
+          presets: ['@babel/preset-env']
+        }
+      }
+    }]
+  }
+}
+
+// 关系图
+// Webpack → babel-loader → @babel/core → 转换代码
+
+// 相关包
+// @babel/core: 核心（必需）
+// babel-loader: Webpack 集成
+// @babel/cli: 命令行工具
+// @babel/register: Node.js 运行时转换
+```
+:::
+
+::: details 10. Polyfill 和语法转换的区别？
+```javascript
+// ==================== 语法转换 ====================
+// 将新语法转换为旧语法
+// 编译时处理
+
+// 箭头函数
+const fn = () => {}
+// → var fn = function() {}
+
+// 类
+class Person {}
+// → function Person() {}
+
+// 解构
+const { a } = obj
+// → var a = obj.a
+
+// 可选链
+a?.b
+// → a == null ? void 0 : a.b
+
+// ==================== Polyfill ====================
+// 为旧环境提供新 API 的实现
+// 运行时处理
+
+// Promise
+new Promise()
+// 需要引入 Promise polyfill
+
+// Array.prototype.includes
+[].includes()
+// 需要给 Array.prototype 添加 includes 方法
+
+// Object.assign
+Object.assign({}, obj)
+// 需要给 Object 添加 assign 方法
+
+// ==================== 总结 ====================
+// 语法转换：
+// - 编译时完成
+// - 不增加运行时代码（除了辅助函数）
+// - Babel 默认行为
+
+// Polyfill：
+// - 运行时注入
+// - 增加打包体积
+// - 需要配置 useBuiltIns 或 transform-runtime
+```
+:::
+
+## 工程化配置示例
+
+::: details React 项目配置
+```javascript
+// babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      targets: '> 0.5%, not dead',
+      useBuiltIns: 'usage',
+      corejs: 3,
+      modules: false
+    }],
+    ['@babel/preset-react', {
+      runtime: 'automatic',  // React 17+ 自动导入
+      development: process.env.NODE_ENV === 'development'
+    }]
+  ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      helpers: true
+    }],
+    // 开发环境添加 React Refresh
+    process.env.NODE_ENV === 'development' && 'react-refresh/babel'
+  ].filter(Boolean)
+}
+```
+:::
+
+::: details Vue 项目配置
+```javascript
+// babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      targets: '> 0.5%, not dead',
+      useBuiltIns: 'usage',
+      corejs: 3,
+      modules: false
+    }]
+  ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      helpers: true
+    }],
+    // Vue JSX 支持
+    '@vue/babel-plugin-jsx'
+  ]
+}
+```
+:::
+
+::: details TypeScript 项目配置
+```javascript
+// babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      targets: '> 0.5%, not dead',
+      useBuiltIns: 'usage',
+      corejs: 3,
+      modules: false
+    }],
+    ['@babel/preset-typescript', {
+      isTSX: true,
+      allExtensions: true
+    }]
+  ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      helpers: true
+    }]
+  ]
+}
+
+// 注意：Babel 只移除类型注解，不做类型检查
+// 需要配合 tsc --noEmit 或 fork-ts-checker-webpack-plugin
+```
+:::
+
+::: details 库开发配置
+```javascript
+// babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      modules: false,       // 保留 ESM
+      useBuiltIns: false    // 不引入 polyfill
+    }],
+    '@babel/preset-typescript'
+  ],
+  plugins: [
+    ['@babel/plugin-transform-runtime', {
+      helpers: true,
+      regenerator: true,
+      corejs: 3           // 沙盒化 polyfill
+    }]
+  ]
+}
+
+// package.json
+{
+  "main": "lib/index.js",      // CommonJS
+  "module": "es/index.js",     // ESM
+  "types": "types/index.d.ts", // 类型声明
+  "sideEffects": false,        // 支持 tree-shaking
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.20.0"
+  }
+}
+```
+:::
+
+::: details Monorepo 配置
+```javascript
+// 根目录 babel.config.js
+module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      targets: '> 0.5%, not dead'
+    }]
+  ],
+  // 允许 packages 目录下的 .babelrc 生效
+  babelrcRoots: [
+    '.',
+    'packages/*'
+  ]
+}
+
+// packages/app/.babelrc
+{
+  "presets": ["@babel/preset-react"]
+}
+
+// packages/utils/.babelrc
+{
+  "plugins": [
+    ["@babel/plugin-transform-runtime", {
+      "corejs": 3
+    }]
+  ]
+}
+```
+:::
+
+## 调试与优化
+
+::: details 调试 Babel 配置
+```javascript
+// 1. 启用 debug 选项
+{
+  presets: [
+    ['@babel/preset-env', {
+      debug: true  // 输出使用的插件列表
+    }]
+  ]
+}
+
+// 2. 使用 BABEL_SHOW_CONFIG_FOR 环境变量
+// BABEL_SHOW_CONFIG_FOR=./src/index.js npm run build
+
+// 3. 查看编译结果
+// npx babel src/index.js --out-file output.js
+
+// 4. 使用 Babel REPL
+// https://babeljs.io/repl
+```
+:::
+
+::: details 性能优化
+```javascript
+// 1. 缩小编译范围
+// webpack.config.js
+module.exports = {
+  module: {
+    rules: [{
+      test: /\.js$/,
+      exclude: /node_modules/,  // 排除 node_modules
+      include: path.resolve(__dirname, 'src'),  // 只处理 src
+      use: 'babel-loader'
+    }]
+  }
+}
+
+// 2. 启用缓存
+// babel-loader 缓存
+{
+  loader: 'babel-loader',
+  options: {
+    cacheDirectory: true,      // 启用缓存
+    cacheCompression: false    // 禁用压缩（提高速度）
+  }
+}
+
+// 3. 使用 api.cache
+// babel.config.js
+module.exports = function(api) {
+  api.cache(true)  // 永久缓存
+  // api.cache.using(() => process.env.NODE_ENV)  // 基于环境缓存
+
+  return {
+    // 配置...
+  }
+}
+
+// 4. 减少不必要的转换
+{
+  presets: [
+    ['@babel/preset-env', {
+      targets: { esmodules: true },  // 只针对现代浏览器
+      bugfixes: true                  // 更精细的转换
+    }]
+  ]
+}
+```
+:::

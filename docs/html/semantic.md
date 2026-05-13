@@ -1502,3 +1502,310 @@ function hello() {
 ```
 
 ---
+
+## 面试题
+
+::: details 1. 什么是 HTML 语义化？
+**答：**
+语义化是指使用恰当的 HTML 标签来描述内容的含义和结构，而不仅仅关注外观。
+
+**核心思想：**
+- 用正确的标签做正确的事
+- 标签本身就能表达内容的性质
+- 代码即文档
+
+**示例：**
+```html
+<!-- 非语义化 -->
+<div class="title">标题</div>
+
+<!-- 语义化 -->
+<h1>标题</h1>
+```
+:::
+
+::: details 2. 语义化有什么好处？
+**答：**
+
+1. **SEO 优化**：搜索引擎更好地理解页面结构
+2. **可访问性**：屏幕阅读器能准确解读内容
+3. **可维护性**：代码结构清晰，易于理解和修改
+4. **可读性**：开发者能快速了解页面结构
+5. **语义明确**：标签本身说明了内容的性质
+:::
+
+::: details 3. HTML5 新增了哪些语义化标签？
+**答：**
+
+**结构标签：**
+- `<header>` - 头部
+- `<nav>` - 导航
+- `<main>` - 主内容
+- `<article>` - 独立文章
+- `<section>` - 区块
+- `<aside>` - 侧边栏
+- `<footer>` - 页脚
+
+**内容标签：**
+- `<figure>` / `<figcaption>` - 图片和说明
+- `<time>` - 时间
+- `<mark>` - 高亮
+- `<details>` / `<summary>` - 折叠详情
+:::
+
+::: details 4. article 和 section 的区别？
+**答：**
+
+**article：**
+- 独立的、完整的内容单元
+- 可以单独分发或重用（如 RSS）
+- 通常包含自己的标题
+- 示例：博客文章、新闻、评论、产品卡片
+
+**section：**
+- 文档中的主题性分组
+- 通常包含标题
+- 是文档大纲的一部分
+- 示例：章节、选项卡内容
+
+**判断方法：**
+- 问：这段内容能否独立存在？能 → article，否 → section
+- article 可以包含 section（文章的章节）
+- section 可以包含 article（新闻列表中的每篇新闻）
+
+```html
+<!-- article 包含 section -->
+<article>
+    <h1>文章标题</h1>
+    <section>
+        <h2>第一章</h2>
+        <p>内容...</p>
+    </section>
+    <section>
+        <h2>第二章</h2>
+        <p>内容...</p>
+    </section>
+</article>
+
+<!-- section 包含 article -->
+<section>
+    <h2>最新新闻</h2>
+    <article>新闻1</article>
+    <article>新闻2</article>
+</section>
+```
+:::
+
+::: details 5. 一个页面可以有多个 main 标签吗？
+**答：**
+不可以。一个页面只能有**一个可见的** `<main>` 标签。
+
+**原因：**
+- `<main>` 表示文档的主要内容
+- 帮助屏幕阅读器快速定位主内容
+- 有利于 SEO
+
+**特殊情况：**
+- 如果使用 `hidden` 属性隐藏，可以有多个 main，但只能有一个可见
+
+```html
+<!-- ❌ 错误：多个可见的 main -->
+<main>内容1</main>
+<main>内容2</main>
+
+<!-- ✅ 正确：只有一个可见 -->
+<main>主要内容</main>
+
+<!-- ✅ 正确：其他 main 隐藏 -->
+<main>当前页面</main>
+<main hidden>其他页面（SPA）</main>
+```
+:::
+
+::: details 6. 如何选择合适的语义化标签？
+**答：**
+
+**决策流程：**
+1. 是否是导航链接？→ `<nav>`
+2. 是否是头部？→ `<header>`
+3. 是否是主要内容？→ `<main>`
+4. 是否是独立完整的内容？→ `<article>`
+5. 是否是主题性分组？→ `<section>`
+6. 是否是侧边内容？→ `<aside>`
+7. 是否是页脚？→ `<footer>`
+8. 都不是？→ `<div>`
+
+**原则：**
+- 优先使用语义化标签
+- 没有合适的语义化标签时用 div
+- 不要为了语义化而强行使用
+:::
+
+::: details 7. div 和 span 什么时候使用？
+**答：**
+
+**div（块级容器）：**
+- 没有合适的语义化块级标签时使用
+- 纯粹的样式容器
+- 布局需要
+
+```html
+<!-- ✅ 正确：样式容器 -->
+<div class="card-container">
+    <article class="card">...</article>
+</div>
+
+<!-- ✅ 正确：布局需要 -->
+<div class="row">
+    <div class="col">...</div>
+    <div class="col">...</div>
+</div>
+```
+
+**span（内联容器）：**
+- 没有合适的语义化内联标签时使用
+- 需要单独设置样式
+- 不改变文本含义
+
+```html
+<!-- ✅ 正确：样式包装 -->
+<p>这是 <span class="highlight">重点</span> 内容</p>
+
+<!-- ❌ 错误：应该用 strong -->
+<p>这是 <span class="bold">重要</span> 内容</p>
+
+<!-- ✅ 正确 -->
+<p>这是 <strong>重要</strong> 内容</p>
+```
+:::
+
+::: details 8. 如何提升页面的可访问性？
+**答：**
+
+1. **使用语义化标签**
+```html
+<nav aria-label="主导航">
+    <ul>
+        <li><a href="/" aria-current="page">首页</a></li>
+    </ul>
+</nav>
+```
+
+2. **提供 alt 文本**
+```html
+<img src="chart.png" alt="销售数据图表">
+```
+
+3. **使用 label 关联表单**
+```html
+<label for="email">邮箱</label>
+<input type="email" id="email">
+```
+
+4. **提供键盘导航支持**
+```html
+<button tabindex="0">按钮</button>
+```
+
+5. **使用 ARIA 属性**
+```html
+<button aria-label="关闭" aria-pressed="false">×</button>
+```
+
+6. **合理的对比度和字体大小**
+7. **提供跳过导航链接**
+```html
+<a href="#main-content" class="skip-link">跳到主内容</a>
+```
+:::
+
+::: details 9. 语义化对 SEO 有什么帮助？
+**答：**
+
+1. **更好的页面结构**
+   - 搜索引擎能理解内容的层次和重要性
+   - `<h1>` 权重 > `<h2>` > `<h3>`
+
+2. **关键内容识别**
+   - `<article>` 标识主要内容
+   - `<nav>` 帮助识别导航区域
+
+3. **丰富摘要**
+   - 使用 Schema.org 微数据
+   - 搜索结果显示评分、价格等
+
+4. **更快的爬取**
+   - 清晰的结构让爬虫更高效
+
+5. **移动友好**
+   - 语义化通常伴随响应式设计
+
+**示例：**
+```html
+<!-- SEO 友好的结构 -->
+<article itemscope itemtype="http://schema.org/Article">
+    <header>
+        <h1 itemprop="headline">SEO 优化指南</h1>
+        <time itemprop="datePublished" datetime="2024-01-01">2024年1月1日</time>
+    </header>
+    <div itemprop="articleBody">
+        <p>内容...</p>
+    </div>
+</article>
+```
+:::
+
+::: details 10. 实际项目中如何落地语义化？
+**答：**
+
+1. **制定规范**
+   - 团队统一语义化标准
+   - Code Review 检查
+
+2. **使用 Linter**
+   - ESLint 插件检查 HTML
+   - 自动化检测
+
+3. **组件化开发**
+```jsx
+// React 组件示例
+function BlogPost({ title, date, content }) {
+    return (
+        <article className="blog-post">
+            <header>
+                <h1>{title}</h1>
+                <time dateTime={date}>{formatDate(date)}</time>
+            </header>
+            <div className="content">{content}</div>
+        </article>
+    );
+}
+```
+
+4. **渐进式改进**
+   - 新页面严格使用语义化
+   - 老页面逐步重构
+
+5. **测试验证**
+   - 使用屏幕阅读器测试
+   - Lighthouse 评分
+   - WAVE 可访问性检测
+
+---
+:::
+
+## 总结
+
+语义化是 HTML 的核心理念，掌握语义化不仅是技术能力的体现，更是对用户体验和 Web 标准的尊重。
+
+**核心要点：**
+1. 使用恰当的标签描述内容
+2. 提升 SEO、可访问性、可维护性
+3. 理解各语义化标签的适用场景
+4. 合理使用 ARIA 增强可访问性
+5. 在实际项目中落地执行
+
+**记住：**
+- 语义化不是目的，而是手段
+- 用户体验和可访问性才是最终目标
+- 好的语义化代码应该是自解释的

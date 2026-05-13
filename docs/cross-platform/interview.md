@@ -4,8 +4,7 @@
 
 ## 跨端基础
 
-### 1. 跨端开发的主流方案有哪些？各有什么优缺点？
-
+::: details 1. 跨端开发的主流方案有哪些？各有什么优缺点？
 | 方案 | 代表框架 | 原理 | 优点 | 缺点 |
 |------|---------|------|------|------|
 | **编译时转换** | uni-app、Taro | 将代码编译为各平台原生代码 | 性能接近原生 | 兼容性处理复杂 |
@@ -14,9 +13,9 @@
 | **自绘引擎** | Flutter | 自己绘制 UI | 性能最好，一致性高 | 包体大，学习 Dart |
 
 ---
+:::
 
-### 2. uni-app 和 Taro 如何选择？
-
+::: details 2. uni-app 和 Taro 如何选择？
 | 特性 | uni-app | Taro |
 |------|---------|------|
 | 语法 | Vue 语法 | React/Vue 语法 |
@@ -28,11 +27,11 @@
 **选型建议**：Vue 技术栈 → uni-app；React 技术栈 → Taro；需要 App 端 → uni-app（内置 App 支持更完善）
 
 ---
+:::
 
 ## 小程序原理
 
-### 3. 小程序的双线程架构是什么？
-
+::: details 3. 小程序的双线程架构是什么？
 小程序采用**渲染层（WebView）+ 逻辑层（JSCore）**双线程架构：
 
 ```
@@ -48,9 +47,9 @@
 **缺点**：通信是异步的，频繁的 setData 会有性能问题
 
 ---
+:::
 
-### 4. 小程序的生命周期有哪些？
-
+::: details 4. 小程序的生命周期有哪些？
 **应用生命周期（App）：**
 - `onLaunch`：小程序初始化（只触发一次）
 - `onShow`：小程序启动或从后台进入前台
@@ -67,9 +66,9 @@
 - `created` → `attached` → `ready` → `detached`
 
 ---
+:::
 
-### 5. 小程序 setData 的注意事项？
-
+::: details 5. 小程序 setData 的注意事项？
 ```javascript
 // ❌ 频繁 setData（每次都触发渲染层更新）
 for (let i = 0; i < 100; i++) {
@@ -96,9 +95,9 @@ this.setData({ 'list[0].name': 'new name' });
 4. 长列表用分页或虚拟列表
 
 ---
+:::
 
-### 6. 小程序如何实现页面间通信？
-
+::: details 6. 小程序如何实现页面间通信？
 ```javascript
 // 1. URL 参数（简单数据）
 wx.navigateTo({ url: '/pages/detail?id=123' });
@@ -116,11 +115,11 @@ prevPage.setData({ result: 'success' });
 ```
 
 ---
+:::
 
 ## uni-app
 
-### 7. uni-app 的条件编译是什么？
-
+::: details 7. uni-app 的条件编译是什么？
 条件编译允许针对不同平台编写不同代码：
 
 ```javascript
@@ -143,9 +142,9 @@ console.log('非 App 平台');
 **常用平台标识**：`MP-WEIXIN`、`MP-ALIPAY`、`H5`、`APP-PLUS`、`MP`（所有小程序）
 
 ---
+:::
 
-### 8. uni-app 的性能优化有哪些？
-
+::: details 8. uni-app 的性能优化有哪些？
 1. **减少 setData 频率**：合并数据更新，避免频繁触发
 2. **长列表优化**：使用 `<recycle-list>`（微信）或虚拟列表
 3. **图片优化**：懒加载（`lazy-load`）、WebP 格式、CDN
@@ -154,11 +153,11 @@ console.log('非 App 平台');
 6. **避免频繁获取节点信息**：缓存 `createSelectorQuery` 结果
 
 ---
+:::
 
 ## Taro
 
-### 9. Taro 3.x 的运行时原理是什么？
-
+::: details 9. Taro 3.x 的运行时原理是什么？
 Taro 3.x 采用**运行时适配**方案：
 
 ```
@@ -176,9 +175,9 @@ React/Vue 代码
 **优势**：支持 React Hooks、Vue 3 Composition API，更接近原生开发体验
 
 ---
+:::
 
-### 10. 小程序分包加载如何配置？
-
+::: details 10. 小程序分包加载如何配置？
 ```json
 // app.json
 {
@@ -204,3 +203,4 @@ React/Vue 代码
 ```
 
 **主包限制**：2MB；单个分包限制：2MB；总包限制：20MB（微信）
+:::

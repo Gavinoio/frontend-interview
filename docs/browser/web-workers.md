@@ -812,3 +812,53 @@ import { helper } from './helper.js';
 // ...
 ```
 
+## 面试常见问题
+
+::: details 1. Web Worker 有哪些限制？
+- 无法访问 DOM
+- 无法访问 window、document、parent
+- 无法使用 localStorage
+- 受同源策略限制
+- 无法使用 alert、confirm
+:::
+
+::: details 2. 如何在 Worker 和主线程之间高效传输大数据？
+- 使用 Transferable Objects 转移所有权
+- 使用 SharedArrayBuffer 共享内存
+- 分块传输大数据
+:::
+
+::: details 3. Dedicated Worker、Shared Worker、Service Worker 的区别？
+| 特性 | Dedicated Worker | Shared Worker | Service Worker |
+|------|-----------------|---------------|----------------|
+| 关联页面 | 单个页面 | 多个页面 | 所有页面 |
+| 生命周期 | 页面关闭终止 | 所有连接关闭终止 | 独立于页面 |
+| 主要用途 | 计算密集任务 | 跨页面通信 | 离线缓存、推送 |
+| API | postMessage | port.postMessage | fetch 拦截 |
+:::
+
+::: details 4. 为什么 Worker 不能操作 DOM？
+- DOM 不是线程安全的
+- 多线程同时操作 DOM 会导致竞态条件
+- 简化了浏览器的实现
+:::
+
+::: details 5. 如何实现 Worker 池？
+关键点：
+- 维护固定数量的 Worker
+- 任务队列管理
+- 空闲 Worker 调度
+- 错误处理和重试
+:::
+
+## 总结
+
+Web Workers 是前端实现多线程的重要手段：
+
+1. **Dedicated Worker**：适合单页面的计算密集型任务
+2. **Shared Worker**：适合多标签页共享数据和连接
+3. **Service Worker**：适合离线缓存、消息推送
+4. **数据传输**：使用 Transferable Objects 或 SharedArrayBuffer 优化大数据传输
+5. **最佳实践**：Worker 池、Promise 封装、模块化
+
+掌握 Web Workers 能够显著提升 Web 应用的性能和用户体验。

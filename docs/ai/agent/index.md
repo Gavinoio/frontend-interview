@@ -909,8 +909,7 @@ const result = await orchestrator.collaborativeExecution(
 
 ## 常见面试题
 
-### 概念理解题
-
+::: details 概念理解题
 **1. 什么是 AI Agent？它与 ChatGPT 有什么区别？**
 
 **答案要点：**
@@ -934,9 +933,9 @@ const result = await orchestrator.collaborativeExecution(
 - 交替进行推理和行动
 - 流程：Thought → Action → Observation → ...
 - 每次行动后观察结果，再进行下一轮推理
+:::
 
-### 设计题
-
+::: details 设计题
 **4. 设计一个能够自动处理客户退款请求的 Agent**
 
 ```javascript
@@ -994,21 +993,22 @@ class RefundAgent {
 - 记忆管理：定期清理、重要性排序
 
 ---
+:::
 
 ## 总结
 
-### AI Agent 核心要点
-
+::: details AI Agent 核心要点
 1. **架构组成**：LLM + Memory + Tools + Planning
 2. **执行模式**：ReAct（推理-行动）、Plan-and-Execute（规划-执行）
 3. **工具系统**：扩展 Agent 能力的关键
 4. **记忆系统**：短期记忆 + 长期记忆 + 工作记忆
 5. **Multi-Agent**：多 Agent 协作完成复杂任务
+:::
 
-### 关键技术
-
+::: details 关键技术
 - Function Calling / Tool Use
 - 向量数据库与语义检索
 - 任务规划与分解
 - 错误处理与重试机制
 - 安全性与权限控制
+:::

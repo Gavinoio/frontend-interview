@@ -4,8 +4,7 @@
 
 ## CSS 基础
 
-### 1. 标准盒模型和 IE 盒模型的区别？
-
+::: details 1. 标准盒模型和 IE 盒模型的区别？
 - **标准盒模型**：`width/height` 只包含 content，总宽度 = width + padding + border
 - **IE 盒模型**：`width/height` 包含 content + padding + border，总宽度 = width
 
@@ -14,9 +13,9 @@
 **推荐**：全局设置 `* { box-sizing: border-box; }`，更符合直觉。
 
 ---
+:::
 
-### 2. CSS 选择器优先级如何计算？
-
+::: details 2. CSS 选择器优先级如何计算？
 优先级从高到低：
 1. `!important`（最高，慎用）
 2. 内联样式（1000）
@@ -28,9 +27,9 @@
 相同优先级时，后定义的覆盖先定义的。
 
 ---
+:::
 
-### 3. display: none、visibility: hidden、opacity: 0 的区别？
-
+::: details 3. display: none、visibility: hidden、opacity: 0 的区别？
 | 特性 | display: none | visibility: hidden | opacity: 0 |
 |------|---------------|-------------------|------------|
 | 空间占用 | 不占空间 | 占据空间 | 占据空间 |
@@ -40,9 +39,9 @@
 | transition | 不支持 | 支持 | 支持 |
 
 ---
+:::
 
-### 4. link 和 @import 的区别？
-
+::: details 4. link 和 @import 的区别？
 | 特性 | `<link>` | `@import` |
 |------|----------|-----------|
 | 本质 | HTML 标签 | CSS 语法 |
@@ -51,9 +50,9 @@
 | 推荐 | ✅ 推荐 | ❌ 不推荐 |
 
 ---
+:::
 
-### 5. CSS3 新增了哪些重要特性？
-
+::: details 5. CSS3 新增了哪些重要特性？
 1. **选择器**：`:nth-child()`、`:not()`、属性选择器
 2. **盒模型**：`box-sizing`、`border-radius`、`box-shadow`
 3. **视觉效果**：`filter`、`backdrop-filter`、渐变
@@ -64,9 +63,9 @@
 8. **自定义属性**：CSS 变量（`--var-name`）
 
 ---
+:::
 
-### 6. 如何清除浮动？
-
+::: details 6. 如何清除浮动？
 ```css
 /* 方法1：clearfix 伪元素（推荐） */
 .clearfix::after {
@@ -80,11 +79,11 @@
 ```
 
 ---
+:::
 
 ## BFC
 
-### 7. 什么是 BFC？如何触发？有什么作用？
-
+::: details 7. 什么是 BFC？如何触发？有什么作用？
 **BFC（块级格式化上下文）** 是一个独立的渲染区域，内部元素的布局不影响外部。
 
 **触发条件：**
@@ -99,11 +98,11 @@
 3. **自适应两栏布局**：BFC 区域不会与浮动元素重叠
 
 ---
+:::
 
 ## Flex 布局
 
-### 8. flex: 1 代表什么？
-
+::: details 8. flex: 1 代表什么？
 `flex: 1` 等价于 `flex: 1 1 0%`，即：
 - `flex-grow: 1`：有剩余空间时放大
 - `flex-shrink: 1`：空间不足时缩小
@@ -118,9 +117,9 @@
 | `flex: none` | `0 0 auto` | 不伸缩，保持原始大小 |
 
 ---
+:::
 
-### 9. flex: 1 和 flex: auto 的区别？
-
+::: details 9. flex: 1 和 flex: auto 的区别？
 区别在于 `flex-basis`：
 - `flex: 1`（`flex-basis: 0%`）：完全平分，忽略内容大小
 - `flex: auto`（`flex-basis: auto`）：先保留各自内容大小，再平分剩余空间
@@ -128,20 +127,20 @@
 **场景**：需要严格等分用 `flex: 1`；需要内容自适应用 `flex: auto`。
 
 ---
+:::
 
-### 10. Flex 布局和 Grid 布局的区别？
-
+::: details 10. Flex 布局和 Grid 布局的区别？
 - **Flex**：一维布局（行或列），适合组件内部、导航栏、卡片列表
 - **Grid**：二维布局（行和列同时控制），适合页面整体布局、复杂网格
 
 两者可以配合使用：Grid 做页面骨架，Flex 做组件内部排列。
 
 ---
+:::
 
 ## 居中方案
 
-### 11. 如何实现水平垂直居中？
-
+::: details 11. 如何实现水平垂直居中？
 **现代方案（推荐）：**
 ```css
 /* Flex */
@@ -161,9 +160,9 @@
 ```
 
 ---
+:::
 
-### 12. margin: auto 为什么能水平居中但不能垂直居中？
-
+::: details 12. margin: auto 为什么能水平居中但不能垂直居中？
 **水平方向**：块级元素宽度有明确计算方式，`margin: 0 auto` 平分剩余空间。
 
 **垂直方向**：正常文档流中高度由内容决定，没有"剩余空间"概念，`margin: auto` 计算为 0。
@@ -171,11 +170,11 @@
 **例外**：绝对定位 + `top: 0; bottom: 0;` 时，垂直方向有了明确空间，`margin: auto` 可以垂直居中（需固定高度）。
 
 ---
+:::
 
 ## 响应式设计
 
-### 13. rem、em、vw 的区别和使用场景？
-
+::: details 13. rem、em、vw 的区别和使用场景？
 | 单位 | 相对于 | 特点 | 使用场景 |
 |------|--------|------|----------|
 | `rem` | 根元素字体大小 | 不累加，统一管理 | 布局、字体（首选） |
@@ -184,17 +183,17 @@
 | `px` | 绝对像素 | 精确 | 边框、阴影 |
 
 ---
+:::
 
-### 14. 移动端适配方案有哪些？
-
+::: details 14. 移动端适配方案有哪些？
 1. **vw 方案（推荐）**：PostCSS 自动将 px 转为 vw，无需 JS
 2. **Flexible 方案（rem）**：动态设置根字体大小，`font-size = clientWidth / 10`
 3. **媒体查询 + rem**：在不同断点设置不同根字体大小
 
 ---
+:::
 
-### 15. 如何解决移动端 1px 边框问题？
-
+::: details 15. 如何解决移动端 1px 边框问题？
 高清屏（DPR=2）上 CSS 的 1px 实际渲染为 2 个物理像素，显示偏粗。
 
 ```css
@@ -211,11 +210,11 @@
 ```
 
 ---
+:::
 
 ## 主题与 CSS 变量
 
-### 16. CSS 变量和 Sass 变量的区别？
-
+::: details 16. CSS 变量和 Sass 变量的区别？
 | 特性 | CSS 变量 | Sass 变量 |
 |------|---------|-----------|
 | 处理时机 | 运行时 | 编译时 |
@@ -224,9 +223,9 @@
 | 开发者工具 | 可见 | 不可见 |
 
 ---
+:::
 
-### 17. 如何实现夜间模式？如何避免切换时的闪烁？
-
+::: details 17. 如何实现夜间模式？如何避免切换时的闪烁？
 **实现方案：**
 ```css
 :root { --bg: #fff; --text: #333; }
@@ -243,9 +242,9 @@
 ```
 
 ---
+:::
 
-### 18. height: auto 无法过渡怎么办？
-
+::: details 18. height: auto 无法过渡怎么办？
 ```css
 /* 方案1：max-height 过渡（有延迟感） */
 .collapse { max-height: 0; overflow: hidden; transition: max-height 0.3s; }
@@ -258,11 +257,11 @@
 ```
 
 ---
+:::
 
 ## 原子化 CSS
 
-### 19. 什么是原子化 CSS？有什么优势和劣势？
-
+::: details 19. 什么是原子化 CSS？有什么优势和劣势？
 **定义**：将样式拆分为最小的单一用途功能类，通过组合类名构建 UI（如 Tailwind CSS）。
 
 **优势：**
@@ -277,9 +276,9 @@
 - 不适合高度动态的样式
 
 ---
+:::
 
-### 20. Tailwind CSS 的 JIT 模式是什么？
-
+::: details 20. Tailwind CSS 的 JIT 模式是什么？
 JIT（Just-In-Time）是 Tailwind 3.0+ 的默认模式，按需生成 CSS：
 - 扫描源码中实际使用的类名，只生成对应 CSS
 - 启动速度从 3-5s 降至 <100ms
@@ -287,11 +286,11 @@ JIT（Just-In-Time）是 Tailwind 3.0+ 的默认模式，按需生成 CSS：
 - 开发环境 CSS 体积从 3-10MB 降至几 KB
 
 ---
+:::
 
 ## CSS-in-JS
 
-### 21. CSS-in-JS 的优缺点是什么？
-
+::: details 21. CSS-in-JS 的优缺点是什么？
 **优点：**
 - 样式与组件共存，天然作用域隔离
 - 可使用 JS 变量和逻辑
@@ -307,11 +306,11 @@ JIT（Just-In-Time）是 Tailwind 3.0+ 的默认模式，按需生成 CSS：
 **主流方案**：styled-components、Emotion（运行时）；vanilla-extract、Linaria（零运行时）。
 
 ---
+:::
 
 ## 综合题
 
-### 22. 重排（Reflow）和重绘（Repaint）的区别？如何优化？
-
+::: details 22. 重排（Reflow）和重绘（Repaint）的区别？如何优化？
 **重排**：元素的几何属性（位置、尺寸）发生变化，浏览器需要重新计算布局。触发：改变 width/height/margin/padding、DOM 增删、字体大小变化。
 
 **重绘**：元素外观变化但不影响布局。触发：改变 color/background/visibility。
@@ -338,3 +337,4 @@ const fragment = document.createDocumentFragment();
 items.forEach(item => fragment.appendChild(createEl(item)));
 container.appendChild(fragment);
 ```
+:::

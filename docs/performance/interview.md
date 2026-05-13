@@ -4,8 +4,7 @@
 
 ## 性能指标
 
-### 1. 前端核心性能指标有哪些？
-
+::: details 1. 前端核心性能指标有哪些？
 **Core Web Vitals（Google 核心指标）：**
 
 | 指标 | 全称 | 含义 | 良好阈值 |
@@ -21,9 +20,9 @@
 - **TTI**（Time to Interactive）：可交互时间
 
 ---
+:::
 
-### 2. 前端性能优化有哪些手段？
-
+::: details 2. 前端性能优化有哪些手段？
 **加载阶段：**
 - 资源压缩（Gzip/Brotli、代码压缩）
 - 代码分割 + 路由懒加载
@@ -46,11 +45,11 @@
 - 持久化缓存（文件名 hash）
 
 ---
+:::
 
 ## 加载性能
 
-### 3. 图片优化有哪些方案？
-
+::: details 3. 图片优化有哪些方案？
 1. **格式选择**：WebP（比 JPEG 小 25-35%）、AVIF（更小）、SVG（图标/矢量）
 2. **懒加载**：`loading="lazy"` 或 IntersectionObserver
 3. **响应式图片**：`srcset` + `sizes` 按屏幕分辨率加载合适尺寸
@@ -59,9 +58,9 @@
 6. **预加载关键图片**：`<link rel="preload" as="image">`
 
 ---
+:::
 
-### 4. 代码分割和懒加载如何实现？
-
+::: details 4. 代码分割和懒加载如何实现？
 ```javascript
 // React 路由懒加载
 const Home = lazy(() => import('./pages/Home'));
@@ -83,9 +82,9 @@ const Chart = () => import(/* webpackChunkName: "chart" */ './Chart');
 - 第三方库单独打包（vendor chunk）
 
 ---
+:::
 
-### 5. 预加载指令 preload、prefetch、dns-prefetch 的区别？
-
+::: details 5. 预加载指令 preload、prefetch、dns-prefetch 的区别？
 | 指令 | 时机 | 优先级 | 用途 |
 |------|------|--------|------|
 | `preload` | 当前页面立即需要 | 高 | 关键字体、首屏 CSS/JS |
@@ -101,9 +100,9 @@ const Chart = () => import(/* webpackChunkName: "chart" */ './Chart');
 ```
 
 ---
+:::
 
-### 6. 首屏优化有哪些方案？
-
+::: details 6. 首屏优化有哪些方案？
 1. **SSR/SSG**：服务端渲染，直接返回 HTML，减少白屏时间
 2. **骨架屏**：占位 UI，提升感知性能
 3. **关键 CSS 内联**：首屏 CSS 内联到 HTML，避免阻塞渲染
@@ -112,11 +111,11 @@ const Chart = () => import(/* webpackChunkName: "chart" */ './Chart');
 6. **HTTP/2 Server Push**：服务端主动推送关键资源
 
 ---
+:::
 
 ## 运行时性能
 
-### 7. 如何优化长列表渲染？
-
+::: details 7. 如何优化长列表渲染？
 **虚拟列表（Virtual Scrolling）**：只渲染可视区域内的节点。
 
 ```javascript
@@ -133,9 +132,9 @@ const visibleItems = allItems.slice(startIndex, endIndex);
 **不定高列表**：预估高度 + 渲染后更新实际高度，用 Map 缓存已知高度。
 
 ---
+:::
 
-### 8. 防抖和节流的区别？各适用什么场景？
-
+::: details 8. 防抖和节流的区别？各适用什么场景？
 **防抖（Debounce）**：最后一次触发后延迟执行，期间重复触发会重置计时器。
 - 适用：搜索框输入、窗口 resize 结束后、表单验证
 
@@ -166,9 +165,9 @@ function throttle(fn, interval) {
 ```
 
 ---
+:::
 
-### 9. 什么是时间切片（Time Slicing）？
-
+::: details 9. 什么是时间切片（Time Slicing）？
 将耗时任务拆分为小片段，利用 `requestIdleCallback` 或 `MessageChannel` 在浏览器空闲时执行，避免阻塞主线程。
 
 ```javascript
@@ -190,11 +189,11 @@ function processInChunks(items, chunkSize = 100) {
 React 的 Fiber 架构本质上就是时间切片的实现。
 
 ---
+:::
 
 ## 构建优化
 
-### 10. 什么是 Tree Shaking？如何确保它生效？
-
+::: details 10. 什么是 Tree Shaking？如何确保它生效？
 Tree Shaking 基于 ES Module 的静态分析，在构建时删除未被引用的代码（dead code）。
 
 **生效条件：**
@@ -212,9 +211,9 @@ Tree Shaking 基于 ES Module 的静态分析，在构建时删除未被引用�
 ```
 
 ---
+:::
 
-### 11. Webpack 和 Vite 的构建优化各有哪些手段？
-
+::: details 11. Webpack 和 Vite 的构建优化各有哪些手段？
 **Webpack 优化：**
 - `SplitChunksPlugin`：提取公共代码
 - `TerserPlugin`：JS 压缩
@@ -230,11 +229,11 @@ Tree Shaking 基于 ES Module 的静态分析，在构建时删除未被引用�
 - `@vitejs/plugin-legacy`：兼容旧浏览器
 
 ---
+:::
 
 ## CDN
 
-### 12. CDN 的工作原理是什么？
-
+::: details 12. CDN 的工作原理是什么？
 1. 用户请求资源 → DNS 解析到 GSLB（全局负载均衡）
 2. GSLB 根据用户地理位置、节点负载，返回最近的 CDN 边缘节点 IP
 3. 用户访问边缘节点：
@@ -245,9 +244,9 @@ Tree Shaking 基于 ES Module 的静态分析，在构建时删除未被引用�
 **优势**：减少网络延迟、分担源站压力、提高可用性
 
 ---
+:::
 
-### 13. 静态资源如何配置 CDN 缓存策略？
-
+::: details 13. 静态资源如何配置 CDN 缓存策略？
 ```
 JS/CSS（带 hash）：Cache-Control: max-age=31536000, immutable
   → 文件内容变化时 hash 变化，URL 变化，自动失效
@@ -262,11 +261,11 @@ HTML：Cache-Control: no-cache
 **文件指纹**：构建时在文件名中加入内容 hash（如 `app.a1b2c3.js`），实现长期缓存 + 自动更新。
 
 ---
+:::
 
 ## 性能监控
 
-### 14. 如何采集 Core Web Vitals 指标？
-
+::: details 14. 如何采集 Core Web Vitals 指标？
 ```javascript
 import { onLCP, onFID, onCLS, onINP, onFCP, onTTFB } from 'web-vitals';
 
@@ -293,9 +292,9 @@ observer.observe({ entryTypes: ['largest-contentful-paint'] });
 ```
 
 ---
+:::
 
-### 15. 前端错误监控如何实现？
-
+::: details 15. 前端错误监控如何实现？
 ```javascript
 // JS 运行时错误
 window.addEventListener('error', (e) => {
@@ -319,3 +318,4 @@ window.addEventListener('beforeunload', () => {
     navigator.sendBeacon('/report', JSON.stringify(errorQueue));
 });
 ```
+:::

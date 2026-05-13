@@ -496,3 +496,148 @@ if (window.__POWERED_BY_WUJIE__) {
 
 ---
 
+## 常见面试题
+
+::: details 1. Wujie 为什么使用 iframe + Web Components？
+**回答要点**：
+- **iframe 优势**：天然的 JS 沙箱隔离，不需要 Proxy 劫持，不会有兼容性问题
+- **iframe 劣势**：传统 iframe 的 DOM 隔离在 iframe 内部，导致弹窗、样式等问题
+- **Web Components 解决方案**：将 DOM 渲染到 Shadow DOM 中，保留 iframe 的 JS 隔离，又解决了 DOM 问题
+- **巧妙之处**：通过劫持 iframe 的 document 操作，让 JS 以为自己在操作 iframe 的 DOM，实际操作的是 Shadow DOM
+:::
+
+::: details 2. Wujie 的预加载和预执行是什么？
+```javascript
+// 预加载：提前加载子应用资源
+preloadApp({
+  name: 'sub-app',
+  url: 'http://localhost:8001'
+})
+
+// 预执行：提前创建 iframe 并执行 JS
+preloadApp({
+  name: 'sub-app',
+  url: 'http://localhost:8001',
+  exec: true  // 预执行
+})
+```
+
+**回答要点**：
+- **预加载**：应用启动时就加载子应用的 HTML、JS、CSS 资源，减少首次打开时间
+- **预执行**：不仅加载资源，还提前创建 iframe 沙箱并执行 JS，首次渲染几乎无延迟
+- **应用场景**：首页加载完成后预加载常用子应用，用户点击时秒开
+:::
+
+::: details 3. Wujie 如何实现保活（keep-alive）？
+**回答要点**：
+```javascript
+// 保活模式下，切换子应用时：
+// 1. 不销毁 iframe（JS 状态保持）
+// 2. 不清空 Shadow DOM（DOM 状态保持）
+// 3. 只是隐藏容器
+
+startApp({
+  name: 'sub-app',
+  url: 'http://localhost:8001',
+  alive: true  // 开启保活
+})
+
+// 实现原理
+class WujieApp {
+  deactivate() {
+    // 只隐藏，不销毁
+    this.container.style.display = 'none'
+    // 触发 deactivated 生命周期
+    this.execLifecycle('deactivated')
+  }
+
+  activate() {
+    // 显示
+    this.container.style.display = 'block'
+    // 触发 activated 生命周期
+    this.execLifecycle('activated')
+  }
+}
+```
+:::
+
+::: details 4. 如何解决 Wujie 子应用的弹窗层级问题？
+```javascript
+// 问题：子应用弹窗在 Shadow DOM 中，可能被主应用遮挡
+
+// 解决方案1：使用 degrade 降级模式
+startApp({
+  name: 'sub-app',
+  url: 'http://localhost:8001',
+  degrade: true  // 降级为 iframe 模式，弹窗正常
+})
+
+// 解决方案2：弹窗挂载到主应用
+// 子应用中
+const dialog = document.createElement('div')
+// 挂载到主应用 body
+window.parent.document.body.appendChild(dialog)
+
+// 解决方案3：使用主应用的弹窗组件
+window.$wujie.props.showDialog({
+  title: '提示',
+  content: '操作成功'
+})
+```
+:::
+
+::: details 5. Wujie 的降级模式是什么？
+**回答要点**：
+```javascript
+startApp({
+  name: 'sub-app',
+  url: 'http://localhost:8001',
+  degrade: true  // 降级为纯 iframe 模式
+})
+```
+
+- **降级触发条件**：浏览器不支持 Web Components 或 Proxy
+- **降级后表现**：使用传统 iframe 方案，子应用完全在 iframe 中渲染
+- **降级后限制**：无法共享 DOM 样式，弹窗在 iframe 内部
+
+---
+:::
+
+## 最佳实践
+
+::: details 1. 子应用资源处理
+```javascript
+// vite.config.js - Vite 子应用配置
+export default {
+  base: 'http://localhost:8001/',  // 必须是完整 URL
+  server: {
+    cors: true,
+    origin: 'http://localhost:8001'
+  }
+}
+```
+:::
+
+::: details 2. 开发环境配置
+```javascript
+// 主应用开发配置
+const subAppUrl = import.meta.env.DEV
+  ? 'http://localhost:8001'  // 开发环境
+  : '/sub-app/'              // 生产环境
+```
+:::
+
+::: details 3. 错误处理
+```javascript
+startApp({
+  name: 'sub-app',
+  url: 'http://localhost:8001',
+
+  // 加载失败处理
+  loadError: (url, e) => {
+    console.error('子应用加载失败:', url, e)
+    // 显示错误提示或降级方案
+  }
+})
+```
+:::

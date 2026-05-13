@@ -584,3 +584,145 @@ useClickOutside(menuRef, () => {
 });
 ```
 
+## 面试常见问题
+
+::: details 1. 自定义指令的使用场景？
+- DOM 操作：聚焦、滚动、动画
+- 事件处理：点击外部、长按、防抖节流
+- 权限控制：按钮权限、页面权限
+- 图片懒加载
+- 表单验证
+- 复制文本
+:::
+
+::: details 2. Vue 2 和 Vue 3 指令钩子的区别？
+Vue 3 重命名了钩子函数，使其与组件生命周期更一致：
+- bind → beforeMount
+- inserted → mounted
+- unbind → unmounted
+- 新增 created 和 beforeUnmount
+:::
+
+::: details 3. 指令和组件的选择？
+```javascript
+// 使用指令的情况
+// - 需要直接操作 DOM
+// - 简单的 DOM 增强
+// - 不需要模板或状态管理
+
+// 使用组件的情况
+// - 需要模板
+// - 需要响应式状态
+// - 需要生命周期管理
+// - 功能复杂
+```
+:::
+
+::: details 4. 如何在指令中访问组件实例？
+```javascript
+app.directive('example', {
+  mounted(el, binding) {
+    // 通过 binding.instance 访问组件实例
+    const instance = binding.instance;
+    console.log(instance.$props);
+    console.log(instance.$data);
+  }
+});
+```
+:::
+
+::: details 5. 指令钩子中如何清理副作用？
+```javascript
+app.directive('example', {
+  mounted(el, binding) {
+    // 将需要清理的引用存储在元素上
+    el._handler = () => { /* ... */ };
+    el._observer = new IntersectionObserver(/* ... */);
+
+    document.addEventListener('click', el._handler);
+  },
+  unmounted(el) {
+    // 在 unmounted 中清理
+    document.removeEventListener('click', el._handler);
+    el._observer?.disconnect();
+
+    delete el._handler;
+    delete el._observer;
+  }
+});
+```
+:::
+
+## 最佳实践
+
+::: details 1. 命名规范
+```javascript
+// 全局指令使用 kebab-case
+app.directive('click-outside', { /* ... */ });
+
+// 局部指令使用 camelCase
+const vClickOutside = { /* ... */ };
+```
+:::
+
+::: details 2. 清理副作用
+```javascript
+// 始终在 unmounted 中清理事件监听器、定时器、观察者等
+{
+  mounted(el) {
+    el._cleanup = [];
+    const handler = () => {};
+    document.addEventListener('click', handler);
+    el._cleanup.push(() => document.removeEventListener('click', handler));
+  },
+  unmounted(el) {
+    el._cleanup.forEach(fn => fn());
+  }
+}
+```
+:::
+
+::: details 3. 处理动态值
+```javascript
+// 使用 updated 钩子处理值变化
+{
+  mounted(el, binding) {
+    applyEffect(el, binding.value);
+  },
+  updated(el, binding) {
+    if (binding.value !== binding.oldValue) {
+      applyEffect(el, binding.value);
+    }
+  }
+}
+```
+:::
+
+::: details 4. 类型支持
+```typescript
+// TypeScript 类型定义
+import type { Directive, DirectiveBinding } from 'vue';
+
+interface PermissionBinding extends DirectiveBinding {
+  value: string | string[];
+}
+
+const vPermission: Directive<HTMLElement, string | string[]> = {
+  mounted(el, binding: PermissionBinding) {
+    // ...
+  }
+};
+```
+:::
+
+## 总结
+
+Vue 自定义指令是处理 DOM 操作的强大工具：
+
+1. **使用场景**：直接 DOM 操作、事件处理、权限控制等
+2. **钩子函数**：遵循组件生命周期，Vue 3 重命名更直观
+3. **参数绑定**：支持参数、修饰符、动态值
+4. **清理机制**：在 unmounted 中清理副作用
+5. **与组件对比**：简单 DOM 操作用指令，复杂功能用组件
+
+掌握自定义指令能够优雅地解决很多 DOM 操作需求，是 Vue 开发的重要技能。

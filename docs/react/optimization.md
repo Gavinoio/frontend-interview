@@ -560,3 +560,26 @@ if (process.env.NODE_ENV === 'development') {
 import './wdyr'
 ```
 
+## 常见面试题
+
+::: details 1. React.memo、useMemo、useCallback 的区别？
+- `React.memo`: 缓存组件，props 不变则不重新渲染
+- `useMemo`: 缓存计算结果
+- `useCallback`: 缓存函数引用
+:::
+
+::: details 2. 什么时候使用 useMemo？
+- 计算开销大的操作
+- 作为其他 Hook 的依赖
+- 传递给 memo 组件的对象/数组
+:::
+
+::: details 3. 为什么函数作为 props 会导致子组件重新渲染？
+每次父组件渲染都会创建新的函数对象，引用不同，即使函数内容相同。使用 useCallback 可以保持函数引用稳定。
+:::
+
+::: details 4. 如何优化长列表渲染？
+- 使用虚拟列表（react-window、react-virtualized）
+- 分页加载
+- 使用 key 帮助 React 识别列表项
+:::

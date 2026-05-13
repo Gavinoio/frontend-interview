@@ -1720,3 +1720,733 @@ module.exports = {
 }
 ```
 
+## 面试题
+
+::: details 1. 什么是原子化CSS，有什么优势？
+**答案：**
+
+原子化 CSS（Atomic CSS）是一种 CSS 架构方法，将样式拆分成最小的、单一用途的功能类（原子类）。每个类只负责一个样式属性，通过组合多个原子类来构建复杂的 UI。
+
+**核心概念：**
+- 每个类名只做一件事（如 `p-4` 只设置 padding）
+- 类名直接描述其功能（功能优先，而非语义优先）
+- 通过组合类名构建组件
+
+**主要优势：**
+
+1. **CSS 体积可控**
+   - 随着项目增长，新增功能不再需要新增 CSS
+   - 样式复用率极高，CSS 文件大小趋于稳定
+   - 生产环境可以做到极致的体积优化
+
+2. **开发效率提升**
+   - 无需为每个组件命名类名
+   - 无需在 HTML 和 CSS 文件间切换
+   - 快速原型开发，所见即所得
+
+3. **可维护性强**
+   - 样式与 HTML 紧密耦合，修改影响范围可控
+   - 删除 HTML 即删除样式，无冗余 CSS
+   - 不会产生意外的样式覆盖
+
+4. **一致性好**
+   - 使用设计系统的预定义值
+   - 减少"魔法数字"
+   - 团队风格统一
+
+5. **易于协作**
+   - 降低命名冲突
+   - 代码审查更聚焦功能
+   - 新成员快速上手
+
+**示例对比：**
+
+```html
+<!-- 传统 CSS -->
+<style>
+.user-card {
+  padding: 16px;
+  margin: 8px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+<div class="user-card">...</div>
+
+<!-- 原子化 CSS -->
+<div class="p-4 m-2 bg-white rounded-lg shadow-md">...</div>
+```
+:::
+
+::: details 2. Tailwind CSS 的 JIT 模式是什么？
+**答案：**
+
+JIT（Just-In-Time）模式是 Tailwind CSS 3.0+ 的默认编译模式，它采用"按需生成"策略，只在需要时生成使用到的样式，而不是预先生成所有可能的组合。
+
+**工作原理：**
+
+1. **扫描阶段**：扫描源代码，提取类名
+2. **生成阶段**：只生成实际使用的类的 CSS
+3. **增量更新**：文件变化时，只重新生成变化的部分
+
+**核心优势：**
+
+1. **极快的构建速度**
+   ```
+   传统模式：生成所有可能的组合 → 3-5s 启动
+   JIT 模式：按需生成 → <100ms 启动
+   ```
+
+2. **开发体验提升**
+   - 热更新速度极快（几乎即时）
+   - 无需等待完整编译
+   - 支持任意值
+
+3. **文件体积更小**
+   - 开发环境 CSS 体积大幅减少
+   - 生产环境只包含使用的样式
+   - 无需额外的 PurgeCSS 配置
+
+4. **支持任意值**
+   ```html
+   <!-- JIT 模式支持任意值 -->
+   <div class="top-[117px]">
+   <div class="bg-[#1da1f2]">
+   <div class="text-[14px]">
+   <div class="w-[762px]">
+   <div class="h-[calc(100vh-4rem)]">
+
+   <!-- 使用 CSS 变量 -->
+   <div class="bg-[var(--brand-color)]">
+   ```
+
+5. **所有变体默认启用**
+   ```html
+   <!-- 传统模式需要配置才能使用某些变体 -->
+   <!-- JIT 模式所有变体都可用 -->
+   <div class="hover:rotate-180">
+   <div class="focus:scale-125">
+   <div class="active:brightness-90">
+   ```
+
+**配置（Tailwind 3.0+ 默认启用）：**
+
+```js
+// tailwind.config.js
+module.exports = {
+  // Tailwind 3.0+ 默认就是 JIT 模式
+  content: [
+    './src/**/*.{html,js,vue,jsx,tsx}',
+  ],
+  // ...
+}
+```
+
+**传统模式 vs JIT 模式：**
+
+| 对比项 | 传统模式 | JIT 模式 |
+|-------|---------|---------|
+| 启动时间 | 3-5s | <100ms |
+| 开发环境 CSS 体积 | 3-10MB | 几KB |
+| 热更新速度 | 较慢 | 极快 |
+| 任意值支持 | 不支持 | 支持 |
+| 变体支持 | 需配置 | 全部可用 |
+| 生产环境配置 | 需要 PurgeCSS | 自动优化 |
+:::
+
+::: details 3. UnoCSS 相比 Tailwind 有什么优势？
+**答案：**
+
+UnoCSS 是下一代原子化 CSS 引擎，相比 Tailwind CSS 有以下显著优势：
+
+**1. 性能优势（最大优势）**
+
+```
+性能对比：
+冷启动：Tailwind JIT ~1000ms vs UnoCSS ~50ms (20倍)
+热更新：Tailwind ~50ms vs UnoCSS ~5ms (10倍)
+构建速度：UnoCSS 快 5-200 倍
+```
+
+- **即时编译**：真正的按需生成，零预构建
+- **极快的 HMR**：文件变化时几乎即时更新
+- **体积更小**：核心包 <5KB vs Tailwind ~40KB
+
+**2. 高度灵活和可定制**
+
+```typescript
+// UnoCSS 可以完全自定义规则
+export default defineConfig({
+  rules: [
+    // 自定义任意规则
+    [/^m-(\d+)px$/, ([, d]) => ({ margin: `${d}px` })],
+    ['flex-center', { display: 'flex', 'justify-content': 'center', 'align-items': 'center' }],
+  ]
+})
+```
+
+- **完全可编程**：使用 TypeScript 配置，类型安全
+- **预设系统**：可组合多个预设（Tailwind、Windi、Bootstrap 等）
+- **自定义规则简单**：添加规则只需几行代码
+
+**3. 原生图标支持（杀手级功能）**
+
+```html
+<!-- 直接使用 100+ 图标库 -->
+<div class="i-carbon-sun"></div>
+<div class="i-mdi-github"></div>
+<div class="i-heroicons-outline-home"></div>
+
+<!-- 自定义大小和颜色 -->
+<div class="i-carbon-user text-2xl text-red-500"></div>
+```
+
+- 内置图标预设，支持 Iconify 所有图标集
+- 按需加载，只打包使用的图标
+- 无需额外配置，开箱即用
+
+**4. 属性化模式**
+
+```html
+<!-- 传统方式 -->
+<div class="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-700"></div>
+
+<!-- UnoCSS 属性化模式 -->
+<div
+  bg="blue-500 hover:blue-700"
+  text="white"
+  p="4"
+  rounded="lg"
+></div>
+```
+
+- HTML 更清晰易读
+- 相关样式分组
+- 可选功能，不强制使用
+
+**5. 变体组功能**
+
+```html
+<!-- 传统写法 -->
+<div class="hover:bg-blue-500 hover:text-white hover:scale-110"></div>
+
+<!-- UnoCSS 变体组 -->
+<div class="hover:(bg-blue-500 text-white scale-110)"></div>
+
+<!-- 复杂示例 -->
+<div class="dark:(bg-gray-800 text-white) lg:(grid grid-cols-3)"></div>
+```
+
+- 减少重复前缀
+- 代码更简洁
+- 逻辑更清晰
+
+**6. 快捷方式更强大**
+
+```typescript
+shortcuts: {
+  // 静态
+  'btn': 'px-4 py-2 rounded bg-blue-500 text-white',
+
+  // 动态（支持参数）
+  'btn-color': ([, color]) => `bg-${color}-500 hover:bg-${color}-700`,
+}
+```
+
+**7. 更小的生产包体积**
+
+```
+典型项目对比：
+Tailwind CSS: ~15KB (gzipped)
+UnoCSS:       ~10KB (gzipped)
+```
+
+**8. 开发工具优秀**
+
+- **Inspector**：可视化查看生成的样式
+- **VS Code 插件**：智能提示、预览
+- **DevTools**：调试工具
+
+**9. 框架集成更好**
+
+- **Vite 原生支持**：专为 Vite 优化
+- **Nuxt 模块**：Nuxt 3 一键集成
+- **更好的 SSR**：服务端渲染优化
+
+**劣势（需要注意）：**
+
+1. **生态相对较小**：社区资源不如 Tailwind 丰富
+2. **学习资源有限**：教程和文档相对较少
+3. **配置复杂度**：高度自定义需要学习成本
+4. **团队采用风险**：较新的技术，需要团队评估
+
+**选择建议：**
+
+- **选 Tailwind**：需要稳定性、丰富生态、团队熟悉度
+- **选 UnoCSS**：追求性能、高度定制、新项目、Vue 生态
+:::
+
+::: details 4. 如何解决原子化CSS类名过长的问题？
+**答案：**
+
+原子化 CSS 的类名过长是常见问题，但有多种成熟的解决方案：
+
+**1. 组件抽象（最推荐）**
+
+将重复的类名组合封装成组件：
+
+```vue
+<!-- Button.vue -->
+<template>
+  <button :class="buttonClasses">
+    <slot />
+  </button>
+</template>
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  variant: { type: String, default: 'primary' },
+  size: { type: String, default: 'md' }
+})
+
+const buttonClasses = computed(() => {
+  const base = 'px-4 py-2 rounded font-semibold transition-colors'
+  const variants = {
+    primary: 'bg-blue-500 hover:bg-blue-700 text-white',
+    secondary: 'bg-gray-500 hover:bg-gray-700 text-white'
+  }
+  const sizes = {
+    sm: 'text-sm px-3 py-1',
+    md: 'text-base px-4 py-2',
+    lg: 'text-lg px-6 py-3'
+  }
+  return `${base} ${variants[props.variant]} ${sizes[props.size]}`
+})
+</script>
+
+<!-- 使用 -->
+<Button variant="primary" size="lg">登录</Button>
+```
+
+**2. 使用 @apply 指令**
+
+```css
+/* styles/components.css */
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded font-semibold transition-colors
+           bg-blue-500 hover:bg-blue-700 text-white
+           focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6
+           hover:shadow-xl transition-shadow;
+  }
+
+  .input-text {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md
+           focus:outline-none focus:ring-2 focus:ring-blue-500
+           focus:border-transparent;
+  }
+}
+```
+
+```html
+<!-- 使用抽象后的类 -->
+<button class="btn">按钮</button>
+<div class="card">卡片内容</div>
+<input type="text" class="input-text">
+```
+
+**3. 使用快捷方式（UnoCSS）**
+
+```typescript
+// uno.config.ts
+export default defineConfig({
+  shortcuts: {
+    // 静态快捷方式
+    'btn-primary': 'px-4 py-2 rounded font-semibold bg-blue-500 hover:bg-blue-700 text-white transition-colors',
+    'card': 'bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow',
+
+    // 动态快捷方式
+    'flex-center': 'flex items-center justify-center',
+    'flex-between': 'flex items-center justify-between',
+
+    // 数组形式（更清晰）
+    'btn': [
+      'px-4', 'py-2', 'rounded',
+      'font-semibold',
+      'transition-colors',
+      'focus:outline-none',
+      'focus:ring-2',
+    ],
+  }
+})
+```
+
+**4. 使用变体组（UnoCSS）**
+
+```html
+<!-- 优化前：重复的 hover 前缀 -->
+<div class="hover:bg-blue-500 hover:text-white hover:scale-110 hover:shadow-lg">
+
+<!-- 优化后：使用变体组 -->
+<div class="hover:(bg-blue-500 text-white scale-110 shadow-lg)">
+
+<!-- 复杂示例 -->
+<div class="
+  dark:(bg-gray-800 text-white border-gray-700)
+  lg:(grid grid-cols-3 gap-8 px-12)
+  md:(grid-cols-2 gap-6 px-8)
+">
+```
+
+**5. 使用属性化模式（UnoCSS）**
+
+```html
+<!-- 优化前：所有样式在 class 中 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+
+<!-- 优化后：属性化模式 -->
+<div
+  flex="~ items-center justify-between"
+  p="4"
+  bg="white dark:gray-800"
+  rounded="lg"
+  shadow="md"
+>
+```
+
+**6. 格式化和换行**
+
+```html
+<!-- 不推荐：一行太长 -->
+<div class="flex items-center justify-between p-4 m-2 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
+
+<!-- 推荐：合理换行 -->
+<div class="
+  flex items-center justify-between
+  p-4 m-2
+  bg-white dark:bg-gray-800
+  rounded-lg
+  shadow-md hover:shadow-xl
+  transition-all duration-300
+">
+
+<!-- 或使用数组（Vue/React） -->
+<div :class="[
+  'flex items-center justify-between',
+  'p-4 m-2',
+  'bg-white dark:bg-gray-800',
+  'rounded-lg shadow-md hover:shadow-xl',
+  'transition-all duration-300'
+]">
+```
+
+**7. 使用 CSS Modules + 原子类（混合方案）**
+
+```vue
+<template>
+  <div :class="$style.card">
+    <h3 :class="$style.title">标题</h3>
+    <p class="text-gray-600 mb-4">内容</p>
+    <button class="btn-primary">按钮</button>
+  </div>
+</template>
+
+<style module>
+.card {
+  @apply bg-white rounded-lg shadow-md p-6;
+  @apply hover:shadow-xl transition-shadow;
+}
+
+.title {
+  @apply text-2xl font-bold mb-4 text-gray-900;
+}
+</style>
+```
+
+**8. 使用 clsx/classnames 库**
+
+```jsx
+import clsx from 'clsx'
+
+function Button({ variant, size, disabled, children }) {
+  return (
+    <button className={clsx(
+      // 基础样式
+      'px-4 py-2 rounded font-semibold transition-colors',
+      // 变体样式
+      {
+        'bg-blue-500 hover:bg-blue-700 text-white': variant === 'primary',
+        'bg-gray-500 hover:bg-gray-700 text-white': variant === 'secondary',
+      },
+      // 尺寸样式
+      {
+        'text-sm px-3 py-1': size === 'sm',
+        'text-lg px-6 py-3': size === 'lg',
+      },
+      // 状态样式
+      disabled && 'opacity-50 cursor-not-allowed'
+    )}>
+      {children}
+    </button>
+  )
+}
+```
+
+**最佳实践建议：**
+
+1. **分层策略**
+   - 高频复用组件：封装成组件
+   - 中频样式：使用 @apply 或快捷方式
+   - 低频样式：直接使用原子类
+
+2. **团队约定**
+   - 制定类名排序规则（布局 → 间距 → 颜色 → 其他）
+   - 使用 Prettier 或 ESLint 插件自动排序
+   - 统一换行规范
+
+3. **工具辅助**
+   - 使用 VS Code 插件：Tailwind CSS IntelliSense
+   - 使用自动排序工具：prettier-plugin-tailwindcss
+   - 使用代码片段（snippets）
+:::
+
+::: details 5. 原子化CSS与CSS-in-JS的区别？
+**答案：**
+
+原子化 CSS 和 CSS-in-JS 是两种不同的 CSS 解决方案，各有特点和适用场景。
+
+**核心理念差异：**
+
+| 维度 | 原子化 CSS | CSS-in-JS |
+|-----|-----------|-----------|
+| **样式定义** | 预定义的工具类 | 动态生成的样式 |
+| **样式位置** | HTML 类名 | JavaScript 对象/模板字符串 |
+| **运行时** | 无运行时（纯 CSS） | 有运行时（JS 生成 CSS） |
+| **类型** | 静态 CSS | 动态 CSS |
+
+**1. 原子化 CSS**
+
+```html
+<!-- Tailwind CSS 示例 -->
+<div class="flex items-center justify-between p-4 bg-white rounded-lg shadow-md">
+  <h3 class="text-xl font-bold text-gray-900">标题</h3>
+  <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+    按钮
+  </button>
+</div>
+```
+
+**特点：**
+- 样式通过类名组合
+- 编译时生成 CSS
+- 无运行时开销
+- 类名可复用
+
+**2. CSS-in-JS**
+
+```jsx
+// styled-components 示例
+import styled from 'styled-components'
+
+const Card = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`
+
+const Title = styled.h3`
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #111;
+`
+
+const Button = styled.button`
+  padding: 0.5rem 1rem;
+  background: ${props => props.primary ? '#3b82f6' : '#6b7280'};
+  color: white;
+  border-radius: 0.25rem;
+
+  &:hover {
+    background: ${props => props.primary ? '#2563eb' : '#4b5563'};
+  }
+`
+
+// 使用
+<Card>
+  <Title>标题</Title>
+  <Button primary>按钮</Button>
+</Card>
+```
+
+**特点：**
+- 样式在 JavaScript 中定义
+- 运行时生成 CSS
+- 支持动态样式
+- 组件作用域
+
+**详细对比：**
+
+**性能对比：**
+
+```
+初始加载：
+原子化 CSS: 15-30KB CSS（一次性）
+CSS-in-JS:   20-50KB JS + 运行时开销
+
+运行时性能：
+原子化 CSS: 无运行时，纯 CSS
+CSS-in-JS:   需要 JS 解析和注入 CSS
+
+构建性能：
+原子化 CSS: 快速（预编译）
+CSS-in-JS:   较慢（需要 JS 处理）
+```
+
+**语法对比：**
+
+```jsx
+// 原子化 CSS（Tailwind）
+<button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+  按钮
+</button>
+
+// CSS-in-JS（styled-components）
+const Button = styled.button`
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border-radius: 0.25rem;
+  &:hover {
+    background: #2563eb;
+  }
+`
+<Button>按钮</Button>
+
+// CSS-in-JS（Emotion）
+<button css={{
+  padding: '0.5rem 1rem',
+  background: '#3b82f6',
+  color: 'white',
+  borderRadius: '0.25rem',
+  '&:hover': {
+    background: '#2563eb'
+  }
+}}>
+  按钮
+</button>
+```
+
+**动态样式对比：**
+
+```jsx
+// 原子化 CSS - 使用条件类名
+<button className={`
+  px-4 py-2 rounded
+  ${primary ? 'bg-blue-500 hover:bg-blue-700' : 'bg-gray-500 hover:bg-gray-700'}
+  ${size === 'large' ? 'text-lg px-6 py-3' : 'text-sm px-3 py-1'}
+`}>
+  按钮
+</button>
+
+// CSS-in-JS - 使用 props
+const Button = styled.button`
+  padding: ${props => props.size === 'large' ? '0.75rem 1.5rem' : '0.25rem 0.75rem'};
+  background: ${props => props.primary ? '#3b82f6' : '#6b7280'};
+  font-size: ${props => props.size === 'large' ? '1.125rem' : '0.875rem'};
+
+  &:hover {
+    background: ${props => props.primary ? '#2563eb' : '#4b5563'};
+  }
+`
+
+<Button primary size="large">按钮</Button>
+```
+
+**优缺点对比：**
+
+**原子化 CSS 优点：**
+1. 无运行时开销
+2. CSS 体积可控
+3. 开发效率高
+4. 性能优秀
+5. 易于缓存
+
+**原子化 CSS 缺点：**
+1. HTML 类名可能很长
+2. 学习曲线（需记忆类名）
+3. 动态样式相对困难
+4. 样式复用需要组件化
+
+**CSS-in-JS 优点：**
+1. 完全的动态能力
+2. 组件作用域（无全局污染）
+3. 类型安全（TypeScript）
+4. 主题切换方便
+5. 样式与逻辑共存
+
+**CSS-in-JS 缺点：**
+1. 运行时开销
+2. 性能相对较差
+3. 增加包体积
+4. SSR 配置复杂
+5. 样式复用不如原子类
+
+**适用场景：**
+
+**选择原子化 CSS：**
+- 追求极致性能
+- 快速开发和迭代
+- 设计系统规范
+- 静态站点生成
+- 大型项目（样式复用率高）
+
+**选择 CSS-in-JS：**
+- 需要高度动态的样式
+- 复杂的主题系统
+- 组件库开发
+- 需要完全的类型安全
+- 运行时计算样式
+
+**混合使用：**
+
+```jsx
+// 结合两者优势
+import styled from 'styled-components'
+
+// 使用 CSS-in-JS 做复杂逻辑
+const DynamicCard = styled.div`
+  background: ${props => {
+    if (props.status === 'success') return '#10b981'
+    if (props.status === 'error') return '#ef4444'
+    return '#6b7280'
+  }};
+
+  // 复杂动画
+  animation: ${props => props.animate && fadeIn} 0.3s ease-in;
+`
+
+// 使用原子类做基础样式
+<DynamicCard status="success" className="p-6 rounded-lg shadow-lg">
+  内容
+</DynamicCard>
+```
+
+**结论：**
+
+两者不是对立关系，而是互补关系。在实际项目中，可以根据具体需求选择：
+
+- **大部分情况**：原子化 CSS（性能好、开发快）
+- **特殊场景**：CSS-in-JS（复杂动态逻辑）
+- **最佳实践**：两者结合使用
+:::

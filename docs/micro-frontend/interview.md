@@ -4,8 +4,7 @@
 
 ## 微前端基础
 
-### 1. 什么是微前端？解决了什么问题？
-
+::: details 1. 什么是微前端？解决了什么问题？
 **定义**：将单体前端应用拆分为多个独立的、可独立开发和部署的小型前端应用，通过一个主应用（基座）将它们组合在一起。
 
 **解决的问题：**
@@ -21,9 +20,9 @@
 - 故障隔离（子应用崩溃不影响主应用）
 
 ---
+:::
 
-### 2. 微前端的核心技术挑战是什么？
-
+::: details 2. 微前端的核心技术挑战是什么？
 1. **JS 隔离**：子应用的全局变量、事件监听不能污染主应用
 2. **CSS 隔离**：子应用样式不能影响主应用或其他子应用
 3. **路由管理**：主应用和子应用的路由协同
@@ -31,9 +30,9 @@
 5. **资源加载**：子应用的静态资源路径处理
 
 ---
+:::
 
-### 3. 主流微前端框架对比？如何选型？
-
+::: details 3. 主流微前端框架对比？如何选型？
 | 框架 | 隔离方案 | 接入成本 | 隔离强度 | 适用场景 |
 |------|---------|---------|---------|---------|
 | **qiankun** | Proxy 沙箱 + Scoped CSS | 中 | 中 | 成熟稳定，生态好 |
@@ -48,11 +47,11 @@
 - 只需模块共享、不需隔离 → **Module Federation**
 
 ---
+:::
 
 ## qiankun
 
-### 4. qiankun 的生命周期有哪些？
-
+::: details 4. qiankun 的生命周期有哪些？
 子应用需要导出三个生命周期函数：
 
 ```javascript
@@ -77,9 +76,9 @@ export async function unmount() {
 ```
 
 ---
+:::
 
-### 5. qiankun 的 JS 沙箱有哪几种？
-
+::: details 5. qiankun 的 JS 沙箱有哪几种？
 | 沙箱类型 | 原理 | 适用场景 |
 |---------|------|---------|
 | **SnapshotSandbox** | 激活时保存 window 快照，卸载时恢复 | 不支持 Proxy 的旧浏览器 |
@@ -89,9 +88,9 @@ export async function unmount() {
 **ProxySandbox 核心原理**：创建一个 fakeWindow 对象，用 Proxy 拦截 get/set，子应用的全局变量操作都在 fakeWindow 上，不影响真实 window。
 
 ---
+:::
 
-### 6. qiankun 应用间如何通信？
-
+::: details 6. qiankun 应用间如何通信？
 ```javascript
 // 主应用：初始化全局状态
 import { initGlobalState } from 'qiankun';
@@ -117,9 +116,9 @@ export async function mount(props) {
 **其他通信方式**：自定义 EventBus、URL 参数、共享 localStorage。
 
 ---
+:::
 
-### 7. qiankun 常见问题如何解决？
-
+::: details 7. qiankun 常见问题如何解决？
 **子应用资源 404：**
 ```javascript
 // 设置 publicPath，让子应用知道自己的资源路径
@@ -136,11 +135,11 @@ if (window.__POWERED_BY_QIANKUN__) {
 - History 模式需要配置 `base`，或服务端配置 fallback
 
 ---
+:::
 
 ## wujie（无界）
 
-### 8. wujie 的核心原理是什么？
-
+::: details 8. wujie 的核心原理是什么？
 wujie 将 **iframe** 和 **WebComponent** 结合：
 - **iframe**：提供天然的 JS 隔离（独立的 window、document）
 - **WebComponent（Shadow DOM）**：渲染子应用的 DOM，提供 CSS 隔离
@@ -153,9 +152,9 @@ wujie 将 **iframe** 和 **WebComponent** 结合：
 ```
 
 ---
+:::
 
-### 9. wujie 的三种运行模式？
-
+::: details 9. wujie 的三种运行模式？
 | 模式 | 特点 | 适用场景 |
 |------|------|---------|
 | **重建模式**（默认） | 每次切换重新创建/销毁 | 普通场景 |
@@ -165,11 +164,11 @@ wujie 将 **iframe** 和 **WebComponent** 结合：
 **保活模式**：子应用切走时 DOM 隐藏（`display: none`），切回时直接显示，状态完全保留，适合复杂表单、视频播放等场景。
 
 ---
+:::
 
 ## Micro App
 
-### 10. Micro App 的接入方式和核心特点？
-
+::: details 10. Micro App 的接入方式和核心特点？
 ```html
 <!-- 主应用：像使用 HTML 标签一样接入子应用 -->
 <micro-app name="app1" url="http://localhost:3001/"></micro-app>
@@ -197,11 +196,11 @@ window.microApp.addDataListener((data) => console.log(data));
 ```
 
 ---
+:::
 
 ## Module Federation
 
-### 11. Module Federation 的核心概念是什么？
-
+::: details 11. Module Federation 的核心概念是什么？
 Webpack 5 的模块联邦允许多个独立构建的应用在运行时共享代码。
 
 **核心角色：**
@@ -233,9 +232,9 @@ const Button = lazy(() => import('remoteApp/Button'));
 ```
 
 ---
+:::
 
-### 12. Module Federation 和 qiankun 的区别？
-
+::: details 12. Module Federation 和 qiankun 的区别？
 | 特性 | Module Federation | qiankun |
 |------|-----------------|---------|
 | 定位 | 模块共享 | 完整微前端框架 |
@@ -245,3 +244,4 @@ const Button = lazy(() => import('remoteApp/Button'));
 | 适用场景 | 组件库共享、代码复用 | 完整的子应用集成 |
 
 **Module Federation 不是完整的微前端方案**，它解决的是模块共享问题，没有沙箱隔离。两者可以结合使用：qiankun 做应用集成，Module Federation 做模块共享。
+:::

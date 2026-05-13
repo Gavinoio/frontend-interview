@@ -702,3 +702,111 @@ NestJS      ~55,000 (基于 Fastify)
 
 ---
 
+## 七、高频面试题
+
+::: details 1. Express 和 Koa 的区别？
+```
+Express:
+- 回调风格
+- 中间件线性执行
+- 内置路由、静态文件
+- 生态最丰富
+
+Koa:
+- async/await 原生支持
+- 洋葱模型中间件
+- 轻量无捆绑
+- Context 设计更优雅
+
+// 中间件执行顺序
+Express: A → B → C → 响应
+Koa:     A进 → B进 → C进 → C出 → B出 → A出
+```
+:::
+
+::: details 2. NestJS 的核心概念？
+```
+1. Module - 组织代码的基本单元
+2. Controller - 处理 HTTP 请求
+3. Service/Provider - 业务逻辑
+4. DTO - 数据传输对象
+5. Guard - 权限守卫
+6. Interceptor - 拦截器
+7. Pipe - 管道（验证/转换）
+8. Filter - 异常过滤器
+
+依赖注入:
+@Injectable() + constructor 注入
+```
+:::
+
+::: details 3. 什么是洋葱模型？
+```javascript
+// 洋葱模型执行流程
+// 请求 → 中间件1(前) → 中间件2(前) → 处理 → 中间件2(后) → 中间件1(后) → 响应
+
+app.use(async (ctx, next) => {
+  console.log('1')
+  await next()
+  console.log('6')
+})
+
+app.use(async (ctx, next) => {
+  console.log('2')
+  await next()
+  console.log('5')
+})
+
+app.use(async (ctx, next) => {
+  console.log('3')
+  ctx.body = 'Hello'
+  console.log('4')
+})
+
+// 输出: 1 2 3 4 5 6
+```
+:::
+
+::: details 4. Fastify 为什么快？
+```
+1. Schema 序列化
+   - 使用 fast-json-stringify
+   - 比 JSON.stringify 快 2-3 倍
+
+2. 路由优化
+   - 使用 find-my-way (Radix Tree)
+   - O(1) 路由匹配
+
+3. 请求解析
+   - 异步钩子
+   - 流式处理
+
+4. 插件封装
+   - 作用域隔离
+   - 避免全局污染
+```
+:::
+
+::: details 5. 如何选择 Node.js 框架？
+```
+Express:
+- 快速原型
+- 学习 Node.js
+- 中小型 API
+
+Koa:
+- 追求代码优雅
+- 需要完全控制
+- 中小型项目
+
+Fastify:
+- 高性能要求
+- 需要 Schema 验证
+- 微服务
+
+NestJS:
+- 大型企业应用
+- 团队协作
+- TypeScript 项目
+```
+:::

@@ -1367,3 +1367,68 @@ caches.open('my-cache').then((cache) => {
 
 ---
 
+## 十二、高频面试题
+
+::: details 1. PWA 的核心技术有哪些？
+```
+1. Web App Manifest - 定义应用元数据，实现可安装
+2. Service Worker - 实现离线缓存、后台同步、推送通知
+3. Cache API - 存储网络响应
+4. Push API - 接收服务器推送
+5. Notification API - 显示系统通知
+6. Background Sync API - 后台同步数据
+```
+:::
+
+::: details 2. Service Worker 的生命周期？
+```
+1. 注册 (Register) - navigator.serviceWorker.register()
+2. 安装 (Install) - 下载并缓存资源
+3. 等待 (Waiting) - 等待旧 SW 释放控制权
+4. 激活 (Activate) - 清理旧缓存，接管页面
+5. 运行 (Running) - 拦截请求，处理事件
+6. 更新 (Update) - 检测新版本，重复上述流程
+```
+:::
+
+::: details 3. 常见的缓存策略？
+```
+1. Cache First - 缓存优先，适合静态资源
+2. Network First - 网络优先，适合 API 请求
+3. Stale While Revalidate - 先用缓存，后台更新
+4. Network Only - 仅网络，适合实时数据
+5. Cache Only - 仅缓存，适合离线页面
+```
+:::
+
+::: details 4. 如何处理 Service Worker 更新？
+```javascript
+// 方案1: skipWaiting + clients.claim
+self.addEventListener('install', () => self.skipWaiting())
+self.addEventListener('activate', () => self.clients.claim())
+
+// 方案2: 提示用户刷新
+registration.addEventListener('updatefound', () => {
+  const newWorker = registration.installing
+  newWorker.addEventListener('statechange', () => {
+    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+      // 提示用户有新版本
+      showUpdatePrompt()
+    }
+  })
+})
+```
+:::
+
+::: details 5. PWA 与原生应用的区别？
+| 特性 | PWA | 原生应用 |
+|------|-----|----------|
+| 安装 | 无需商店 | 需要商店 |
+| 更新 | 自动更新 | 需要下载 |
+| 存储空间 | 小 | 大 |
+| 设备访问 | 有限 | 完整 |
+| 离线支持 | 支持 | 支持 |
+| 推送通知 | 支持 | 支持 |
+| 跨平台 | 天然支持 | 需要多端开发 |
+| 开发成本 | 低 | 高 |
+:::

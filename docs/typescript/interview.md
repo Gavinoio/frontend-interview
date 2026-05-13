@@ -4,8 +4,7 @@
 
 ## 类型系统基础
 
-### 1. type 和 interface 的区别？
-
+::: details 1. type 和 interface 的区别？
 | 特性 | interface | type |
 |------|-----------|------|
 | 声明合并 | ✅ 支持（同名自动合并） | ❌ 不支持 |
@@ -30,9 +29,9 @@ type Tuple = [string, number];
 ```
 
 ---
+:::
 
-### 2. any、unknown、never 的区别？
-
+::: details 2. any、unknown、never 的区别？
 | 类型 | 含义 | 赋值给其他类型 | 使用前需检查 |
 |------|------|--------------|------------|
 | `any` | 任意类型，关闭类型检查 | ✅ 可以 | ❌ 不需要 |
@@ -60,9 +59,9 @@ function area(shape: Shape) {
 ```
 
 ---
+:::
 
-### 3. 如何实现类型收窄（Type Narrowing）？
-
+::: details 3. 如何实现类型收窄（Type Narrowing）？
 ```typescript
 function process(val: string | number | null) {
     // typeof 收窄
@@ -85,9 +84,9 @@ function process(val: string | number | null) {
 ```
 
 ---
+:::
 
-### 4. 联合类型和交叉类型的区别？
-
+::: details 4. 联合类型和交叉类型的区别？
 ```typescript
 // 联合类型（|）：满足其中一个
 type A = string | number; // 可以是 string 或 number
@@ -104,11 +103,11 @@ function fn(val: string | number) {
 ```
 
 ---
+:::
 
 ## 高级类型
 
-### 5. 内置工具类型有哪些？
-
+::: details 5. 内置工具类型有哪些？
 ```typescript
 interface User { name: string; age: number; email?: string; }
 
@@ -126,9 +125,9 @@ Parameters<typeof fn>  // 获取函数参数类型元组
 ```
 
 ---
+:::
 
-### 6. 什么是条件类型？infer 关键字有什么用？
-
+::: details 6. 什么是条件类型？infer 关键字有什么用？
 ```typescript
 // 条件类型：T extends U ? X : Y
 type IsString<T> = T extends string ? true : false;
@@ -146,9 +145,9 @@ type V = Awaited<Promise<number>>; // number
 ```
 
 ---
+:::
 
-### 7. 如何实现 DeepPartial、DeepRequired？
-
+::: details 7. 如何实现 DeepPartial、DeepRequired？
 ```typescript
 // DeepPartial：递归将所有属性变为可选
 type DeepPartial<T> = {
@@ -165,9 +164,9 @@ type ValueOf<T> = T[keyof T];
 ```
 
 ---
+:::
 
-### 8. 模板字面量类型有什么用？
-
+::: details 8. 模板字面量类型有什么用？
 ```typescript
 type EventName = 'click' | 'focus' | 'blur';
 type Handler = `on${Capitalize<EventName>}`;
@@ -187,11 +186,11 @@ type CamelToSnake<S extends string> =
 ```
 
 ---
+:::
 
 ## 泛型
 
-### 9. 泛型和 any 的区别？
-
+::: details 9. 泛型和 any 的区别？
 ```typescript
 // any：放弃类型检查，失去类型信息
 function identityAny(arg: any): any { return arg; }
@@ -205,9 +204,9 @@ const r2 = identity(42); // r2 是 number，类型安全
 **核心区别**：泛型在保持灵活性的同时保留类型信息，any 完全放弃类型检查。
 
 ---
+:::
 
-### 10. 什么是泛型约束？
-
+::: details 10. 什么是泛型约束？
 ```typescript
 // extends 约束泛型参数
 function getLength<T extends { length: number }>(arg: T): number {
@@ -225,9 +224,9 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
 ```
 
 ---
+:::
 
-### 11. 泛型的常见使用场景？
-
+::: details 11. 泛型的常见使用场景？
 ```typescript
 // 1. 泛型函数
 function first<T>(arr: T[]): T | undefined { return arr[0]; }
@@ -252,11 +251,11 @@ type ApiResponse<T> = { data: T; code: number; message: string; };
 ```
 
 ---
+:::
 
 ## 工程实践
 
-### 12. tsconfig.json 中 strict 包含哪些选项？
-
+::: details 12. tsconfig.json 中 strict 包含哪些选项？
 - `noImplicitAny`：禁止隐式 any
 - `strictNullChecks`：严格空值检查（null/undefined 不能赋给其他类型）
 - `strictFunctionTypes`：严格函数类型检查（逆变）
@@ -267,9 +266,9 @@ type ApiResponse<T> = { data: T; code: number; message: string; };
 **推荐**：新项目开启 `"strict": true`。
 
 ---
+:::
 
-### 13. 如何为第三方库添加类型声明？
-
+::: details 13. 如何为第三方库添加类型声明？
 ```typescript
 // 方式1：安装 @types 包
 npm install @types/lodash
@@ -290,9 +289,9 @@ declare module 'express' {
 ```
 
 ---
+:::
 
-### 14. 装饰器（Decorator）是什么？有哪些类型？
-
+::: details 14. 装饰器（Decorator）是什么？有哪些类型？
 装饰器是一种特殊的声明，可以附加到类、方法、属性或参数上，用于修改或增强其行为。
 
 ```typescript
@@ -316,11 +315,11 @@ class User {
 需要在 tsconfig.json 中开启 `"experimentalDecorators": true`。
 
 ---
+:::
 
 ## TypeScript + React
 
-### 15. React.FC 有什么问题？推荐用什么替代？
-
+::: details 15. React.FC 有什么问题？推荐用什么替代？
 ```tsx
 // ❌ React.FC 的问题：隐式包含 children 类型（React 18 已修复）
 const Button: React.FC<{ text: string }> = ({ text }) => <button>{text}</button>;
@@ -339,9 +338,9 @@ function Button({ text, children }: ButtonProps) { ... }
 ```
 
 ---
+:::
 
-### 16. 如何正确类型化事件处理函数？
-
+::: details 16. 如何正确类型化事件处理函数？
 ```tsx
 // 内联函数：自动推断
 <button onClick={(e) => console.log(e.target)} />
@@ -359,9 +358,9 @@ React.DragEvent<HTMLDivElement>       // onDrag
 ```
 
 ---
+:::
 
-### 17. useRef 的三种使用场景如何类型化？
-
+::: details 17. useRef 的三种使用场景如何类型化？
 ```tsx
 // 1. DOM 引用（初始值为 null，只读）
 const inputRef = useRef<HTMLInputElement>(null);
@@ -377,9 +376,9 @@ useEffect(() => { prevValueRef.current = value; });
 ```
 
 ---
+:::
 
-### 18. 如何类型化 forwardRef 和泛型组件？
-
+::: details 18. 如何类型化 forwardRef 和泛型组件？
 ```tsx
 // forwardRef
 interface InputProps { label: string; }
@@ -397,11 +396,11 @@ const List = <T,>(props: { items: T[] }) => { ... };
 ```
 
 ---
+:::
 
 ## 综合题
 
-### 19. TypeScript 的类型系统是结构化类型还是名义类型？
-
+::: details 19. TypeScript 的类型系统是结构化类型还是名义类型？
 TypeScript 使用**结构化类型（Structural Typing）**，也叫"鸭子类型"：只要结构兼容，类型就兼容，不关心类型名称。
 
 ```typescript
@@ -413,9 +412,9 @@ const c: Coordinate = p; // OK！结构相同即兼容
 ```
 
 ---
+:::
 
-### 20. 如何实现一个类型安全的 EventEmitter？
-
+::: details 20. 如何实现一个类型安全的 EventEmitter？
 ```typescript
 type EventMap = {
     click: { x: number; y: number };
@@ -441,3 +440,4 @@ emitter.on('click', ({ x, y }) => console.log(x, y)); // 类型安全
 emitter.emit('click', { x: 1, y: 2 }); // OK
 // emitter.emit('click', { value: 'a' }); // Error！
 ```
+:::

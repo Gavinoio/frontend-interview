@@ -680,3 +680,227 @@ class StaticClass {
 }
 ```
 
+## 面试高频题
+
+::: details 1. 什么是单例模式？有什么特点？
+**参考答案**：
+
+单例模式是一种创建型设计模式，它确保一个类只有一个实例，并提供全局访问点。
+
+**核心特点**：
+- 唯一实例：整个应用中只有一个实例
+- 全局访问：提供全局访问点
+- 延迟创建：实例在第一次使用时才创建
+- 自行管理：类自己管理唯一实例
+
+**适用场景**：全局状态管理、全局弹窗、缓存管理等需要全局唯一实例的场景。
+:::
+
+::: details 2. 用 JavaScript 实现一个单例模式
+**参考答案**：
+
+```javascript
+// 方法一：闭包实现
+const Singleton = (function() {
+  let instance;
+
+  function createInstance() {
+    return {
+      name: 'Singleton',
+      getData() {
+        return this.name;
+      }
+    };
+  }
+
+  return {
+    getInstance() {
+      if (!instance) {
+        instance = createInstance();
+      }
+      return instance;
+    }
+  };
+})();
+
+// 方法二：ES6 Class 实现
+class Singleton {
+  constructor() {
+    if (Singleton.instance) {
+      return Singleton.instance;
+    }
+    Singleton.instance = this;
+  }
+}
+
+// 方法三：模块化实现（最简单）
+class Singleton {
+  constructor() {
+    this.name = 'Singleton';
+  }
+}
+
+export default new Singleton();
+```
+:::
+
+::: details 3. 单例模式在前端开发中有哪些应用？
+**参考答案**：
+
+1. **全局状态管理**：Vuex、Redux、Pinia 的 Store
+2. **全局组件**：Loading、Toast、Modal 等
+3. **缓存管理**：全局缓存管理器
+4. **请求管理**：防止重复请求
+5. **日志系统**：全局日志记录器
+6. **全局配置**：应用配置对象
+7. **WebSocket 连接**：全局唯一的长连接
+:::
+
+::: details 4. 如何保证单例模式的线程安全？（JavaScript 场景）
+**参考答案**：
+
+JavaScript 是单线程的，所以不存在传统意义上的线程安全问题。但在异步场景下，仍需注意：
+
+```javascript
+// 问题场景：异步创建实例
+class AsyncSingleton {
+  static instance = null;
+  static pending = false;
+
+  static async getInstance() {
+    // 如果正在创建，等待创建完成
+    if (this.pending) {
+      return new Promise(resolve => {
+        const timer = setInterval(() => {
+          if (this.instance) {
+            clearInterval(timer);
+            resolve(this.instance);
+          }
+        }, 10);
+      });
+    }
+
+    if (this.instance) {
+      return this.instance;
+    }
+
+    this.pending = true;
+
+    // 模拟异步初始化
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    this.instance = new AsyncSingleton();
+    this.pending = false;
+
+    return this.instance;
+  }
+}
+```
+:::
+
+::: details 5. 单例模式有什么缺点？如何优化？
+**参考答案**：
+
+**缺点**：
+1. 全局污染，可能造成命名冲突
+2. 紧耦合，不易测试和维护
+3. 违反单一职责原则（既负责业务又负责实例管理）
+
+**优化方案**：
+1. 使用模块化（ES6 Module）避免全局污染
+2. 使用依赖注入减少耦合
+3. 将实例管理逻辑抽离为单例工厂
+4. 使用 WeakMap 管理多个单例
+
+```javascript
+// 单例工厂
+const SingletonFactory = (() => {
+  const instances = new WeakMap();
+
+  return {
+    getInstance(Constructor) {
+      if (!instances.has(Constructor)) {
+        instances.set(Constructor, new Constructor());
+      }
+      return instances.get(Constructor);
+    }
+  };
+})();
+
+// 使用
+class User {}
+class Config {}
+
+const user = SingletonFactory.getInstance(User);
+const config = SingletonFactory.getInstance(Config);
+```
+:::
+
+::: details 6. Vuex 如何实现单例模式？
+**参考答案**：
+
+Vuex 通过 Vue 插件机制和模块缓存实现单例：
+
+```javascript
+// Vuex 源码简化版
+let Vue; // 缓存 Vue 实例
+
+export function install(_Vue) {
+  // 避免重复安装
+  if (Vue && _Vue === Vue) {
+    console.warn('Vuex already installed');
+    return;
+  }
+
+  Vue = _Vue;
+
+  // 注入 $store
+  Vue.mixin({
+    beforeCreate() {
+      const options = this.$options;
+      if (options.store) {
+        // 根实例
+        this.$store = typeof options.store === 'function'
+          ? options.store()
+          : options.store;
+      } else if (options.parent && options.parent.$store) {
+        // 子组件从父组件获取
+        this.$store = options.parent.$store;
+      }
+    }
+  });
+}
+
+// Store 类
+class Store {
+  constructor(options = {}) {
+    // 单例检查
+    if (Store.instance) {
+      console.warn('Store already created');
+      return Store.instance;
+    }
+
+    this.state = options.state || {};
+    Store.instance = this;
+  }
+}
+```
+:::
+
+## 总结
+
+单例模式是最常用的设计模式之一，在前端开发中有广泛应用。掌握单例模式需要：
+
+1. **理解核心**：唯一实例 + 全局访问
+2. **掌握实现**：闭包、Class、模块化等多种方式
+3. **实际应用**：状态管理、全局组件、缓存等
+4. **注意问题**：避免滥用，注意解耦
+5. **面试准备**：手写实现、原理分析、实际应用
+
+**面试必备**：
+- 能手写多种实现方式
+- 理解 Vuex/Redux 的单例原理
+- 知道优缺点和适用场景
+- 会结合实际项目讲解应用
+
+单例模式虽然简单，但在实际开发中非常重要，是前端开发者必须掌握的基础设计模式。

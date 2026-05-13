@@ -4,8 +4,7 @@
 
 ## 数据类型
 
-### 1. JavaScript 有哪些数据类型？如何判断？
-
+::: details 1. JavaScript 有哪些数据类型？如何判断？
 **8 种数据类型：**
 - 基本类型（7）：`undefined`、`null`、`boolean`、`number`、`string`、`symbol`、`bigint`
 - 引用类型（1）：`object`（包含 Array、Function、Date 等）
@@ -26,9 +25,9 @@ Object.prototype.toString.call(new Date) // '[object Date]'
 ```
 
 ---
+:::
 
-### 2. == 和 === 的区别？
-
+::: details 2. == 和 === 的区别？
 - `===`（严格相等）：类型和值都必须相同，不做类型转换
 - `==`（宽松相等）：会进行类型转换后比较
 
@@ -44,9 +43,9 @@ NaN == NaN         // false（NaN 不等于任何值，包括自身）
 **推荐**：始终使用 `===`，除非明确需要 `null == undefined` 的场景。
 
 ---
+:::
 
-### 3. null 和 undefined 的区别？
-
+::: details 3. null 和 undefined 的区别？
 - `undefined`：变量声明但未赋值；函数无返回值；访问不存在的属性
 - `null`：主动赋值，表示"空值"或"无对象"
 
@@ -58,9 +57,9 @@ null === undefined // false
 ```
 
 ---
+:::
 
-### 4. 什么是类型转换？有哪些隐式转换规则？
-
+::: details 4. 什么是类型转换？有哪些隐式转换规则？
 **转换规则：**
 - `+` 运算符：有字符串则转字符串，否则转数字
 - `-`、`*`、`/`：转数字
@@ -70,11 +69,11 @@ null === undefined // false
 **转为 false 的值（falsy）**：`false`、`0`、`''`、`null`、`undefined`、`NaN`
 
 ---
+:::
 
 ## 作用域与闭包
 
-### 5. 什么是闭包？有什么应用场景？
-
+::: details 5. 什么是闭包？有什么应用场景？
 **定义**：函数能够访问其词法作用域中的变量，即使该函数在其词法作用域之外执行。
 
 ```javascript
@@ -99,9 +98,9 @@ c.get();       // 1
 **注意**：闭包会持有外部变量引用，可能导致内存泄漏，用完应手动置 null。
 
 ---
+:::
 
-### 6. var、let、const 的区别？
-
+::: details 6. var、let、const 的区别？
 | 特性 | var | let | const |
 |------|-----|-----|-------|
 | 作用域 | 函数作用域 | 块级作用域 | 块级作用域 |
@@ -113,9 +112,9 @@ c.get();       // 1
 **TDZ（暂时性死区）**：let/const 声明前访问会抛出 ReferenceError。
 
 ---
+:::
 
-### 7. 什么是变量提升（Hoisting）？
-
+::: details 7. 什么是变量提升（Hoisting）？
 JavaScript 引擎在执行前会将变量和函数声明"提升"到作用域顶部：
 - `var` 声明提升，初始化为 `undefined`
 - `function` 声明整体提升（包括函数体）
@@ -133,11 +132,11 @@ function foo() { console.log('foo'); }
 ```
 
 ---
+:::
 
 ## 原型与继承
 
-### 8. 什么是原型链？
-
+::: details 8. 什么是原型链？
 每个对象都有 `__proto__` 属性指向其原型对象，原型对象也有自己的原型，形成链式结构，直到 `null` 为止。
 
 ```javascript
@@ -150,9 +149,9 @@ Object.prototype.__proto__ === null      // true
 属性查找沿原型链向上，直到找到或到达 `null`。
 
 ---
+:::
 
-### 9. instanceof 的原理是什么？
-
+::: details 9. instanceof 的原理是什么？
 检查右侧构造函数的 `prototype` 是否在左侧对象的原型链上：
 
 ```javascript
@@ -167,9 +166,9 @@ function myInstanceof(obj, Constructor) {
 ```
 
 ---
+:::
 
-### 10. 实现继承的几种方式？各有什么优缺点？
-
+::: details 10. 实现继承的几种方式？各有什么优缺点？
 | 方式 | 优点 | 缺点 |
 |------|------|------|
 | 原型链继承 | 简单 | 引用类型共享，无法传参 |
@@ -192,11 +191,11 @@ Child.prototype.constructor = Child;
 ```
 
 ---
+:::
 
 ## this 指向
 
-### 11. this 的指向规则是什么？
-
+::: details 11. this 的指向规则是什么？
 | 调用方式 | this 指向 |
 |---------|-----------|
 | 普通函数调用 | `window`（严格模式为 `undefined`） |
@@ -208,9 +207,9 @@ Child.prototype.constructor = Child;
 **优先级**：`new` > `call/apply/bind` > 方法调用 > 普通调用
 
 ---
+:::
 
-### 12. 箭头函数和普通函数的区别？
-
+::: details 12. 箭头函数和普通函数的区别？
 1. **this**：箭头函数没有自己的 `this`，继承外层词法作用域的 `this`
 2. **arguments**：箭头函数没有 `arguments` 对象
 3. **new**：箭头函数不能作为构造函数（不能 `new`）
@@ -218,11 +217,11 @@ Child.prototype.constructor = Child;
 5. **语法**：更简洁
 
 ---
+:::
 
 ## 异步编程
 
-### 13. Promise 的三种状态是什么？有哪些方法？
-
+::: details 13. Promise 的三种状态是什么？有哪些方法？
 **三种状态**：`pending`（等待）→ `fulfilled`（成功）或 `rejected`（失败），状态不可逆。
 
 **常用方法：**
@@ -233,9 +232,9 @@ Child.prototype.constructor = Child;
 - `Promise.any(arr)`：第一个成功的结果，全失败才失败
 
 ---
+:::
 
-### 14. async/await 的原理是什么？
-
+::: details 14. async/await 的原理是什么？
 `async/await` 是 Generator + Promise 的语法糖：
 - `async` 函数返回一个 Promise
 - `await` 暂停函数执行，等待 Promise 决议，本质是 `then` 的语法糖
@@ -255,9 +254,9 @@ function fetchData() {
 ```
 
 ---
+:::
 
-### 15. 什么是事件循环（Event Loop）？宏任务和微任务的区别？
-
+::: details 15. 什么是事件循环（Event Loop）？宏任务和微任务的区别？
 JavaScript 是单线程的，通过事件循环处理异步：
 
 **执行顺序**：同步代码 → 微任务队列（清空）→ 宏任务（一个）→ 微任务队列（清空）→ ...
@@ -275,11 +274,11 @@ console.log('4');
 ```
 
 ---
+:::
 
 ## ES6+
 
-### 16. ES6 有哪些重要新特性？
-
+::: details 16. ES6 有哪些重要新特性？
 1. **let/const**：块级作用域
 2. **箭头函数**：简洁语法，词法 this
 3. **解构赋值**：数组和对象解构
@@ -295,9 +294,9 @@ console.log('4');
 13. **Generator/Iterator**：迭代器协议
 
 ---
+:::
 
-### 17. Map 和 Object 的区别？Set 和 Array 的区别？
-
+::: details 17. Map 和 Object 的区别？Set 和 Array 的区别？
 **Map vs Object：**
 - Map 的键可以是任意类型，Object 的键只能是字符串/Symbol
 - Map 保持插入顺序，Object 不保证
@@ -311,9 +310,9 @@ console.log('4');
 - 常用 Set 去重：`[...new Set(arr)]`
 
 ---
+:::
 
-### 18. Proxy 和 Object.defineProperty 的区别？
-
+::: details 18. Proxy 和 Object.defineProperty 的区别？
 | 特性 | Proxy | Object.defineProperty |
 |------|-------|----------------------|
 | 拦截操作 | 13 种（get/set/has/delete 等） | 仅 get/set |
@@ -323,11 +322,11 @@ console.log('4');
 | Vue 版本 | Vue 3 使用 | Vue 2 使用 |
 
 ---
+:::
 
 ## 模块化
 
-### 19. CommonJS 和 ES Module 的区别？
-
+::: details 19. CommonJS 和 ES Module 的区别？
 | 特性 | CommonJS | ES Module |
 |------|---------|-----------|
 | 语法 | `require/module.exports` | `import/export` |
@@ -338,11 +337,11 @@ console.log('4');
 | this | module 对象 | undefined |
 
 ---
+:::
 
 ## 手写代码
 
-### 20. 手写 call、apply、bind
-
+::: details 20. 手写 call、apply、bind
 ```javascript
 // call
 Function.prototype.myCall = function(ctx, ...args) {
@@ -378,9 +377,9 @@ Function.prototype.myBind = function(ctx, ...args) {
 ```
 
 ---
+:::
 
-### 21. 手写防抖和节流
-
+::: details 21. 手写防抖和节流
 ```javascript
 // 防抖：最后一次触发后 delay ms 执行
 function debounce(fn, delay) {
@@ -405,9 +404,9 @@ function throttle(fn, interval) {
 ```
 
 ---
+:::
 
-### 22. 手写深拷贝
-
+::: details 22. 手写深拷贝
 ```javascript
 function deepClone(obj, map = new WeakMap()) {
     if (obj === null || typeof obj !== 'object') return obj;
@@ -428,9 +427,9 @@ function deepClone(obj, map = new WeakMap()) {
 ```
 
 ---
+:::
 
-### 23. 手写 Promise
-
+::: details 23. 手写 Promise
 ```javascript
 class MyPromise {
     constructor(executor) {
@@ -480,9 +479,9 @@ class MyPromise {
 ```
 
 ---
+:::
 
-### 24. 手写 new 操作符
-
+::: details 24. 手写 new 操作符
 ```javascript
 function myNew(Constructor, ...args) {
     // 1. 创建新对象，原型指向构造函数的 prototype
@@ -495,9 +494,9 @@ function myNew(Constructor, ...args) {
 ```
 
 ---
+:::
 
-### 25. 手写 instanceof
-
+::: details 25. 手写 instanceof
 ```javascript
 function myInstanceof(obj, Constructor) {
     if (typeof obj !== 'object' && typeof obj !== 'function') return false;
@@ -511,9 +510,9 @@ function myInstanceof(obj, Constructor) {
 ```
 
 ---
+:::
 
-### 26. 手写数组扁平化
-
+::: details 26. 手写数组扁平化
 ```javascript
 // 递归
 function flatten(arr, depth = Infinity) {
@@ -532,9 +531,9 @@ function flatten(arr, depth = Infinity) {
 ```
 
 ---
+:::
 
-### 27. 手写 Promise.all
-
+::: details 27. 手写 Promise.all
 ```javascript
 function promiseAll(promises) {
     return new Promise((resolve, reject) => {
@@ -553,11 +552,11 @@ function promiseAll(promises) {
 ```
 
 ---
+:::
 
 ## 综合题
 
-### 28. 说说 JavaScript 的垃圾回收机制
-
+::: details 28. 说说 JavaScript 的垃圾回收机制
 **标记清除（主流）**：
 1. 从根对象（window/global）出发，标记所有可达对象
 2. 清除未被标记的对象（不可达 = 垃圾）
@@ -571,11 +570,12 @@ function promiseAll(promises) {
 - DOM 引用未清除
 
 ---
+:::
 
-### 29. 什么是执行上下文和调用栈？
-
+::: details 29. 什么是执行上下文和调用栈？
 **执行上下文**：代码执行时的环境，包含变量环境、词法环境、this 绑定。
 
 **类型**：全局执行上下文、函数执行上下文、eval 执行上下文
 
 **调用栈（Call Stack）**：管理执行上下文的栈结构，LIFO（后进先出）。函数调用时压栈，返回时出栈。栈溢出（Stack Overflow）发生在递归过深时。
+:::
