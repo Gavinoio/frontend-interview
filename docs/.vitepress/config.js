@@ -84,6 +84,12 @@ export default defineConfig({
             { text: '自定义指令', link: '/vue/directives' },
             { text: '性能优化', link: '/vue/optimization' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'Vue 面试题精选', link: '/vue/interview' }
+          ]
         }
       ],
 
@@ -100,6 +106,12 @@ export default defineConfig({
             { text: 'React Router', link: '/react/router' },
             { text: 'Next.js', link: '/react/nextjs' },
             { text: 'React 18 并发特性', link: '/react/concurrent' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'React 面试题精选', link: '/react/interview' }
           ]
         }
       ],

@@ -602,31 +602,3 @@ const count = useStore((state) => state.count)
 const increment = useStore((state) => state.increment)
 ```
 
-## 常见面试题
-
-### 1. Redux 和 Context 的区别？
-
-- Redux 有中间件、DevTools、性能优化
-- Context 适合简单场景，值变化会导致所有消费者重渲染
-- Redux 可以通过 selector 精确订阅
-
-### 2. 什么时候使用全局状态？
-
-- 多个不相关组件需要共享的数据
-- 用户登录信息、主题设置
-- 需要跨页面持久化的数据
-- 避免过度使用，能用 props 解决就用 props
-
-### 3. Redux Toolkit 相比传统 Redux 有什么优势？
-
-- 内置 Immer，可以直接修改状态
-- createSlice 自动生成 action creators
-- configureStore 自动配置中间件
-- 大幅减少样板代码
-
-### 4. React Query 和 Redux 的区别？
-
-- React Query 专注于服务端状态（缓存、同步）
-- Redux 是通用状态管理
-- React Query 自动处理 loading、error、缓存失效
-- 两者可以配合使用
