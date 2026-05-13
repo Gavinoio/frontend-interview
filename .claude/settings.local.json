@@ -1,17 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git init:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git branch:*)",
-      "Bash(gh repo create:*)",
-      "Bash(git remote add:*)",
-      "Bash(git push:*)",
+      "Bash(*)",
       "WebFetch(domain:github.com)",
-      "Bash(git config:*)",
-      "Bash(cat:*)",
-      "Bash(for dir in D:/村长/frontend-interview/docs/*/)"
+      "Read(//tmp/**)",
+      "Skill(git-commit)",
+      "Skill(git-commit:*)",
+      "Skill(update-config)",
+      "Skill(update-config:*)"
+    ],
+    "additionalDirectories": [
+      "/private/tmp"
     ]
   }
 }

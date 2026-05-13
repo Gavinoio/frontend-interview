@@ -129,6 +129,12 @@ export default defineConfig({
             { text: '网络安全', link: '/network/security' },
             { text: 'DNS 解析', link: '/network/dns' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '网络协议面试题精选', link: '/network/interview' }
+          ]
         }
       ],
 
@@ -147,6 +153,12 @@ export default defineConfig({
             { text: 'URL 到页面渲染', link: '/browser/url-to-render' },
             { text: 'Web Workers', link: '/browser/web-workers' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '浏览器原理面试题精选', link: '/browser/interview' }
+          ]
         }
       ],
 
@@ -160,6 +172,12 @@ export default defineConfig({
             { text: '构建优化', link: '/performance/build' },
             { text: '性能监控', link: '/performance/monitoring' },
             { text: 'CDN 原理与优化', link: '/performance/cdn' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '性能优化面试题精选', link: '/performance/interview' }
           ]
         }
       ],
@@ -180,6 +198,12 @@ export default defineConfig({
             { text: 'Git Hooks', link: '/engineering/git-hooks' },
             { text: '单元测试', link: '/engineering/unit-testing' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '工程化面试题精选', link: '/engineering/interview' }
+          ]
         }
       ],
 
@@ -189,6 +213,12 @@ export default defineConfig({
           items: [
             { text: 'Node.js 基础', link: '/nodejs/' },
             { text: 'Web 框架对比', link: '/nodejs/frameworks' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'Node.js 面试题精选', link: '/nodejs/interview' }
           ]
         }
       ],
@@ -201,7 +231,14 @@ export default defineConfig({
             { text: 'qiankun', link: '/micro-frontend/qiankun' },
             { text: 'wujie 无界', link: '/micro-frontend/wujie' },
             { text: 'Micro App', link: '/micro-frontend/micro-app' },
-            { text: 'Module Federation', link: '/micro-frontend/module-federation' }
+            { text: 'Module Federation', link: '/micro-frontend/module-federation' },
+            { text: '方案对比', link: '/micro-frontend/comparison' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '微前端面试题精选', link: '/micro-frontend/interview' }
           ]
         }
       ],
@@ -214,6 +251,12 @@ export default defineConfig({
             { text: 'uni-app', link: '/cross-platform/uniapp' },
             { text: 'Taro', link: '/cross-platform/taro' },
             { text: '小程序原理', link: '/cross-platform/miniprogram' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '跨端开发面试题精选', link: '/cross-platform/interview' }
           ]
         }
       ],
@@ -265,6 +308,12 @@ export default defineConfig({
             { text: '高频场景题', link: '/scenarios/common-questions' },
             { text: '错误边界处理', link: '/scenarios/error-handling' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '场景题面试题精选', link: '/scenarios/interview' }
+          ]
         }
       ],
 
@@ -281,6 +330,12 @@ export default defineConfig({
             { text: '代理模式', link: '/design-patterns/proxy' },
             { text: '装饰器模式', link: '/design-patterns/decorator' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '设计模式面试题精选', link: '/design-patterns/interview' }
+          ]
         }
       ],
 
@@ -294,6 +349,12 @@ export default defineConfig({
             { text: '高频算法详解', link: '/algorithm/advanced' },
             { text: '前端算法题', link: '/algorithm/frontend' },
             { text: '面试高频题精选', link: '/algorithm/interview-hot' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: '算法面试题精选', link: '/algorithm/interview' }
           ]
         }
       ],
