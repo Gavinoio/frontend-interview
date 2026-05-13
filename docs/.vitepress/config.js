@@ -37,6 +37,12 @@ export default defineConfig({
             { text: '正则表达式', link: '/javascript/regex' },
             { text: 'Proxy 与 Reflect', link: '/javascript/proxy-reflect' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'JavaScript 面试题精选', link: '/javascript/interview' }
+          ]
         }
       ],
 
@@ -50,6 +56,12 @@ export default defineConfig({
             { text: '泛型', link: '/typescript/generics' },
             { text: '工程实践', link: '/typescript/practice' },
             { text: 'TypeScript + React', link: '/typescript/react' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'TypeScript 面试题精选', link: '/typescript/interview' }
           ]
         }
       ],
@@ -283,6 +295,12 @@ export default defineConfig({
             { text: '无障碍访问', link: '/html/a11y' },
             { text: 'Web Components', link: '/html/web-components' }
           ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'HTML 面试题精选', link: '/html/interview' }
+          ]
         }
       ],
 
@@ -300,6 +318,12 @@ export default defineConfig({
             { text: 'CSS 变量', link: '/css/variables' },
             { text: '原子化 CSS', link: '/css/atomic-css' },
             { text: 'CSS-in-JS', link: '/css/css-in-js' }
+          ]
+        },
+        {
+          text: '面试题精选',
+          items: [
+            { text: 'CSS 面试题精选', link: '/css/interview' }
           ]
         }
       ]
