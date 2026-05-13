@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
-    "preview": "vitepress preview docs"
+    "preview": "vitepress preview docs",
+    "docs:dev": "npm run dev",
+    "docs:build": "npm run build",
+    "docs:preview": "npm run preview"
   },
   "keywords": ["frontend", "knowledge", "vue", "react", "javascript", "typescript"],
   "author": "",
