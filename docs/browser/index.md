@@ -763,3 +763,150 @@ const users = await db.getAll('users');
 - 掌握性能优化策略
 - 了解浏览器安全机制(同源策略、CSP)
 - 熟悉各种存储方案的应用场景
+
+## 6. V8 引擎与垃圾回收
+
+### V8 引擎工作原理
+
+V8 是 Chrome 和 Node.js 使用的 JavaScript 引擎，将 JS 代码编译为机器码执行。
+
+```
+源代码（JavaScript）
+    ↓ 解析（Parser）
+AST（抽象语法树）
+    ↓ 解释器（Ignition）
+字节码（Bytecode）
+    ↓ 热点代码（频繁执行的代码）
+    ↓ 编译器（TurboFan，JIT 即时编译）
+机器码（直接执行，速度最快）
+```
+
+**JIT（Just-In-Time）编译**：V8 先用解释器快速执行字节码，同时监控"热点代码"（频繁执行的函数）。热点代码会被 TurboFan 编译为高度优化的机器码，后续执行速度大幅提升。
+
+**避免反优化（Deoptimization）**：
+```javascript
+// ❌ 频繁改变变量类型会触发反优化
+function add(a, b) { return a + b; }
+add(1, 2);       // V8 优化为数字加法
+add('a', 'b');   // 类型变化，需要反优化重新解释
+
+// ✅ 保持类型稳定，让 V8 保持优化状态
+function addNumbers(a, b) { return a + b; }  // 只用于数字
+function addStrings(a, b) { return a + b; }  // 只用于字符串
+```
+
+### 垃圾回收机制
+
+V8 使用**分代式垃圾回收**，将内存分为两代：
+
+**新生代（Young Generation）**：存放短命对象（大多数对象），空间小（1-8MB）。
+- 使用 **Scavenge 算法**（复制算法）：将空间一分为二，存活对象复制到另一半，原空间清空。
+- 速度快，但空间利用率只有 50%。
+
+**老生代（Old Generation）**：存放长命对象（经历多次 GC 仍存活）。
+- 使用**标记清除（Mark-Sweep）**：标记所有可达对象，清除未标记的对象。
+- 会产生内存碎片，配合**标记整理（Mark-Compact）**压缩内存。
+
+**增量标记（Incremental Marking）**：为避免 GC 暂停主线程，将标记工作拆分为小步骤，穿插在 JS 执行之间。
+
+### 常见内存泄漏场景与排查
+
+```javascript
+// 1. 意外的全局变量
+function leak() {
+  leakedVar = 'I am global'; // 没有 var/let/const，挂到 window
+}
+
+// 2. 未清除的定时器
+const intervalId = setInterval(() => {
+  // 持有对外部变量的引用
+}, 1000);
+// ✅ 记得清除
+clearInterval(intervalId);
+
+// 3. 未移除的事件监听
+element.addEventListener('click', handler);
+// ✅ 组件销毁时移除
+element.removeEventListener('click', handler);
+
+// 4. 闭包持有大对象
+function createHeavyClosure() {
+  const hugeData = new Array(1000000).fill('*');
+  return function() {
+    console.log(hugeData.length); // 闭包持有 hugeData，无法被回收
+  };
+}
+
+// 5. DOM 引用未清除
+let element = document.getElementById('myDiv');
+document.body.removeChild(element);
+// ❌ element 变量仍持有引用，DOM 节点无法被回收
+element = null; // ✅ 手动解除引用
+```
+
+**排查工具**：Chrome DevTools → Memory → Heap Snapshot（堆快照），对比多次快照找出增长的对象。
+
+---
+
+## 7. 浏览器安全机制
+
+### 同源策略（Same-Origin Policy）
+
+**同源**：协议、域名、端口完全相同。同源策略限制不同源的页面访问：
+- JavaScript 无法读取其他源的 Cookie、localStorage
+- `XMLHttpRequest` 和 `fetch` 无法跨域
+- DOM 无法访问其他源的 iframe 内容
+
+### Content Security Policy（CSP）
+
+CSP 是防御 XSS 的重要机制，通过 HTTP 响应头或 `<meta>` 标签告诉浏览器哪些资源可以加载。
+
+```http
+# 服务端响应头
+Content-Security-Policy: default-src 'self'; script-src 'self' https://cdn.example.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;
+```
+
+```html
+<!-- 或通过 meta 标签（功能有限，不支持 report-uri 等） -->
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'">
+```
+
+**常用指令**：
+- `default-src`：默认策略，其他指令的回退值
+- `script-src`：JS 来源
+- `style-src`：CSS 来源
+- `img-src`：图片来源
+- `connect-src`：fetch、XHR、WebSocket 连接
+- `frame-src`：iframe 来源
+- `'self'`：只允许同源
+- `'none'`：禁止所有
+- `'unsafe-inline'`：允许内联脚本（弱化 CSP，尽量避免）
+- `'nonce-xxx'`：通过随机数允许特定内联脚本
+
+**违规上报**：
+```http
+Content-Security-Policy: default-src 'self'; report-uri /csp-report
+Content-Security-Policy-Report-Only: default-src 'self'  # 只报告不拦截，用于测试
+```
+
+### 点击劫持（Clickjacking）防御
+
+```http
+# 禁止被 iframe 嵌入
+X-Frame-Options: DENY            # 完全禁止
+X-Frame-Options: SAMEORIGIN      # 只允许同源嵌入
+
+# 现代替代方案（用 CSP）
+Content-Security-Policy: frame-ancestors 'none'
+Content-Security-Policy: frame-ancestors 'self'
+```
+
+### HTTPS 与 HSTS
+
+```http
+# 强制浏览器只用 HTTPS 访问（包含子域名）
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+```
+
+HSTS 开启后，即使用户输入 `http://`，浏览器也会自动改为 `https://`，防止中间人攻击。

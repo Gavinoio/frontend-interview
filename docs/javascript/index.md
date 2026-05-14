@@ -1487,3 +1487,135 @@ function deepClone(obj, map = new WeakMap()) {
 3. 展示深入理解 (原理、底层)
 4. 主动提及相关知识点
 :::
+
+## 错误处理
+
+### 错误类型
+
+JavaScript 内置了多种错误类型：
+
+```javascript
+// SyntaxError：语法错误（编译时）
+// eval('let a ='); // SyntaxError
+
+// ReferenceError：访问未声明的变量
+// console.log(notDefined); // ReferenceError
+
+// TypeError：类型操作错误（最常见）
+null.property;              // TypeError: Cannot read properties of null
+undefined();                // TypeError: undefined is not a function
+
+// RangeError：数值超出范围
+new Array(-1);              // RangeError: Invalid array length
+(1234567890).toFixed(200);  // RangeError: toFixed() digits argument must be between 0 and 100
+
+// URIError：URL 编码/解码错误
+decodeURIComponent('%');    // URIError: URI malformed
+```
+
+### 自定义错误类
+
+```javascript
+// 创建自定义错误类，继承 Error
+class NetworkError extends Error {
+  constructor(message, statusCode) {
+    super(message);           // 调用父类构造函数
+    this.name = 'NetworkError'; // 错误名称
+    this.statusCode = statusCode;
+    // 确保 instanceof 检查正常工作
+    Object.setPrototypeOf(this, NetworkError.prototype);
+  }
+}
+
+class ValidationError extends Error {
+  constructor(message, field) {
+    super(message);
+    this.name = 'ValidationError';
+    this.field = field;
+  }
+}
+
+// 使用
+function fetchUser(id) {
+  if (!id) throw new ValidationError('用户 ID 不能为空', 'id');
+  // ...
+}
+
+try {
+  fetchUser(null);
+} catch (err) {
+  if (err instanceof ValidationError) {
+    console.log(`字段 ${err.field} 验证失败: ${err.message}`);
+  } else if (err instanceof NetworkError) {
+    console.log(`网络错误 ${err.statusCode}: ${err.message}`);
+  } else {
+    throw err; // 未知错误，重新抛出
+  }
+}
+```
+
+### 异步错误处理
+
+```javascript
+// Promise 链中的错误处理
+fetch('/api/data')
+  .then(res => {
+    if (!res.ok) throw new NetworkError(`请求失败`, res.status);
+    return res.json();
+  })
+  .then(data => processData(data))
+  .catch(err => {
+    // 捕获整个链中的所有错误
+    console.error(err);
+  });
+
+// async/await 中的错误处理
+async function loadData() {
+  try {
+    const res = await fetch('/api/data');
+    if (!res.ok) throw new NetworkError('请求失败', res.status);
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    if (err instanceof NetworkError) {
+      // 处理网络错误
+    } else {
+      throw err; // 重新抛出非预期错误
+    }
+  } finally {
+    // 无论成功失败都会执行，适合清理资源
+    setLoading(false);
+  }
+}
+
+// 统一处理 Promise rejection
+window.addEventListener('unhandledrejection', event => {
+  console.error('未处理的 Promise 拒绝:', event.reason);
+  event.preventDefault(); // 阻止默认行为（浏览器报错）
+});
+
+// 全局错误捕获
+window.addEventListener('error', event => {
+  console.error('全局错误:', event.error);
+  // 上报到监控系统
+});
+```
+
+### 错误边界与优雅降级
+
+```javascript
+// 函数级别的错误边界（高阶函数模式）
+function withErrorHandler(fn, fallback) {
+  return async function(...args) {
+    try {
+      return await fn(...args);
+    } catch (err) {
+      console.error(`${fn.name} 出错:`, err);
+      return typeof fallback === 'function' ? fallback(err) : fallback;
+    }
+  };
+}
+
+const safeLoadUser = withErrorHandler(loadUser, null);
+const user = await safeLoadUser(userId); // 出错时返回 null，不崩溃
+```

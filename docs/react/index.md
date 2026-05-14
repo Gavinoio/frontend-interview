@@ -616,3 +616,215 @@ JSX 是 JavaScript 的语法扩展，允许在 JS 中写类似 HTML 的代码。
 - 批量更新，避免重复渲染
 - 跨平台能力（React Native）
 :::
+
+## 受控组件与非受控组件
+
+### 受控组件（Controlled Component）
+
+表单元素的值由 React state 控制，每次变化都触发 `onChange` 更新 state。
+
+```jsx
+function ControlledForm() {
+  const [value, setValue] = useState('');
+  return (
+    <input
+      value={value}
+      onChange={e => setValue(e.target.value)}
+    />
+  );
+}
+```
+
+**特点**：数据始终在 React state 中，可以随时读取和验证；适合需要即时反馈的场景（实时搜索、表单验证、格式化输入）。
+
+### 非受控组件（Uncontrolled Component）
+
+表单元素自己维护状态，通过 `ref` 在需要时读取值。
+
+```jsx
+function UncontrolledForm() {
+  const inputRef = useRef(null);
+  function handleSubmit() {
+    console.log(inputRef.current.value);
+  }
+  return (
+    <>
+      <input ref={inputRef} defaultValue="初始值" />
+      <button onClick={handleSubmit}>提交</button>
+    </>
+  );
+}
+```
+
+**选择原则**：需要即时验证或联动 → 受控组件；文件上传（必须非受控）、简单表单 → 非受控组件。
+
+---
+
+## forwardRef 与 useImperativeHandle
+
+默认情况下 React 不允许父组件访问子组件的 DOM，`forwardRef` 可以将子组件内部的 DOM 引用暴露给父组件。
+
+```jsx
+// forwardRef：向父组件暴露 DOM 引用
+const FancyInput = forwardRef(function FancyInput(props, ref) {
+  return <input ref={ref} className="fancy" {...props} />;
+});
+
+// 父组件可以直接操作子组件内部的 input
+function Parent() {
+  const inputRef = useRef(null);
+  return (
+    <>
+      <FancyInput ref={inputRef} />
+      <button onClick={() => inputRef.current.focus()}>聚焦</button>
+    </>
+  );
+}
+
+// useImperativeHandle：控制暴露给父组件的内容（只暴露特定方法，而非整个 DOM）
+const MyInput = forwardRef(function MyInput(props, ref) {
+  const inputRef = useRef(null);
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current.focus(),
+    clear: () => { inputRef.current.value = ''; },
+    // 不暴露 inputRef.current 本身，更安全
+  }));
+  return <input ref={inputRef} />;
+});
+```
+
+---
+
+## Error Boundary（错误边界）
+
+React 组件树中某个子组件抛出的 JavaScript 错误会导致整棵树崩溃。错误边界可以捕获子组件的渲染错误，显示降级 UI，防止整个应用崩溃。
+
+```jsx
+class ErrorBoundary extends React.Component {
+  state = { hasError: false, error: null };
+
+  // 子组件抛错时更新 state，触发降级渲染
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  // 可在这里上报错误（Sentry 等监控工具）
+  componentDidCatch(error, info) {
+    console.error('渲染错误:', error);
+    console.error('组件栈:', info.componentStack);
+    // reportToSentry(error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || <h2>出了点问题，请刷新重试</h2>;
+    }
+    return this.props.children;
+  }
+}
+
+// 使用：包裹可能出错的子树
+<ErrorBoundary fallback={<ErrorPage />}>
+  <UserDashboard />
+</ErrorBoundary>
+```
+
+**不能捕获的错误**：事件处理函数（用 try/catch）、异步代码（setTimeout、Promise）、自身错误。
+
+**React 18+ 推荐**：使用 `react-error-boundary` 库，提供更便捷的函数式 API 和 `useErrorBoundary` Hook。
+
+---
+
+## Suspense 与代码分割
+
+Suspense 可以在子组件"还没准备好"时展示 fallback UI，主要用于懒加载和数据获取。
+
+```jsx
+import { lazy, Suspense } from 'react';
+
+// lazy()：将组件改为懒加载，只有在首次渲染时才下载对应代码
+const HeavyChart = lazy(() => import('./HeavyChart'));
+const UserProfile = lazy(() => import('./UserProfile'));
+
+function App() {
+  return (
+    // Suspense：子组件加载中时显示 fallback
+    <Suspense fallback={<Spinner />}>
+      <HeavyChart />
+    </Suspense>
+  );
+}
+
+// 路由懒加载（最常见用法）
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+
+function Router() {
+  return (
+    <Suspense fallback={<PageLoading />}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
+// React 18 + 支持 Suspense 的数据库（如 SWR、React Query）
+function UserCard({ id }) {
+  // suspense: true 时，数据未就绪会自动"挂起"，由外层 Suspense 显示 loading
+  const { data } = useSWR(`/api/users/${id}`, fetcher, { suspense: true });
+  return <div>{data.name}</div>;
+}
+```
+
+---
+
+## Portal（传送门）
+
+将组件渲染到 DOM 的任意节点（默认是父组件 DOM 内部），常用于 Modal、Tooltip、Dropdown，解决 `overflow: hidden` 或 `z-index` 带来的遮挡问题。
+
+```jsx
+import { createPortal } from 'react-dom';
+
+function Modal({ isOpen, onClose, children }) {
+  if (!isOpen) return null;
+
+  // 渲染到 document.body，脱离父组件的 DOM 树
+  // 即使父组件有 overflow: hidden，Modal 也能正常显示
+  return createPortal(
+    <div
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(0,0,0,0.5)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        zIndex: 9999
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{ background: '#fff', padding: 24, borderRadius: 8 }}
+        onClick={e => e.stopPropagation()} // 防止点击内容区关闭
+      >
+        {children}
+      </div>
+    </div>,
+    document.body  // 挂载目标节点
+  );
+}
+
+// 使用
+function App() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ overflow: 'hidden' }}>
+      <button onClick={() => setOpen(true)}>打开弹窗</button>
+      <Modal isOpen={open} onClose={() => setOpen(false)}>
+        <h2>这是弹窗内容</h2>
+      </Modal>
+    </div>
+  );
+}
+```
+
+**注意**：Portal 中的事件冒泡遵循 **React 组件树**的顺序，而不是 DOM 树。点击 Modal 内的按钮，事件会冒泡到 `App`，而不是 `document.body`。

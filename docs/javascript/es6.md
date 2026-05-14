@@ -896,6 +896,163 @@ for await (const value of asyncGenerator()) {
 }
 ```
 
+## Generator（生成器）与 Iterator（迭代器）
+
+### 什么是 Iterator（迭代器）？
+
+迭代器是一个实现了 `next()` 方法的对象，每次调用返回 `{ value, done }` 格式的结果。
+
+```javascript
+// 手动实现一个迭代器
+function createRangeIterator(start, end) {
+  let current = start;
+  return {
+    next() {
+      if (current <= end) {
+        return { value: current++, done: false };
+      }
+      return { value: undefined, done: true };
+    }
+  };
+}
+
+const iter = createRangeIterator(1, 3);
+iter.next(); // { value: 1, done: false }
+iter.next(); // { value: 2, done: false }
+iter.next(); // { value: 3, done: false }
+iter.next(); // { value: undefined, done: true }
+```
+
+**可迭代对象**：实现了 `Symbol.iterator` 方法（返回迭代器）的对象，可以被 `for...of`、展开运算符、解构赋值使用。内置的可迭代对象有：Array、String、Map、Set、arguments、NodeList。
+
+```javascript
+// 让自定义对象支持 for...of
+const range = {
+  from: 1,
+  to: 5,
+  [Symbol.iterator]() {
+    let current = this.from;
+    const last = this.to;
+    return {
+      next() {
+        if (current <= last) return { value: current++, done: false };
+        return { value: undefined, done: true };
+      }
+    };
+  }
+};
+
+for (const num of range) {
+  console.log(num); // 1 2 3 4 5
+}
+console.log([...range]); // [1, 2, 3, 4, 5]
+```
+
+### Generator 函数
+
+Generator 函数是一种特殊函数，可以**暂停执行**并在需要时**恢复**。调用 Generator 函数不会立即执行，而是返回一个遍历器对象（同时也是可迭代对象）。
+
+```javascript
+function* simpleGenerator() {
+  console.log('开始');
+  yield 1;          // 暂停，返回 1
+  console.log('继续');
+  yield 2;          // 暂停，返回 2
+  console.log('结束');
+  return 3;         // 完成
+}
+
+const gen = simpleGenerator(); // 不执行函数体
+gen.next(); // 打印"开始"，返回 { value: 1, done: false }
+gen.next(); // 打印"继续"，返回 { value: 2, done: false }
+gen.next(); // 打印"结束"，返回 { value: 3, done: true }
+gen.next(); // 返回 { value: undefined, done: true }
+```
+
+### yield 双向通信
+
+`next(value)` 可以向 Generator 传值，该值会成为上一个 `yield` 表达式的返回值：
+
+```javascript
+function* calculator() {
+  const x = yield '请输入第一个数';    // 接收外部传入的值
+  const y = yield '请输入第二个数';
+  return x + y;
+}
+
+const calc = calculator();
+calc.next();      // 启动，返回 { value: '请输入第一个数', done: false }
+calc.next(10);    // 传入 10 作为 x，返回 { value: '请输入第二个数', done: false }
+calc.next(20);    // 传入 20 作为 y，返回 { value: 30, done: true }
+```
+
+### 实际应用场景
+
+```javascript
+// 1. 无限序列（惰性计算）
+function* naturalNumbers() {
+  let n = 1;
+  while (true) yield n++;
+}
+
+const nums = naturalNumbers();
+nums.next().value; // 1
+nums.next().value; // 2
+// 按需生成，不占用大量内存
+
+// 2. 斐波那契数列
+function* fibonacci() {
+  let [a, b] = [0, 1];
+  while (true) {
+    yield a;
+    [a, b] = [b, a + b];
+  }
+}
+
+const fib = fibonacci();
+Array.from({ length: 8 }, () => fib.next().value);
+// [0, 1, 1, 2, 3, 5, 8, 13]
+
+// 3. 状态机（优雅地管理状态）
+function* trafficLight() {
+  while (true) {
+    yield '红灯';
+    yield '绿灯';
+    yield '黄灯';
+  }
+}
+
+// 4. Generator 实现 async/await 原理
+// async/await 本质上是 Generator + Promise + 自动执行器
+function run(genFn) {
+  const gen = genFn();
+  return new Promise((resolve, reject) => {
+    function step(key, arg) {
+      let result;
+      try { result = gen[key](arg); }
+      catch (e) { return reject(e); }
+      const { value, done } = result;
+      if (done) return resolve(value);
+      Promise.resolve(value).then(
+        val => step('next', val),
+        err => step('throw', err)
+      );
+    }
+    step('next');
+  });
+}
+
+// 用 Generator 模拟 async/await
+function* fetchData() {
+  const user = yield fetch('/api/user').then(r => r.json());
+  const posts = yield fetch(`/api/posts/${user.id}`).then(r => r.json());
+  return posts;
+}
+
+run(fetchData).then(console.log); // 自动处理异步流程
+```
+
+
 ## Proxy 和 Reflect
 
 ### Proxy

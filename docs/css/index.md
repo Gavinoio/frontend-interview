@@ -517,3 +517,214 @@ div p { }                /* 0,0,0,2 */
 - [MDN CSS 文档](https://developer.mozilla.org/zh-CN/docs/Web/CSS)
 - [CSS Tricks](https://css-tricks.com/)
 - [Can I Use](https://caniuse.com/)
+
+## 层叠上下文（Stacking Context）
+
+### 什么是层叠上下文？
+
+层叠上下文是 HTML 元素在 z 轴（屏幕纵深方向）上的三维空间概念。每个层叠上下文内部有自己的 z 轴排序规则，**子元素的 z-index 只在同一个层叠上下文中有效**。
+
+**同一层叠上下文内，z-index 越大越靠前。不同层叠上下文，子元素的 z-index 大小不影响父层叠上下文之间的排序。**
+
+### 触发层叠上下文的条件
+
+```css
+/* 以下属性会创建新的层叠上下文 */
+
+/* 1. position + z-index（最常见） */
+.box { position: relative; z-index: 1; }
+
+/* 2. opacity 小于 1 */
+.box { opacity: 0.9; }
+
+/* 3. transform */
+.box { transform: translateZ(0); }
+
+/* 4. filter */
+.box { filter: blur(4px); }
+
+/* 5. will-change */
+.box { will-change: transform; }
+
+/* 6. isolation */
+.box { isolation: isolate; } /* 明确创建层叠上下文，不触发 GPU 加速 */
+
+/* 7. position: fixed / sticky */
+.box { position: fixed; }
+
+/* 8. flex/grid 子元素设置了 z-index */
+.flex-child { z-index: 2; } /* 父为 flex 容器时有效 */
+```
+
+### 经典问题：z-index 不生效
+
+```html
+<!-- 问题：B 的 z-index 比 C 大，但 B 仍然在 C 下面 -->
+<div class="a" style="position: relative; z-index: 1;">
+  <div class="b" style="position: relative; z-index: 100;">B（z-index: 100）</div>
+</div>
+<div class="c" style="position: relative; z-index: 2;">C（z-index: 2）</div>
+```
+
+**原因**：B 在 A 的层叠上下文内，A 的 z-index 是 1，C 的 z-index 是 2。A 排在 C 后面，所以 A 内的所有元素（包括 B）都在 C 下方，无论 B 的 z-index 多大。
+
+**解决**：提升 A 的 z-index，或移除 A 的层叠上下文（去掉 z-index 或改为 `z-index: auto`）。
+
+### 同一层叠上下文内的排序（从下到上）
+
+1. 背景和边框（最底层）
+2. `z-index` 为负的定位元素
+3. 块级盒（block box）
+4. 浮动盒（float box）
+5. 内联盒（inline box）
+6. `z-index: 0` 或 `z-index: auto` 的定位元素
+7. `z-index` 为正的定位元素（最顶层）
+
+---
+
+## CSS 动画性能优化
+
+### 触发 GPU 合成的属性（性能最好）
+
+这些属性的变化只影响合成层，不触发布局或绘制：
+
+```css
+/* ✅ 推荐：使用 transform 和 opacity 做动画 */
+.box {
+  transition: transform 0.3s, opacity 0.3s;
+}
+.box:hover {
+  transform: translateX(10px) scale(1.1);
+  opacity: 0.8;
+}
+
+/* ❌ 避免：触发重排（布局重计算） */
+.bad {
+  transition: width 0.3s, margin 0.3s;
+}
+.bad:hover {
+  width: 200px; /* 触发重排 → 重绘 → 合成，代价最高 */
+  margin-left: 10px;
+}
+
+/* ❌ 避免：触发重绘 */
+.worse {
+  transition: background-color 0.3s;
+}
+```
+
+### will-change 提前告知浏览器
+
+```css
+/* 告知浏览器该元素将要变化，让浏览器提前创建合成层 */
+.animated {
+  will-change: transform;
+}
+
+/* 注意：不要滥用 will-change */
+/* ❌ 错误：所有元素都用 will-change */
+* { will-change: transform; } /* 会消耗大量 GPU 内存 */
+
+/* ✅ 正确：只在即将动画时添加，动画结束后移除 */
+element.addEventListener('mouseenter', () => {
+  element.style.willChange = 'transform';
+});
+element.addEventListener('animationend', () => {
+  element.style.willChange = 'auto';
+});
+```
+
+### requestAnimationFrame 优化 JS 动画
+
+```javascript
+// ❌ 用 setTimeout 做动画：不稳定，可能掉帧
+setTimeout(() => {
+  element.style.left = `${x}px`;
+}, 16);
+
+// ✅ 用 requestAnimationFrame：与浏览器刷新率同步
+function animate() {
+  x += 2;
+  element.style.transform = `translateX(${x}px)`;
+  if (x < 300) requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+```
+
+---
+
+## Container Queries（容器查询）
+
+传统媒体查询基于**视口**大小，容器查询基于**父容器**大小，让组件真正实现响应式。
+
+```css
+/* 1. 声明容器：告诉浏览器哪个元素是容器 */
+.card-wrapper {
+  container-type: inline-size; /* 基于内联轴（宽度）查询 */
+  container-name: card;        /* 可选：给容器命名 */
+}
+
+/* 2. 容器查询：当 .card-wrapper 宽度小于 600px 时应用 */
+@container card (max-width: 600px) {
+  .card {
+    flex-direction: column; /* 窄容器改为纵向排列 */
+  }
+  .card-image {
+    width: 100%;
+  }
+}
+
+@container card (min-width: 600px) {
+  .card {
+    flex-direction: row;
+  }
+  .card-image {
+    width: 200px;
+    flex-shrink: 0;
+  }
+}
+
+/* 3. 容器查询单位 */
+.card-title {
+  font-size: 5cqi; /* cqi = container query inline，容器宽度的 1% */
+}
+```
+
+```html
+<!-- 同一组件，在不同宽度的容器中自动适配 -->
+<div class="card-wrapper" style="width: 800px">
+  <div class="card">宽容器：横向排列</div>
+</div>
+<div class="card-wrapper" style="width: 300px">
+  <div class="card">窄容器：纵向排列</div>
+</div>
+```
+
+**与媒体查询的区别**：媒体查询用 `@media`，基于视口；容器查询用 `@container`，基于容器元素本身的尺寸，适合组件库开发。
+
+**浏览器支持**：Chrome 106+、Firefox 110+、Safari 16+，现代浏览器已全面支持。
+
+---
+
+## CSS 逻辑属性
+
+传统 CSS 方向属性（top/right/bottom/left）与书写方向绑定，逻辑属性根据书写方向自动适配，方便国际化（支持 RTL 语言如阿拉伯语）。
+
+```css
+/* 传统写法 → 逻辑属性 */
+margin-left    → margin-inline-start  /* 书写方向的起始边距 */
+margin-right   → margin-inline-end    /* 书写方向的结束边距 */
+margin-top     → margin-block-start   /* 块方向的起始边距 */
+margin-bottom  → margin-block-end     /* 块方向的结束边距 */
+
+padding-left   → padding-inline-start
+width          → inline-size          /* 内联方向尺寸 */
+height         → block-size           /* 块方向尺寸 */
+
+/* 实践示例 */
+.button {
+  padding-inline: 16px;  /* 左右内边距（等同于 padding-left + padding-right） */
+  padding-block: 8px;    /* 上下内边距 */
+  margin-inline-start: 8px; /* 在 LTR 是 margin-left，在 RTL 是 margin-right */
+}
+```
